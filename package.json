@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "name": "sveltekit-template",
+  "version": "1.0.0",
+  "license": "MIT",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "add:workspace": "./scripts/add-workspace.cjs",
+    "add:route": "./scripts/add-route.sh",
+    "add:comp": "./scripts/add-comp.cjs",
+    "add:store": "./scripts/add-store.cjs",
+    "remove:workspace": "./scripts/remove-workspace.cjs",
+    "remove:route": "./scripts/remove-route.sh",
+    "update": "./scripts/update-deps.sh",
+    "build": "yarn workspaces run build",
+    "dev": "yarn workspace client run dev",
+    "watch": "yarn workspace server run dev",
+    "lint": "yarn workspaces run lint",
+    "serve": "yarn workspace server run start"
+  },
+  "devDependencies": {
+    "npm-check-updates": "*"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true, 
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",   
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+  }
+}
