@@ -35,21 +35,25 @@ storageRoute.get("/file/:id",(req,res) => {
         const width  =+params.get("width")! || undefined
         const height =+params.get("height")! || undefined
 
+        console.log(width,height)
+
         const stream =fs.createReadStream(filePath)
         const transform =sharp()
           .resize(width,height)
           .flatten()
           .webp()
 
-        stream.pipe(transform)
+        stream
+          .pipe(transform)
+          .pipe(res)
       } break
 
       case ".mp3": res.setHeader("Content-Type","audio/mpeg"); break
       case ".wav": res.setHeader("Content-Type","audio/wav"); break
       case ".opus": res.setHeader("Content-Type","audio/opus"); break
-    }
 
-    stream.pipe(res)
+      default: stream.pipe(res)
+    }
   }
   catch ( err ) {
     console.log( err )
