@@ -8,13 +8,20 @@ function logger(req:Request,res:Response,next:NextFunction) {
   next()
 }
 
+function cors(_: Request, res: Response,next: NextFunction) {
+  res.setHeader("Access-Control-Allow-Origin","*")
+  next()
+}
+
 const app =express()
 
-app.use(logger)
-app.use("/storage",storageRoute)
-app.use("/releases",releasesRoute)
-app.use("/wip",demosRoute)
-app.use("/shitpost",shitpostRoute)
-app.use((_,res) => res.sendStatus(404))
+app
+  .use(logger)
+  .use(cors)
+  .use("/storage",storageRoute) 
+  .use("/releases",releasesRoute)  
+  .use("/wip",demosRoute) 
+  .use("/shitpost",shitpostRoute)  
+  .use((_,res) => res.sendStatus(404))
+  .listen(3000)
 
-app.listen(3000)
