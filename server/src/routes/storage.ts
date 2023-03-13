@@ -1,5 +1,8 @@
 import { Router } from "express"
 import fs from "node:fs"
+import path from "node:path"
+import url from "node:url"
+import sharp from "sharp"
 import { db } from "../db"
 import { listAllWrapper } from "./listAllWrapper"
 
@@ -8,10 +11,45 @@ storageRoute.get("/file/:id",(req,res) => {
   try {
     const { id } =req.params
     const record =db.filemap.get(id)
-    const filePath = record.path as string
-    const file =fs.readFileSync(filePath)
+    if ( !record ) res.sendStatus(404).end()
 
-    res.end(file)
+    const filePath = record.path as string
+    const parsedUrl =url.parse(req.url)
+    const params =new URLSearchParams(parsedUrl.query || "")
+
+    const stream =fs.createReadStream(filePath)
+
+    res.setHeader("Connection","close")
+    res.removeHeader("X-Powered-By")
+    res.removeHeader("Date")
+
+    switch ( path.extname(filePath) ) {
+      case ".gif":
+      case ".jpeg":
+      case ".jpg":
+      case ".png":
+      case ".webp": {
+
+        res.setHeader("Content-Type","image/webp")
+
+        const width  =+params.get("width")! || undefined
+        const height =+params.get("height")! || undefined
+
+        const stream =fs.createReadStream(filePath)
+        const transform =sharp()
+          .resize(width,height)
+          .flatten()
+          .webp()
+
+        stream.pipe(transform)
+      } break
+
+      case ".mp3": res.setHeader("Content-Type","audio/mpeg"); break
+      case ".wav": res.setHeader("Content-Type","audio/wav"); break
+      case ".opus": res.setHeader("Content-Type","audio/opus"); break
+    }
+
+    stream.pipe(res)
   }
   catch ( err ) {
     console.log( err )
