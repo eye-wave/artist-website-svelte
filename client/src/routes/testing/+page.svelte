@@ -6,17 +6,18 @@
   import EffectNode from "src/lib/music_player/audio_effects/EffectNode.svelte"
   import Knob from "src/lib/music_player/audio_effects/Knob.svelte"
   import DbMeter from "src/lib/music_player/audio_effects/DbMeter.svelte"
+    import AudioGraph from "src/lib/music_player/audio_effects/AudioGraph.svelte";
+    import PlaybackSpeed from "src/lib/music_player/audio_effects/PlaybackSpeed.svelte";
   
 </script>
 
 <main>
   <ul class="flex flex-col gap-1 select-none">
+    <PlaybackSpeed />
     <Reverb color="#50aaff" />
     <Waveshaper color="#de8098" />
     <Eq color="#ceceaa" />
 
-    <!-- <AudioGraph /> -->
-    <DbMeter />
 
     <!-- <EffectNode>
       <span slot="label">Reverb</span>
@@ -26,7 +27,5 @@
         on:change={e => musicPlayer.changeEffectParam({reverb:{wet:e.detail}})} />
     </EffectNode> -->
   </ul>
-
-  <MusicPlayer />
 </main>
 

@@ -30,9 +30,3 @@
     </div>
   </div>
 </nav>
-
-<style>
-  nav {
-    background-color: #ffffff05;
-  }
-</style>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { musicPlayer } from "src/lib/MusicPlayer.svelte"
+  import { getCoordinatesFromEvent } from "src/utils/mouseEvent";
   import { onMount } from "svelte"
   // import type { ReverbNode, ReverbOptions } from "../reverb"
   import Knob from "./Knob.svelte"
@@ -8,9 +9,9 @@
   export let width =360
   export let height =220
 
-  const filters =Array.from({ length:7 }).map((_,i) => {
+  const filters =Array.from({ length:3 }).map((_,i) => {
     return {
-      frequency: i * 100,
+      frequency: i * 40 +20,
       gain: 1,
       Q: 1,
       type: "peaking"
@@ -22,13 +23,27 @@
   function onWinResize() { boundingRect =curveMonitor?.getBoundingClientRect() }
   onMount(onWinResize)
 
-  function handleGrabStart(e:MouseEvent) {
+  function getTranslatedCordsFromEvent(e:MouseEvent|TouchEvent) {
+    let { x, y } = getCoordinatesFromEvent(e)
+    
+    x = (x -boundingRect.left) / boundingRect.width * width
+    y = (y -boundingRect.top) / boundingRect.height * height
+    return { x,y }
+  }
+
+  function handleGrabStart(e:MouseEvent|TouchEvent) {
+    const { x,y } =getTranslatedCordsFromEvent(e)
+
 
   }
-  function handleGrab(e:MouseEvent) {
+  function handleGrab(e:MouseEvent|TouchEvent) {
+    const { x,y } =getTranslatedCordsFromEvent(e)
+
 
   }
-  function handleGrabEnd(e:MouseEvent) {
+  function handleGrabEnd(e:MouseEvent|TouchEvent) {
+    const { x,y } =getTranslatedCordsFromEvent(e)
+
 
   }
 
@@ -49,9 +64,13 @@
     <svg fill="none"
       class="w-full h-full" {width} {height}
       viewBox="0 0 {width} {height}">
+      
       {#each filters as filter}
-        <circle cy={height /2} cx={filter.frequency} r={20} fill="#000" />
-        <text y={height /2} x={filter.frequency} r={20} fill="#fff">hi</text>
+        {@const r =10}
+        
+        <circle cy={height /2} cx={filter.frequency +r} {r} fill="#000" />
+        <text y={height /2} x={filter.frequency} {r} fill="#fff">hi</text>
+
       {/each}
     </svg>
   </div>

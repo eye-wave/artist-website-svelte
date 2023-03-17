@@ -1,54 +1,47 @@
 <script lang="ts">
   import { musicPlayer } from "../../MusicPlayer.svelte"
-  import * as d3 from "d3"
+  import { scaleLinear, line, curveBasis } from "d3"
   import { onMount, onDestroy } from "svelte"
   import { browser } from "$app/environment"
-  // TODO add vendor script to prevent loading entire d3 package
-  // and maybe test if that's even worth trying
-  // or even >:) steal fancy trigonometry functions from d3
 
 
   let canvas:HTMLCanvasElement
   let ctx:CanvasRenderingContext2D
   let animationId =-1
   let fftSize =8196
+  let domRect:DOMRect
+  let div:HTMLDivElement
 
   $: if ( musicPlayer.audioEffects ) musicPlayer.audioEffects.analyzer.fftSize =fftSize
 
-  // TODO remove width and height in favor of boundingRect for responsive canvas
-  export let width =500
-  export let height =180
+  $: width =domRect?.width || 200
+  $: height =domRect?.height || 48
+
   export let bufferSize =50
   export let curveSteepness =6
   $: buffer =new Uint8Array(bufferSize +1)
 
-  $: x =d3.scaleLinear()
+  $: x =scaleLinear()
     .domain([0,bufferSize])
     .range([0,width])
 
-  $: y =d3.scaleLinear()
+  $: y =scaleLinear()
     .domain([255,0])
     .range([0,height])
 
-  $: lineGenerator =d3.line<Point>()
+  $: lineGenerator =line<Point>()
     .x(d => x(d.x))
     .y(d => y(d.y))
-    .curve(d3.curveBasis)
+    .curve(curveBasis)
 
 
   onDestroy(() => browser && cancelAnimationFrame(animationId))
   onMount(() => {
+    domRect =div.getBoundingClientRect()
     ctx =canvas.getContext("2d")!
-    ctx.strokeStyle ="#fff"
-    ctx.lineWidth =2
-    ctx.lineJoin ="round"
-    ctx.lineCap ="round"
-    ctx.fillStyle ="#000"
+    ctx.fillStyle ="#fff"
 
     animationId =requestAnimationFrame( animate )
-
-    // TODO create db meter component ( check fl studio first for correct settings )
-    // TODO create oscilloscope component
   })
 
   function animate() {
@@ -61,19 +54,25 @@
 
       const path =new Path2D(lineGenerator(points) || "")
 
-      ctx.fillRect(0,0,width,height)
-      ctx.stroke(path)
+      
+      ctx.clearRect(0,0,width,height)
+      ctx.fill(path)
 
     }
 
     requestAnimationFrame(animate)
   }
+
+  onDestroy(() => {
+    browser && cancelAnimationFrame(animationId)
+    animationId -1
+  })
   
 
 </script>
 
-<div class="h-96">
-  <canvas {width} {height} bind:this={canvas}>
+<div class="relative" bind:this={div}>
+  <canvas {width} {height} class="w-full h-full relative" bind:this={canvas}>
     Your browser does not support the canvas tag
   </canvas>
 </div>

@@ -1,33 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
-@import "../lib/fonts/iconfont.css";
 
 @tailwind base;
+
+@layer base {
+  *,*::before,*::after {
+    box-sizing: border-box;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+  }
+  
+  html {
+    color-scheme: dark light;
+  }
+  
+  body {
+    min-height: 100vh;
+    @apply bg-gradient-to-t from-black to-neutral-800;
+    background-attachment: fixed;
+  }
+
+  h1 { @apply text-3xl }
+
+  img, picture, svg, video { @apply block max-w-full }
+  img { @apply flex justify-center items-center text-current }
+  
+  a {
+    text-decoration: none;
+    @apply text-current;
+  }
+
+  #app {
+    @apply min-h-screen bg-fixed text-white;
+    @apply flex flex-col;
+  }
+}
+
 @tailwind utilities;
-@tailwind components;
-
-*,*::before,*::after { @apply box-border }
-* {
-  @apply m-0 p-0;
-  font: inherit
-}
-html { @apply font-sans }
-#app {
-  @apply min-h-screen bg-fixed text-white;
-  background-image: linear-gradient(to top,#05121e,#102a2c)
-}
-img, picture, svg, video { @apply block max-w-full }
-
-img { @apply flex justify-center items-center text-current }
-
-a {
-  text-decoration: none;
-  @apply text-current;
-}
-
-.s-full { @apply w-full h-full }
-
-h1 { @apply text-3xl }
 
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after {

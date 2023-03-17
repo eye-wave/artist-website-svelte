@@ -11,7 +11,7 @@
   let canvas:HTMLCanvasElement
   let ctx:CanvasRenderingContext2D
   let animationId =-1
-  let fftSize =8196
+  let fftSize =8192
 
   $: if ( musicPlayer.audioEffects ) musicPlayer.audioEffects.analyzer.fftSize =fftSize
 

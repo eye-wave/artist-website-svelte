@@ -1,6 +1,5 @@
-import type { PageLoad } from './$types';
-
-export const csr =false
+import type { PageServerLoad } from './$types';
+import { AUTH } from "$env/static/private"
 
 export type ReleaseEntry ={
   id:number,
@@ -19,8 +18,8 @@ type PageData ={
   releases: ReleaseEntry[]
 }
 
-export const load:PageLoad =(({ fetch }) => new Promise<PageData>(resolve => {
-  fetch("http://localhost:3000/releases/list?raw=false")
+export const load:PageServerLoad =(({ fetch }) => new Promise<PageData>(resolve => {
+  fetch("http://localhost:3000/releases/list",{ method: "POST" })
     .then(res => res.json())
     .then(releases => resolve({ releases }))
     .catch(() => console.log("Fetch failed for some reason."))

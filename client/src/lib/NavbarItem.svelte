@@ -7,7 +7,7 @@
 </script>
 
 <a
-  class="select-none relative {$$props.class}"
+  class="select-none relative {$$props.class || ""}"
   class:active {href}>
   {name}
 </a>

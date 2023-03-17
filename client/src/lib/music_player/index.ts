@@ -1,23 +1,19 @@
 import { browser } from "$app/environment"
 import { shortFetch } from "src/utils/shortFetch"
 import { derived, writable } from "svelte/store"
-import { createAudioEffects, type AudioEffects, type EffectChainOptions } from "./audioEffects"
+import { createAudioEffects, type AudioEffects, type CustomNodeName, type EffectChainOptions } from "./audioEffects"
 import { createTrackMap, type FetchedTrack, type TrackMapEntry } from "./trackMap"
 
 export enum PLAYER_STATE { playing, paused, idle, loading, error }
+export enum QUEUE_STATE { loopall, loopone, loopoff }
+
 export type MusicPlayer =ReturnType<typeof createMusicPlayer>
 export function createMusicPlayer() {
   let audioContext:AudioContext|undefined
   let audioElement:HTMLAudioElement|undefined
   let audioEffects:AudioEffects|undefined
   
-  let audioEffectsPreset:EffectChainOptions ={
-    sequence: ["waveshaper"],
-    waveshaper: {
-      dry: 0,
-      wet: 0.7
-    }
-  }
+  let audioEffectsPreset:EffectChainOptions ={}
 
   const trackMap =createTrackMap()
   let currentTrack:TrackMapEntry|undefined
@@ -35,6 +31,22 @@ export function createMusicPlayer() {
     playerStateStore.set(state)
   }
 
+
+
+  let queueState =QUEUE_STATE.loopoff
+  const queueStateStore =writable<QUEUE_STATE>(QUEUE_STATE.loopoff)
+  const setQueueState =(state:QUEUE_STATE) => {
+    queueState =state
+    queueStateStore.set(state)
+  }
+
+
+  let shuffleOn =false
+  const shuffleOnStore =writable<boolean>(false)
+  const setShuffleOn =(state:boolean) => {
+    shuffleOn =state
+    shuffleOnStore.set(state)
+  }
 
 
   const onError =() => {
@@ -64,16 +76,22 @@ export function createMusicPlayer() {
     get currentTrack() { return currentTrack },
     get state() { return playerState },
     get audioEffects() { return audioEffects },
+    get currentPreset() { return audioEffectsPreset },
 
     stores: {
       playerStateStore: derived(playerStateStore,state => state),
+      queueStateStore: derived(queueStateStore,state => state),
+      shuffleOnStore: derived(shuffleOnStore,state => state),
       currentTrackStore: derived(currentTrackStore,track => track),
-      // TODO store or some other getter for current effect preset
     },
 
-    changeEffectParam(options: Omit<EffectChainOptions,"sequence">) {
-      console.log(options)
+    get queue() { return queueState },
+    set queue(state:QUEUE_STATE) { setQueueState(state) },
 
+    get shuffleOn() { return shuffleOn },
+    set shuffleOn(state:boolean) { setShuffleOn(state) },
+
+    changeEffectParam(options: Omit<EffectChainOptions,"sequence">) {
       if ( (options.speed || 0) > 0.5 ) audioEffectsPreset.speed =options.speed
       if ( options.reverb ) {
         if ( !audioEffectsPreset.reverb ) audioEffectsPreset.reverb ={}
@@ -135,7 +153,7 @@ export function createMusicPlayer() {
     async downloadSong( songId:string ):Promise<void> {
       if ( trackMap.has(songId) ) return
       
-      const songInfo =await shortFetch(`/api/song?id=${songId}`,"json") as FetchedTrack
+      const songInfo =await shortFetch(`http://localhost:3000/song/${songId}`,"json") as FetchedTrack
       const blobUrl =await shortFetch(`http://localhost:3000/storage/file/${songId}`,"audioUrl") as string
       trackMap.add(songId, {...songInfo,blobUrl,id:songId})
     },

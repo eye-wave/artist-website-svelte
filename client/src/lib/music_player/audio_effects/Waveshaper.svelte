@@ -4,8 +4,11 @@
   import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
   import Knob from "./Knob.svelte"
 
+
+  let dry: number =musicPlayer.currentPreset.waveshaper?.dry || 0.8
+  let wet: number =musicPlayer.currentPreset.waveshaper?.wet || 0.2
   
-  export let active =false
+  export let active =musicPlayer.currentPreset.sequence?.includes("waveshaper") || false
   export let color ="#7469ff"
   export let resolution =30
   
@@ -17,7 +20,6 @@
   
   // TODO remove d3 lib ( it's just for debuging )
   import * as d3 from "d3"
-    import { randomLcg } from "d3";
   const x =d3.scaleLinear()
     .domain([0,resolution *2])
     .range([0,resolution])
@@ -169,10 +171,25 @@
     return new Float32Array(dblCurve)
   }
 
+  function handleToggleButton() {
+    active =!active
+    const { sequence =[] } =musicPlayer.currentPreset
+    
+    if ( active ) sequence?.push("waveshaper")
+    else sequence?.splice(sequence.indexOf("waveshaper"),1)
+
+    musicPlayer.loadEffectChain({
+      ...musicPlayer.currentPreset ,sequence,
+      waveshaper: { dry, wet }
+    })
+  }
+
   // TODO remove debug line
   // TODO add swtich component for symettic / asymetric curve
   // TODO add select component for default curve shapes
   // TODO mobile accesibility
+
+  // TODO SUGGESTION add vital like gradient on the path element
 
 </script>
 
@@ -213,16 +230,18 @@
     defaultValue={0.8}
     min={0} max={1} step={0.02}
     label="dry" {color}
-    on:change={e => musicPlayer.changeEffectParam({waveshaper:{dry:e.detail}})} />
+    bind:value={dry}
+    on:change={e => active && musicPlayer.changeEffectParam({waveshaper:{dry:e.detail}})} />
   
   <Knob
     defaultValue={0.2}
     min={0} max={1} step={0.02}
     label="wet" {color}
-    on:change={e => musicPlayer.changeEffectParam({waveshaper:{wet:e.detail}})} />
+    bind:value={wet}
+    on:change={e => active && musicPlayer.changeEffectParam({waveshaper:{wet:e.detail}})} />
   
   <div
-    on:click={() => active =!active}
+    on:click={handleToggleButton}
     class:bg-neutral-500={!active}
     style:background={active ? color : ""}
     class="cursor-pointer w-6 h-6 rounded-full" />
