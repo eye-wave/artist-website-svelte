@@ -18,6 +18,6 @@ shitpostRoute.get("/entry/:id",(req,res) => {
   }
 })
 
-shitpostRoute.get("/list",(req,res) => listAllWrapper(req,res,true,"shitposts"))
+shitpostRoute.post("/list",(req,res) => listAllWrapper(req,res,true,"shitposts"))
 
 // TODO add entry upload with basic auth

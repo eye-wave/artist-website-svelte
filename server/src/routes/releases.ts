@@ -33,6 +33,6 @@ releasesRoute.get("/artist/:id",(req,res) => {
   }
 })
 
-releasesRoute.get("/list",(req,res) => listAllWrapper(req,res,false,"released"))
+releasesRoute.post("/list",(req,res) => listAllWrapper(req,res,false,"released"))
 
 // TODO add release upload with basic auth

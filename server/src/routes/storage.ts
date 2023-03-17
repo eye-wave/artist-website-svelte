@@ -11,13 +11,11 @@ storageRoute.get("/file/:id",(req,res) => {
   try {
     const { id } =req.params
     const record =db.filemap.get(id)
-    if ( !record ) res.sendStatus(404).end()
+    if ( !record ) return res.sendStatus(404).end()
 
     const filePath = record.path as string
     const parsedUrl =url.parse(req.url)
     const params =new URLSearchParams(parsedUrl.query || "")
-
-    const stream =fs.createReadStream(filePath)
 
     res.setHeader("Connection","close")
     res.removeHeader("X-Powered-By")
@@ -35,8 +33,6 @@ storageRoute.get("/file/:id",(req,res) => {
         const width  =+params.get("width")! || undefined
         const height =+params.get("height")! || undefined
 
-        console.log(width,height)
-
         const stream =fs.createReadStream(filePath)
         const transform =sharp()
           .resize(width,height)
@@ -46,14 +42,20 @@ storageRoute.get("/file/:id",(req,res) => {
         stream
           .pipe(transform)
           .pipe(res)
+        
+        return
       } break
 
       case ".mp3": res.setHeader("Content-Type","audio/mpeg"); break
       case ".wav": res.setHeader("Content-Type","audio/wav"); break
       case ".opus": res.setHeader("Content-Type","audio/opus"); break
-
-      default: stream.pipe(res)
     }
+
+    fs.readFile(filePath,(err,data) => {
+      if ( err ) throw new Error(`failed to read ${filePath}`)
+
+      res.end(data)
+    })
   }
   catch ( err ) {
     console.log( err )
@@ -61,6 +63,6 @@ storageRoute.get("/file/:id",(req,res) => {
   }
 })
 
-storageRoute.get("/list",(req,res) => listAllWrapper(req,res,true,"filemap"))
+storageRoute.post("/list",(req,res) => listAllWrapper(req,res,true,"filemap"))
 
 // TODO add file upload with basic auth

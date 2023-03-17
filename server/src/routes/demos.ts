@@ -18,6 +18,6 @@ demosRoute.get("/song/:id",(req,res) => {
   }
 })
 
-demosRoute.get("/list",(req,res) => listAllWrapper(req,res,false,"demos"))
+demosRoute.post("/list",(req,res) => listAllWrapper(req,res,false,"demos"))
 
 // TODO add song upload with basic auth

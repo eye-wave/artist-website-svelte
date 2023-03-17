@@ -11,8 +11,16 @@ export function listAllWrapper(req:Request,res:Response,auth:boolean,tableName:s
     const sendRawData =query.get("json") === "false" || query.get("raw") === "true"
 
     if ( auth ) {
-      const auth =query.get("auth")
-      if ( auth !== AUTH ) throw new Error("Could not authenticate")
+      if ( !req.body ) {
+        res.sendStatus(403).end()
+        return
+      }
+      
+      const [ auth ] =req.body.match(/(?<=:)[\w\d]+$/) || []
+      if ( auth !== AUTH ) {
+        res.sendStatus(403).end()
+        return
+      }
     }
 
     const table =db[tableName]
