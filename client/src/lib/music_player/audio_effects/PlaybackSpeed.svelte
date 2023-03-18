@@ -1,5 +1,6 @@
 <script lang="ts">
   import { musicPlayer } from "src/lib/MusicPlayer.svelte";
+  import EffectTemplate from "./EffectTemplate.svelte";
 
   let speed =1
   function onSpeedChange() {
@@ -13,19 +14,11 @@
 
 </script>
 
-
-<div class="flex gap-2 p-4 bg-neutral-700">
-  <span class="text-white font-bold">Speed</span>
-
+<EffectTemplate effectName="Speed" enableToggle={false}>
   <input
     on:dblclick={onReset}
     on:change={onSpeedChange}
     name="speed-changer" type="range" max={2} min={0.5} bind:value={speed} step={0.01}>
-  
-  <label for="speed-changer">{speed}</label>
-</div>
 
-<style lang="postcss">
-  
-  
-</style>
+  <label for="speed-changer">{speed}</label>
+</EffectTemplate>

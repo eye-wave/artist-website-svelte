@@ -104,14 +104,11 @@ export async function createAudioEffects( context:AudioContext, audioElement:HTM
         if ( !eqNode.filters[i] ) return
         
         const { Q, disabled, frequency, gain, type } =filter
-        
-        // TODO create disabling for eq bands
-        // disabled && eqNode.set
-        
-        Q && eqNode.setBandQAtTime(i,Q)
-        frequency && eqNode.setBandFrequencyAtTime(i,frequency)
-        gain && eqNode.setBandGainAtTime(i,gain)
-        type && eqNode.setBandType(i,type)
+                
+        Q !== undefined && eqNode.setBandQAtTime(i,Q)
+        frequency !== undefined && eqNode.setBandFrequencyAtTime(i,frequency)
+        gain !== undefined && eqNode.setBandGainAtTime(i,gain)
+        type !== undefined && eqNode.setBandType(i,type)
         
       })
 

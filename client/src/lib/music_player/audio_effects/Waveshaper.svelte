@@ -20,6 +20,7 @@
   
   // TODO remove d3 lib ( it's just for debuging )
   import * as d3 from "d3"
+    import EffectTemplate from "./EffectTemplate.svelte";
   const x =d3.scaleLinear()
     .domain([0,resolution *2])
     .range([0,resolution])
@@ -69,7 +70,6 @@
   let currentPointMaxX =width
 
   function handleDblClick(e:MouseEvent|TouchEvent) {
-    // if ( !active ) return
     const { x, y } = getTranslatedCordsFromEvent(e)
 
     const point = { x, y }
@@ -171,9 +171,9 @@
     return new Float32Array(dblCurve)
   }
 
-  function handleToggleButton() {
-    active =!active
+  function handleToggleButton(e:CustomEvent) {
     const { sequence =[] } =musicPlayer.currentPreset
+    const active =e.detail as boolean
     
     if ( active ) sequence?.push("waveshaper")
     else sequence?.splice(sequence.indexOf("waveshaper"),1)
@@ -193,18 +193,16 @@
 
 </script>
 
-  <svelte:window
-    on:mouseup={handleGrabEnd}
-    on:mousemove={handleGrab}
-    on:resize={onWinResize}/>
+<svelte:window
+  on:mouseup={handleGrabEnd}
+  on:resize={onWinResize}/>
 
-<div class="flex gap-2 p-4 bg-neutral-700">
-  <span class="text-white font-bold">Waveshaper</span>
-
+<EffectTemplate {color} bind:active on:change={handleToggleButton} effectName="Waveshaper">
   <div
     bind:this={curveMonitor}
     on:dblclick={handleDblClick}
     on:mousedown={handleGrabStart}
+    on:mousemove={handleGrab}
     class="curve-monitor bg-neutral-500 w-40 h-40">
     
     <svg fill="none"
@@ -232,20 +230,15 @@
     label="dry" {color}
     bind:value={dry}
     on:change={e => active && musicPlayer.changeEffectParam({waveshaper:{dry:e.detail}})} />
-  
+
   <Knob
     defaultValue={0.2}
     min={0} max={1} step={0.02}
     label="wet" {color}
     bind:value={wet}
     on:change={e => active && musicPlayer.changeEffectParam({waveshaper:{wet:e.detail}})} />
+</EffectTemplate>
   
-  <div
-    on:click={handleToggleButton}
-    class:bg-neutral-500={!active}
-    style:background={active ? color : ""}
-    class="cursor-pointer w-6 h-6 rounded-full" />
-</div>
 
 <style>
   .curve-monitor {

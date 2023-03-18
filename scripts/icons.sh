@@ -6,6 +6,7 @@ mkdir -p $exdir
 mv "/home/$USER/Downloads/iconfont.zip" $exdir
 cd $exdir
 unzip iconfont.zip
+rm _demo.html
 ls
 
 cd -

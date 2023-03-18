@@ -8,6 +8,7 @@
   import DbMeter from "src/lib/music_player/audio_effects/DbMeter.svelte"
     import AudioGraph from "src/lib/music_player/audio_effects/AudioGraph.svelte";
     import PlaybackSpeed from "src/lib/music_player/audio_effects/PlaybackSpeed.svelte";
+    import EffectTemplate from "src/lib/music_player/audio_effects/EffectTemplate.svelte";
   
 </script>
 
@@ -17,6 +18,7 @@
     <Reverb color="#50aaff" />
     <Waveshaper color="#de8098" />
     <Eq color="#ceceaa" />
+
 
 
     <!-- <EffectNode>

@@ -91,9 +91,5 @@
       {/if}
     </button>
   </div>
-
-
-  <!-- <h1>state: {stateMap[$playerStateStore]}</h1> -->
-
   <AudioGraph />
 </div>

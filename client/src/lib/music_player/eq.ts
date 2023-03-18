@@ -11,10 +11,12 @@ export type EQBandOptions ={
 
 export type EQNode =ReturnType<typeof createEQNode>
 export function createEQNode( context:AudioContext ) {
-  const filters: BiquadFilterNode[] =Array.from({ length: 7 }).map((_,i) => {
+  
+  const filterQuantity =3
+  const filters: BiquadFilterNode[] =Array.from({ length: filterQuantity }).map((_,i) => {
     const filter = context.createBiquadFilter()
     if ( i === 0 ) filter.type ="lowshelf"
-    else if ( i === 6 ) filter.type ="highshelf"
+    else if ( i === filterQuantity -1 ) filter.type ="lowpass"
     else filter.type ="peaking"
 
     filter.frequency.setValueAtTime( frequencyChart[i], 0)
