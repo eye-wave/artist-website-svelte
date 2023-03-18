@@ -3,6 +3,8 @@
   import { onMount } from "svelte"
   import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
   import Knob from "./Knob.svelte"
+  import EffectTemplate from "./EffectTemplate.svelte";
+  import { scaleLinear, line } from "d3"
 
 
   let dry: number =musicPlayer.currentPreset.waveshaper?.dry || 0.8
@@ -18,18 +20,15 @@
   $: width =resolution
   $: height =resolution
   
-  // TODO remove d3 lib ( it's just for debuging )
-  import * as d3 from "d3"
-    import EffectTemplate from "./EffectTemplate.svelte";
-  const x =d3.scaleLinear()
+  const x =scaleLinear()
     .domain([0,resolution *2])
     .range([0,resolution])
   
-  const y =d3.scaleLinear()
+  const y =scaleLinear()
     .domain([1,-1])
     .range([0,resolution])
   
-  const line =d3.line<Point>()
+  const linegenerator =line<Point>()
     .x(d => x(d.x))
     .y(d => y(d.y))
 
@@ -166,7 +165,7 @@
 
     const dblCurve =[...curveLeft,...curveRight].map(i => -i)
 
-    debugCurve =line(dblCurve.map((y,x) => ({x,y}))) || ""
+    debugCurve =linegenerator(dblCurve.map((y,x) => ({x,y}))) || ""
 
     return new Float32Array(dblCurve)
   }

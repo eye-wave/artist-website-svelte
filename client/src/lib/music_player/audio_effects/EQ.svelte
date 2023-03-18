@@ -3,7 +3,31 @@
   import { getCoordinatesFromEvent } from "src/utils/mouseEvent";
   import { onMount } from "svelte"
   import EffectTemplate from "./EffectTemplate.svelte";
+  import { scaleLinear, line, curveCardinal as curve } from "d3"
+  
   // import Knob from "./Knob.svelte"
+
+  $: x =scaleLinear()
+    .domain([0,width])
+    .range([0,width])
+
+  $: y =scaleLinear()
+    .domain([0,height])
+    .range([0,height])
+
+  $: lineGenerator =line<Point>()
+    .x(d => x(d.x))
+    .y(d => y(d.y))
+    .curve(curve)
+
+  $: eqCurvePath =lineGenerator(
+    [
+      {x:0,y:height/2},
+      ...filters.map(f => ({ x: hzToValue(f.frequency), y: gainToValue(f.gain) })),
+      {x:width,y:height/2}
+    ]
+  )
+
 
   export let color ="#7469ff"
   export let width =360
@@ -72,7 +96,7 @@
   }
 
   function getClosestPoints(x:number,y:number) {
-    const radius =20
+    const radius =35
     return filters.filter(f => {
       const _x =hzToValue(f.frequency)
       const _y =gainToValue(f.gain)
@@ -170,9 +194,11 @@
         {@const cx =hzToValue(filter.frequency)}
         {@const cy =gainToValue(filter.gain)}
 
-        <circle {cy} {cx} {r} fill="#000" />
+        <circle {cy} {cx} {r} fill={color} />
 
       {/each}
+
+      <path d={eqCurvePath} stroke-width=5 stroke={color} stroke-linejoin="round" />
     </svg>
   </div>
 </EffectTemplate>
