@@ -1,4 +1,4 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from "./$types"
 import { AUTH } from "$env/static/private"
 
 export type ReleaseEntry ={

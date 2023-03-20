@@ -1,6 +1,6 @@
 <script lang="ts">
   import OfficialCard from "./OfficialCard.svelte"
-  import type { ReleaseEntry } from "./+page.server";
+  import type { ReleaseEntry } from "./+page.server"
   export let data
 
   const { releases } =data

@@ -17,12 +17,13 @@ export type EffectChainOptions ={
 
 export type AudioEffects ={
   readonly analyzer: AnalyserNode,
-  loadEffectChain(options?: EffectChainOptions):AudioEffects
+  getEqCurve:(filters:EQBandOptions[],size?:number)=>Float32Array,
+  loadEffectChain(options?: EffectChainOptions):AudioEffects,
   changeEffectParam(options: Omit<EffectChainOptions,"sequence">):AudioEffects
 }
-export async function createAudioEffects( context:AudioContext, audioElement:HTMLAudioElement ) {
+export function createAudioEffects( context:AudioContext, audioElement:HTMLAudioElement ):AudioEffects {
   
-  const nodes =new Map<EffectName,CustomAudioNode | undefined>()
+  const nodes =new Map<EffectName,CustomAudioNode>()
   
   const reverbNode =createReverbNode( context )
   const eqNode =createEQNode( context )
@@ -81,6 +82,8 @@ export async function createAudioEffects( context:AudioContext, audioElement:HTM
 
   return {
     get analyzer() { return analyserNode },
+
+    getEqCurve: (options:EQBandOptions[],size=50) => eqNode.getCurveData(options,size),
 
     changeEffectParam(options: Omit<EffectChainOptions,"sequence">) {
       if ( options.speed !== undefined ) {

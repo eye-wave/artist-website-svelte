@@ -3,14 +3,14 @@
   import { onMount } from "svelte"
   import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
   import Knob from "./Knob.svelte"
-  import EffectTemplate from "./EffectTemplate.svelte";
+  import EffectTemplate from "./EffectTemplate.svelte"
   import { scaleLinear, line } from "d3"
 
 
-  let dry: number =musicPlayer.currentPreset.waveshaper?.dry || 0.8
-  let wet: number =musicPlayer.currentPreset.waveshaper?.wet || 0.2
+  let dry: number =musicPlayer.currentPreset.waveshaper?.dry || 0
+  let wet: number =musicPlayer.currentPreset.waveshaper?.wet || 0.4
   
-  export let active =musicPlayer.currentPreset.sequence?.includes("waveshaper") || false
+  let active =(musicPlayer.currentPreset.sequence || []).indexOf("waveshaper") !== -1
   export let color ="#7469ff"
   export let resolution =30
   
@@ -174,8 +174,10 @@
     const { sequence =[] } =musicPlayer.currentPreset
     const active =e.detail as boolean
     
-    if ( active ) sequence?.push("waveshaper")
-    else sequence?.splice(sequence.indexOf("waveshaper"),1)
+    const isWaveshaperInSequence =sequence.indexOf("waveshaper") !== -1
+    
+    if ( active && !isWaveshaperInSequence ) sequence?.push("waveshaper")
+    if ( !active && isWaveshaperInSequence ) sequence?.splice(sequence.indexOf("waveshaper"),1)
 
     musicPlayer.loadEffectChain({
       ...musicPlayer.currentPreset ,sequence,

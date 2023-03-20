@@ -26,35 +26,35 @@
     <img src="http://localhost:3000/storage/file/{image}?width=192&height=192" alt=""/>
   </picture>
 
-    <figcaption> { title } </figcaption>
-    <div class="card-icons">
+  <figcaption> { title } </figcaption>
+  <div class="card-icons">
+    
+    {#if link.soundcloud }
+      {@const href =link.soundcloud}
       
-      {#if link.soundcloud }
-        {@const href =link.soundcloud}
-        
-        <a {href} target="_blank">
-          <SoundCloudIcon />
-        </a>
-      {/if}
+      <a {href} target="_blank">
+        <SoundCloudIcon />
+      </a>
+    {/if}
 
-      {#if link.youtube }
-        {@const href =link.youtube}
-        
-        <a {href} target="_blank">
-          <YoutubeIcon />
-        </a>
-      {/if}
+    {#if link.youtube }
+      {@const href =link.youtube}
+      
+      <a {href} target="_blank">
+        <YoutubeIcon />
+      </a>
+    {/if}
 
-      {#if link.spotify }
-        {@const href =link.spotify}
-        
-        <a {href} target="_blank">
-          <SpotifyIcon />
-        </a>
-      {/if}
+    {#if link.spotify }
+      {@const href =link.spotify}
+      
+      <a {href} target="_blank">
+        <SpotifyIcon />
+      </a>
+    {/if}
 
-    </div>
-  </figure>
+  </div>
+</figure>
 
 <style lang="postcss">
   figure {

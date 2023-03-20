@@ -1,10 +1,10 @@
 <script lang="ts">
   import { musicPlayer } from "src/lib/MusicPlayer.svelte"
-  import EffectTemplate from "./EffectTemplate.svelte";
+  import EffectTemplate from "./EffectTemplate.svelte"
   import Knob from "./Knob.svelte"
   export let color ="#7469ff"
 
-  let active =false
+  let active =(musicPlayer.currentPreset.sequence || []).indexOf("reverb") !== -1
   let dry: number =musicPlayer.currentPreset.reverb?.dry || 0.3
   let wet: number =musicPlayer.currentPreset.reverb?.wet || 0.7
 
@@ -12,8 +12,10 @@
     const { sequence =[] } =musicPlayer.currentPreset
     const active =e.detail as boolean
 
-    if ( active ) sequence?.push("reverb")
-    else sequence?.splice(sequence.indexOf("reverb"),1)
+    const isReverbInSequence =sequence.indexOf("reverb") !== -1
+    
+    if ( active && !isReverbInSequence ) sequence?.push("reverb")
+    if ( !active && isReverbInSequence ) sequence?.splice(sequence.indexOf("reverb"),1)
 
     musicPlayer.loadEffectChain({
       ...musicPlayer.currentPreset ,sequence,

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { musicPlayer } from "src/lib/MusicPlayer.svelte";
-  import EffectTemplate from "./EffectTemplate.svelte";
+  import { musicPlayer } from "src/lib/MusicPlayer.svelte"
+  import EffectTemplate from "./EffectTemplate.svelte"
 
-  let speed =1
+  let speed =musicPlayer.currentPreset.speed || 1
   function onSpeedChange() {
     musicPlayer.changeEffectParam({ speed })
   }

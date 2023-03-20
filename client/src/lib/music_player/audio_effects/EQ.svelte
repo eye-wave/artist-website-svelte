@@ -1,53 +1,16 @@
 <script lang="ts">
   import { musicPlayer } from "src/lib/MusicPlayer.svelte"
-  import { getCoordinatesFromEvent } from "src/utils/mouseEvent";
+  import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
   import { onMount } from "svelte"
-  import EffectTemplate from "./EffectTemplate.svelte";
+  import EffectTemplate from "./EffectTemplate.svelte"
   import { scaleLinear, line, curveCardinal as curve } from "d3"
-  
+  import { gainToValue, hzToValue, valueToGain, valueToHz } from "src/utils/filters"  
   // import Knob from "./Knob.svelte"
-
-  $: x =scaleLinear()
-    .domain([0,width])
-    .range([0,width])
-
-  $: y =scaleLinear()
-    .domain([0,height])
-    .range([0,height])
-
-  $: lineGenerator =line<Point>()
-    .x(d => x(d.x))
-    .y(d => y(d.y))
-    .curve(curve)
-
-  $: eqCurvePath =lineGenerator(
-    [
-      {x:0,y:height/2},
-      ...filters.map(f => ({ x: hzToValue(f.frequency), y: gainToValue(f.gain) })),
-      {x:width,y:height/2}
-    ]
-  )
-
 
   export let color ="#7469ff"
   export let width =360
   export let height =220
-  
-  const logMin =Math.log10(20)
-  const logMax =Math.log10(20000)
 
-  const valueToHz =(input:number,min=0,max=width) => 10 ** (((input -min) / (max -min) * (logMax -logMin)) +logMin)
-  const hzToValue = (hz: number, min = 0, max = width) => ((Math.log10(hz) - logMin) / (logMax - logMin)) * (max - min) + min
-  
-  const valueToGain = (input: number,min=0,max=height) => (input - min) / (max - min) * 2;
-  const gainToValue = (input: number,min=0,max=height) => input * (max - min) / 2 + min;
-
-  const pointRadius =10
-
-  let active =false
-  let mouseDown =false
-  let currentPoint:Filter|null =null
-  
   type Filter ={
     id: number,
     type: BiquadFilterType,
@@ -56,35 +19,56 @@
     Q: number,
   }
 
+  $: x =scaleLinear()
+    .domain([0,50])
+    .range([0,width])
+
+  $: y =scaleLinear()
+    .domain([2,0])
+    .range([0,height])
+
+  $: lineGenerator =line<number>()
+    .x((d,i) => x(i))
+    .y(d => y(d))
+    .curve(curve)
+
+  const pointRadius =10
   const defaultFilters:Filter[] =[
-    {
-      id: 0,
-      type: "lowshelf",
-      frequency: 82.4,
-      gain: 1,
-      Q: 1
-    },
-    {
-      id: 1,
-      type: "peaking",
-      frequency: 830.6,
-      gain: 1,
-      Q: 1
-    },
-    {
-      id: 2,
-      type: "lowpass",
-      frequency: 2637,
-      gain: 1,
-      Q: 1
-    },
+    { id: 0, type: "lowshelf", frequency: 82.4, gain: 0, Q: 10 },
+    { id: 1, type: "peaking", frequency: 830.6, gain: 0, Q: 10 },
+    { id: 2, type: "lowpass", frequency: 2637, gain: 0, Q: 10 },
   ]
 
-  let filters =defaultFilters.map(obj => Object.assign({},obj))
+  let eqCurvePath =`M0 ${height /2} L${width} ${height/2}`
+  let active =(musicPlayer.currentPreset.sequence || []).indexOf("eq") !== -1
+  let mouseDown =false
+  let currentPoint:Filter|null =null
+
+  let filters:Filter[] =defaultFilters.map((df,i) => {
+    const mf =musicPlayer.currentPreset?.eq?.[i]
+    
+    return {
+      id: i,
+      type: mf?.type || df.type,
+      frequency: mf?.frequency || df.frequency,
+      gain: mf?.gain || df.gain,
+      Q: mf?.Q || df.Q,
+    }
+  })
 
   let boundingRect:DOMRect
   let curveMonitor:HTMLDivElement
-  function onWinResize() { boundingRect =curveMonitor?.getBoundingClientRect() }
+  function onWinResize() {
+    const relativeRect =curveMonitor?.getBoundingClientRect()
+    const absoluteRect =new DOMRect(
+      relativeRect.x +window.scrollX,
+      relativeRect.y +window.scrollY,
+      relativeRect.width,
+      relativeRect.height
+    )
+    
+    boundingRect =absoluteRect
+  }
   onMount(onWinResize)
 
   function getTranslatedCordsFromEvent(e:MouseEvent|TouchEvent) {
@@ -98,8 +82,8 @@
   function getClosestPoints(x:number,y:number) {
     const radius =35
     return filters.filter(f => {
-      const _x =hzToValue(f.frequency)
-      const _y =gainToValue(f.gain)
+      const _x =hzToValue(f.frequency,width)
+      const _y =gainToValue(f.gain,height)
 
       const distance =Math.hypot(x -_x,y -_y)
       return distance <= radius
@@ -122,7 +106,6 @@
     point.type =defaultPoint.type
     
     filters =filters
-    console.log(point)
   }
 
   function handleGrabStart(e:MouseEvent|TouchEvent) {
@@ -141,34 +124,36 @@
     
     const { x,y } =getTranslatedCordsFromEvent(e)
 
-    currentPoint.frequency =valueToHz(x)
-    currentPoint.gain =valueToGain(y)
+    currentPoint.frequency =valueToHz(x,width)
+    currentPoint.gain =valueToGain(y,height)
     filters =filters
+
+    eqCurvePath =lineGenerator(musicPlayer?.audioEffects?.getEqCurve(filters) || new Float32Array(50)) || ""
   }
 
   function handleGrabEnd(e:MouseEvent|TouchEvent) {
     if ( !mouseDown ) return
-    // const { x,y } =getTranslatedCordsFromEvent(e)
 
     mouseDown =false
     currentPoint =null
 
     musicPlayer.changeEffectParam({ eq: filters })
+    console.table(filters)
   }
 
   function handleToggleButton(e:CustomEvent) {
     const { sequence =[] } =musicPlayer.currentPreset
     const active =e.detail as boolean
 
-    if ( active ) sequence?.push("eq")
-    else sequence?.splice(sequence.indexOf("eq"),1)
+    const isEqInSequence =sequence.indexOf("eq") !== -1
+    
+    if ( active && !isEqInSequence ) sequence?.push("eq")
+    if ( !active && isEqInSequence ) sequence?.splice(sequence.indexOf("eq"),1)
 
     musicPlayer.loadEffectChain({
       ...musicPlayer.currentPreset ,sequence,
       eq: filters
     })
-
-    console.log(musicPlayer.currentPreset.sequence)
   }
 
 </script>
@@ -191,8 +176,8 @@
       
       {#each filters as filter}
         {@const r =pointRadius}
-        {@const cx =hzToValue(filter.frequency)}
-        {@const cy =gainToValue(filter.gain)}
+        {@const cx =hzToValue(filter.frequency,width)}
+        {@const cy =gainToValue(filter.gain,height)}
 
         <circle {cy} {cx} {r} fill={color} />
 

@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-  export const musicPlayer =createMusicPlayer()
+  export const musicPlayer =MusicPlayer.getInstance()
 </script>
 <script lang="ts">
   import LoopAllIcon from "virtual:icons/cil/loop"
@@ -14,42 +14,48 @@
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
 
-  import { createMusicPlayer, PLAYER_STATE, QUEUE_STATE } from "./music_player"
-  import AudioGraph from "./music_player/audio_effects/AudioGraph.svelte";
+  import { MusicPlayer, PLAYER_STATE } from "./music_player"
+  import AudioGraph from "./music_player/audio_effects/AudioGraph.svelte"
+  import { QUEUE_STATE } from "./music_player/queue"
 
   const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore } =musicPlayer.stores
 
 
-  const songId ="ROtjNQyggjKB5AdnlIQhIg"
-
   async function handlePlayButton() {
     if ( !musicPlayer.isInitialized ) await musicPlayer.initialize()
-    if ( musicPlayer.currentTrack?.id !== songId ) await musicPlayer.downloadSong( songId )
 
     switch ( $playerStateStore ) {
       case PLAYER_STATE.paused: return musicPlayer.resume()
       case PLAYER_STATE.playing: return musicPlayer.pause()
       
-      default: return musicPlayer.play( songId ) 
+      default: return
     }
   }
 
   function handleQueueButton() {
     switch ( $queueStateStore ) {
-      case QUEUE_STATE.loopall: return musicPlayer.queue =QUEUE_STATE.loopone
-      case QUEUE_STATE.loopone: return musicPlayer.queue =QUEUE_STATE.loopoff
-      case QUEUE_STATE.loopoff: return musicPlayer.queue =QUEUE_STATE.loopall
+      case QUEUE_STATE.loopall: return musicPlayer.queueState =QUEUE_STATE.loopone
+      case QUEUE_STATE.loopone: return musicPlayer.queueState =QUEUE_STATE.loopoff
+      case QUEUE_STATE.loopoff: return musicPlayer.queueState =QUEUE_STATE.loopall
     }
   }
 
-  function handleShuffleButton() {
-    musicPlayer.shuffleOn =!musicPlayer.shuffleOn
+  function handleShuffleButton() { musicPlayer.shuffleOn =!musicPlayer.shuffleOn }
+
+  async function handleNextButton() {
+    if ( !musicPlayer.isInitialized ) await musicPlayer.initialize()
+    musicPlayer.playNext()
+  }
+
+  async function handlePrevButton() {
+    if ( !musicPlayer.isInitialized ) await musicPlayer.initialize()
+    musicPlayer.playPrev()
   }
 
 </script>
 
 <div class="sticky bottom-0 mt-auto w-full h-14 bg-black text-white flex p-1 gap-2">
-  <img width={48} height={48} src="http://localhost:3000/storage/file/{$currentTrackStore?.cover}?width=48&height=48" alt="">
+  <img width={48} height={48} src="http://localhost:3000/storage/file/{""}?width=48&height=48" alt="">
 
   <div class="flex gap-1 text-3xl text-primary-100">
     
@@ -63,7 +69,7 @@
       {/if}
     </button>
 
-    <button>
+    <button on:click={handlePrevButton}>
       <PrevIcon />
     </button>
 
@@ -79,17 +85,20 @@
       {/if}
     </button>
 
-    <button>
+    <button on:click={handleNextButton}>
       <NextIcon />
     </button>
 
     <button class="text-xl" on:click={handleShuffleButton}>
       {#if $shuffleOnStore}
-        <ShuffleIcon />
+        <ShuffleIcon class="text-primary-400" />
       {:else}
         <ShuffleOffIcon />
       {/if}
     </button>
   </div>
+
   <AudioGraph />
+
+  <input type="range" >
 </div>
