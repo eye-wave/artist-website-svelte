@@ -2,7 +2,7 @@ import { filemap } from "../filemap"
 
 export function parseExtendedCsv(csvText: string): any[] {
   const lines = csvText
-    .replace(/#.*/gm,"")
+    .replace(/#.*\n/gm,"")
     .trim()
     .split("\n")
 
@@ -51,12 +51,12 @@ function parseValue(value: string | null, type: string):unknown {
 
   // Array check
   if (value.includes(";")) {
-    const arrayValues = value.split(";").map((v) => parseValue(v.trim(), type.slice(0, -2))).filter(i=>i!==null)
+    const arrayValues = value.split(";").map((v) => parseValue(v.trim(), type.slice(0, -2))).filter(i => i!==null)
     return arrayValues
   }
 
   if ( type === "file" ) {
-    for ( let [key,val] of filemap ) {
+    for ( const [key,val] of filemap ) {
       if ( value === val ) {
         return key
       }

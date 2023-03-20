@@ -17,6 +17,7 @@ storageRoute.get("/file/:id",(req,res) => {
     const params =new URLSearchParams(parsedUrl.query || "")
 
     res.setHeader("Connection","close")
+    res.setHeader("Cache-Control", "max-age=31536000")
     res.removeHeader("X-Powered-By")
     res.removeHeader("Date")
 
