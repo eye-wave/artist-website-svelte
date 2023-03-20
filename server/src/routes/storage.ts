@@ -3,17 +3,16 @@ import fs from "node:fs"
 import path from "node:path"
 import url from "node:url"
 import sharp from "sharp"
-import { db } from "../db"
+import { filemap } from "../filemap"
 import { listAllWrapper } from "./listAllWrapper"
 
 export const storageRoute =Router()
 storageRoute.get("/file/:id",(req,res) => {
   try {
     const { id } =req.params
-    const record =db.filemap.get(id)
-    if ( !record ) return res.sendStatus(404).end()
+    const filePath =filemap.get(id)
+    if ( !filePath ) return res.sendStatus(404).end()
 
-    const filePath = record.path as string
     const parsedUrl =url.parse(req.url)
     const params =new URLSearchParams(parsedUrl.query || "")
 

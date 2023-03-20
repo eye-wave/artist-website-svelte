@@ -4,13 +4,12 @@ import typescript from "@rollup/plugin-typescript"
 import pkg from "./package.json" assert { type: "json" }
 
 /** @type {import('rollup').RollupOptions} */
-export default ["index","filemap"].map(filename => ({
-  input: `./src/${filename}.ts`,
+export default {
+  input: `./src/index.ts`,
   output: {
-    name: filename,
     format: "es",
     sourcemap: true,
-    file: `./dist/${filename}.js`
+    file: `./dist/index.js`
   },
   external: ["dotenv/config",...Object.keys(pkg?.dependencies || {})],
   plugins: [
@@ -21,4 +20,4 @@ export default ["index","filemap"].map(filename => ({
     typescript(),
     resolve({ browser: false })
   ]
-}))
+}

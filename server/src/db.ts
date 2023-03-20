@@ -15,10 +15,12 @@ type Table ={
   readonly path: string,
   readonly rawData: string,
   readonly data: Record[],
-  get: (id:number|string) => Record
+  get: (value:unknown,key?:string) => Record
 }
 
-type Database ={ readonly [name:string]: Table }
+type Database ={
+  readonly [name:string]: Table
+}
 
 
 export function createDb(PATH =DB_PATH):Database {
@@ -34,7 +36,7 @@ export function createDb(PATH =DB_PATH):Database {
         get rawData() { return rawData },
         get path() { return newPath },
         get data() { return [...data] },
-        get: id => data.filter(item => item.id == id )?.[0]
+        get: (value,key="id") => data.filter(item => item?.[key] === value )?.[0],
 
       }
     })
@@ -50,7 +52,6 @@ export function createDb(PATH =DB_PATH):Database {
     return db
   },{})
 }
-
 
 export const db =createDb()
 
