@@ -4,6 +4,7 @@
   import { onMount, onDestroy } from "svelte"
   import { browser } from "$app/environment"
 
+  // TODO IMPORTANT fix canvas width and height on window resize
 
   let canvas:HTMLCanvasElement
   let ctx:CanvasRenderingContext2D
@@ -54,7 +55,7 @@
 
       const path =new Path2D(lineGenerator(points) || "")
 
-      
+      ctx.fillStyle ="#fff"
       ctx.clearRect(0,0,width,height)
       ctx.fill(path)
 

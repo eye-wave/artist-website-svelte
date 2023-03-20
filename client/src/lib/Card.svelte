@@ -1,5 +1,6 @@
 <script lang="ts">  
   import PlayIcon from "virtual:icons/material-symbols/play-circle-rounded"
+  import PauseIcon from "virtual:icons/mingcute/pause-circle-fill"
   import { musicPlayer } from "./MusicPlayer.svelte"
   import { PLAYER_STATE } from "./music_player"
 
@@ -14,8 +15,7 @@
     tags: string[],
   }
 
-  const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore } =musicPlayer.stores
-
+  const { playerStateStore, currentTrackStore } =musicPlayer.stores
 
   async function handlePlayButton() {
     if ( !musicPlayer.isInitialized ) await musicPlayer.initialize()
@@ -38,7 +38,11 @@
     <button on:click={handlePlayButton}
       class="text-primary-400 text-6xl">
       
-      <PlayIcon />
+      {#if audioId === $currentTrackStore?.audioId && $playerStateStore === PLAYER_STATE.playing }
+        <PauseIcon />
+      {:else}
+        <PlayIcon />
+      {/if}
     </button>
 
   </div>

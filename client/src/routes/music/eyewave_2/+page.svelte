@@ -8,6 +8,10 @@
 
 </script>
 
+<svelte:head>
+  <title>Demo songs</title>
+</svelte:head>
+
 <main class="flex flex-wrap gap-3 justify-center">
   {#each songs as song}
     <Card {playlist} {...song} />

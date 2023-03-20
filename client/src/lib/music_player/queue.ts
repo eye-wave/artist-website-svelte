@@ -1,14 +1,8 @@
 import { shortFetch } from "src/utils/shortFetch"
 import { derived, writable } from "svelte/store"
+import type { DemoSong } from "src/routes/music/eyewave_2/+page"
 
-export type SongMetadata = {
-  title: string
-  artworkId: string
-  artists: string[]
-  duration: number
-}
-
-export enum QUEUE_STATE { loopall, loopone, loopoff }
+export type SongMetadata ={} & DemoSong
 
 export type SongQueue =ReturnType<typeof createSongQueue>
 export function createSongQueue() {
@@ -29,6 +23,7 @@ export function createSongQueue() {
 
   return {
     get currentSongId() { return songsMap.get(queue[currentSongIndex]) },
+    get isCurrentLast() { return currentSongIndex === queue.length -1 },
 
     async play( songId: string ) {
       if ( !songsMap.has(songId) ) await downloadSongData(songId)
@@ -67,7 +62,6 @@ export function createSongQueue() {
     },
 
     getSongMetadata(songId: string) { return metadataMap.get(songId) },
-    getSongData(audioId: string) { return songsMap.get(audioId) }
   }
 }
 
