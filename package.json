@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "sveltekit-template",
+  "name": "eyewave-artist-website",
   "version": "1.0.0",
   "license": "MIT",
   "workspaces": [
@@ -16,12 +16,11 @@
     "remove:route": "./scripts/remove-route.sh",
     "update": "./scripts/update-deps.sh",
     "build": "yarn workspaces run build",
-    "dev": "yarn workspace client run dev",
-    "watch": "yarn workspace server run dev",
-    "lint": "yarn workspaces run lint",
-    "serve": "yarn workspace server run start"
+    "dev": "concurrently \"yarn workspace client run dev\" \"yarn workspace server run start\" \"yarn workspace server run dev\"",
+    "lint": "yarn workspaces run lint"
   },
   "devDependencies": {
+    "concurrently": "*",
     "npm-check-updates": "*"
   }
 }
