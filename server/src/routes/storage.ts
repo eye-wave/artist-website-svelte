@@ -5,12 +5,17 @@ import url from "node:url"
 import sharp from "sharp"
 import { filemap } from "../filemap"
 import { listAllWrapper } from "./listAllWrapper"
+import "dotenv/config"
+
+const NULL_IMAGE =process.env.NULL_IMAGE
 
 export const storageRoute =Router()
 storageRoute.get("/file/:id",(req,res) => {
   try {
     const { id } =req.params
-    const filePath =filemap.get(id)
+    let filePath =filemap.get(id)
+    
+    if ( id === "null" || id === "undefined" ) filePath =NULL_IMAGE
     if ( !filePath ) return res.sendStatus(404).end()
 
     const parsedUrl =url.parse(req.url)

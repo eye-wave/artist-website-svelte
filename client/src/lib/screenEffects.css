@@ -1,0 +1,32 @@
+html {
+  &[data-mood='normal'] { filter: none }
+
+  &[data-mood='sad'] {
+    filter: saturate(20%) contrast(140%) brightness(120%);
+    &::after {
+      background-color: #192b4f;
+      opacity: 0.2;
+    }
+  }
+
+  &[data-mood='meme'] {      
+    filter: saturate(2000%) brightness(100%);  
+
+    &::after {
+      background-color: #20100090;
+      mix-blend-mode:color-burn; 
+    }
+  }
+
+  &[data-mood='happy'] {
+    filter: saturate(140%);
+    &::after { background-color: #ff00ff20 }
+  }
+
+  &::after {
+    content:"";
+    @apply fixed inset-0 pointer-events-none;
+    @apply w-screen h-screen;
+    z-index: 200;
+  }
+}

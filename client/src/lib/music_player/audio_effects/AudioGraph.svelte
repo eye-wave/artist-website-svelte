@@ -9,7 +9,7 @@
   let canvas:HTMLCanvasElement
   let ctx:CanvasRenderingContext2D
   let animationId =-1
-  let fftSize =8196
+  let fftSize =8192
   let domRect:DOMRect
   let div:HTMLDivElement
 
@@ -18,9 +18,9 @@
   $: width =domRect?.width || 200
   $: height =domRect?.height || 48
 
-  export let bufferSize =50
+  export let bufferSize =60
   export let curveSteepness =6
-  $: buffer =new Uint8Array(bufferSize +1)
+  $: buffer =new Uint8Array(bufferSize)
 
   $: x =scaleLinear()
     .domain([0,bufferSize])
@@ -46,6 +46,8 @@
   })
 
   function animate() {
+    if ( animationId < 0 ) return
+
     if ( musicPlayer.audioEffects?.analyzer ) {
       musicPlayer.audioEffects.analyzer.getByteFrequencyData(buffer)
       const points =[0,...buffer.slice(3),0].map((Y,x) => {
@@ -66,13 +68,13 @@
 
   onDestroy(() => {
     browser && cancelAnimationFrame(animationId)
-    animationId -1
+    animationId = -1
   })
   
 
 </script>
 
-<div class="relative" bind:this={div}>
+<div class="relative w-52 flex-shrink-0" bind:this={div}>
   <canvas {width} {height} class="w-full h-full relative" bind:this={canvas}>
     Your browser does not support the canvas tag
   </canvas>

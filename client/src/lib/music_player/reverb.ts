@@ -9,7 +9,7 @@ export function createReverbNode( context: AudioContext ) {
   const dryGainNode =context.createGain()
   const wetGainNode =context.createGain()
   const inputNode =context.createGain()
-
+    
   return {
     get node() { return inputNode },
     get hasBuffer() { return !!convolverNode.buffer },
@@ -22,12 +22,6 @@ export function createReverbNode( context: AudioContext ) {
       wetGainNode.gain.setValueAtTime(value, startTime)
       return this
     },
-    setDryWetAtTime(dry:number, wet:number, startTime =0) {
-      dryGainNode.gain.setValueAtTime(dry, startTime)
-      wetGainNode.gain.setValueAtTime(wet, startTime)
-      return this
-    },
-
     async loadImpulseResponse( fileUrl:string ) {
       return new Promise<void>((resolve,reject) => {
         fetch(fileUrl)

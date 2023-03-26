@@ -16,7 +16,7 @@ export const handle = (async ({ event, resolve }) => {
       minifyURLs: {
         ignore_www: true,
       }
-    }),
+    }).replace(/<noscript[^>]+>/,"<noscript>"),
   })
  
   return response

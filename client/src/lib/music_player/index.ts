@@ -25,38 +25,44 @@ export class MusicPlayer {
   private _audioContext:AudioContext|undefined
   private _audioElement:HTMLAudioElement|undefined
   private _audioEffects:AudioEffects|undefined
-  private audioEffectsPreset:EffectChainOptions ={}
+  private _mediaSession:MediaSession|undefined
   private timeStore =writable<number>(-1)
+  private isInitializedStore =writable(false)
 
   get isInitialized() { return this._audioContext !== undefined || this._audioElement !== undefined }
   get audioEffects() { return this._audioEffects }
-  get currentPreset() { return this.audioEffectsPreset }
 
   async initialize() {
     if ( !browser ) return
-    
+
     this.setPlayerState(PLAYER_STATE.loading)
+    this.isInitializedStore.set(true)
 
     this._audioContext = new AudioContext()
     this._audioElement =new Audio()
     this._audioEffects =createAudioEffects(this._audioContext,this._audioElement)
+    this._mediaSession =window.navigator.mediaSession
 
-    // AEE -> Audio Element Events
+    this._mediaSession.setActionHandler("play",() => this.resume())
+    this._mediaSession.setActionHandler("pause",() => this.pause())
+    this._mediaSession.setActionHandler("nexttrack",() => this.playNext())
+    this._mediaSession.setActionHandler("previoustrack",() => this.playPrev())
 
     this._audioElement.onerror =() => {
       this.setPlayerState(PLAYER_STATE.error)
       this.currentTrackStore.set(null)
     }
-  
+
     this._audioElement.onended =() => {
       this.setPlayerState(PLAYER_STATE.idle)
-     
+      this.timeStore.set(0)
+
       if ( this.queue.isCurrentLast && this.queueState === QUEUE_STATE.loopoff ) return
       if ( this._queueState === QUEUE_STATE.autoplayoff ) return
       
       if ( this.queueState === QUEUE_STATE.loopone ) return this.replay() 
       
-      const nextId =this.queue.next()
+      const nextId =this.shuffleOn ? this.queue.random() : this.queue.next()
       if ( !nextId ) return console.warn("Couldn't find next track")
 
       this.play(nextId)
@@ -72,7 +78,7 @@ export class MusicPlayer {
       if ( !this._audioElement ) return
   
       this.setPlayerState(PLAYER_STATE.playing)
-      this._audioEffects.loadEffectChain( this.audioEffectsPreset )
+      this._audioEffects.loadEffectChain()
       this.currentTrackStore.update(meta => {
         if ( !meta ) return null
         return { ...meta, duration: this._audioElement?.duration || -1 }
@@ -84,38 +90,6 @@ export class MusicPlayer {
 
 
     this.setPlayerState(PLAYER_STATE.idle)
-    return this
-  }
-
-
-  public changeEffectParam(options: Omit<EffectChainOptions,"sequence">) {
-    if ( (options.speed || 0) > 0.5 ) this.audioEffectsPreset.speed =options.speed
-    if ( options.reverb ) {
-      if ( !this.audioEffectsPreset.reverb ) this.audioEffectsPreset.reverb ={}
-      if ( options.reverb.dry !== undefined ) this.audioEffectsPreset.reverb.dry =options.reverb.dry
-      if ( options.reverb.wet !== undefined ) this.audioEffectsPreset.reverb.wet =options.reverb.wet
-    }
-    if ( options.waveshaper ) {
-      if ( !this.audioEffectsPreset.waveshaper ) this.audioEffectsPreset.waveshaper ={}
-      if ( options.waveshaper.dry !== undefined ) this.audioEffectsPreset.waveshaper.dry =options.waveshaper.dry
-      if ( options.waveshaper.wet !== undefined ) this.audioEffectsPreset.waveshaper.wet =options.waveshaper.wet
-      if ( options.waveshaper.curve ) this.audioEffectsPreset.waveshaper.curve =options.waveshaper.curve
-    }
-    if ( options.eq ) {
-      this.audioEffectsPreset.eq =[...options.eq]
-    }
-
-    this._audioEffects && this._audioEffects.changeEffectParam( options )
-
-    return this
-  }
-
-  public loadEffectChain(options: EffectChainOptions) {
-    if ( !this._audioEffects ) return this
-    
-    this.audioEffectsPreset =options
-    this._audioEffects.loadEffectChain(this.audioEffectsPreset)
-    
     return this
   }
   
@@ -134,6 +108,7 @@ export class MusicPlayer {
     this.queueStateStore.set(state)
   }
 
+  get queueLength() { return this.queue.length }
   get queueState() { return this._queueState }
   set queueState(state:QUEUE_STATE) { this.setQueueState(state) }
 
@@ -194,6 +169,7 @@ export class MusicPlayer {
 
   get stores () {
     return {
+      isInitializedStore: derived(this.isInitializedStore,init=>init),
       playerStateStore: derived(this.playerStateStore,state => state),
       queueStateStore: derived(this.queueStateStore,state => state),
       shuffleOnStore: derived(this.shuffleOnStore,shuffle => shuffle),
@@ -218,13 +194,32 @@ export class MusicPlayer {
 
     this.currentTrackStore.set({duration:0,...metadata})
     this._audioElement.src =id
-    
+
+    if ( !this._mediaSession ) return this
+    this._mediaSession.metadata =new MediaMetadata({
+      title: metadata.metadata.title,
+      album: "",
+      artist: "_eyewave",
+      artwork: [96,128,192,256,384,512].map(n => ({
+        src: `http://localhost:3000/storage/file/${metadata.metadata.imageId}?width=${n}&height=${n}`,
+        sizes: `${n}x${n}`,
+        type: "image/webp"
+      }))
+    })
+
     return this
   }
 
   public replay() {
     if ( !this._audioElement ) return this
+    this.setPlayerState(PLAYER_STATE.playing)
     this._audioElement.play()
+  }
+
+
+  public skipTo(time:number) {
+    if ( !this._audioElement ) return
+    this._audioElement.currentTime =time
   }
 
 

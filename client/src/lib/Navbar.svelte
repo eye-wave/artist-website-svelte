@@ -8,6 +8,7 @@
     // {name: "News",href: "/news"},
     // {name: "About",href: "/about"},
     {name: "Music",href: "/music"},
+    {name: "Demo Songs",href: "/music/eyewave_2"},
     // {name: "Contact",href: "/contact"},
     {name: "Debug",href: "/testing"},
   ]

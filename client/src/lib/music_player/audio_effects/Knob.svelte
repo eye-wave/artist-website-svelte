@@ -27,7 +27,7 @@
     mouseDown =true
 
     const { x,y } =getCoordinatesFromEvent(e)
-
+    
     startX =x
     startY =y
     startValue =value
@@ -41,14 +41,10 @@
 
   function onDrag(e:MouseEvent|TouchEvent) {
     if ( !mouseDown ) return
-    const { x,y } =getCoordinatesFromEvent(e)
+    const { x } =getCoordinatesFromEvent(e)
     let deltaX =x -startX
-    // TODO fix wonky knob movement on both x and y
-    // let deltaY =startY -y
 
     let val =deltaX
-    // if ( Math.abs(deltaY) > Math.abs(deltaX) ) val =deltaY
-
     val =val /100 *max *knobSpeed
 
     value =startValue +val
@@ -79,7 +75,7 @@
 
 
 <div
-  class="select-none text-center w-fit text-white"
+  class="select-none text-center w-16 text-white{$$props.class ? " "+$$props.class : ""}"
   on:dblclick={onDblClick}
   on:mousedown={onDragStart}
   on:touchstart={onDragStart}>

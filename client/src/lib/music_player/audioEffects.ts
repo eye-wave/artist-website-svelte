@@ -1,149 +1,188 @@
+import { compareArrays } from "src/utils/array"
+import { derived, writable } from "svelte/store"
 import impulseAudioSource from "../audio/impulse.opus"
-import { createEQNode, type EQBandOptions, type EQNode } from "./eq"
 import { createReverbNode, type ReverbNode, type ReverbOptions } from "./reverb"
-import { createWaveShaperNode, type WaveShaperNode, type WaveShaperOptions } from "./waveshaper"
+import { createWaveShaperNode, WaveshaperCurveType, type WaveShaperNode, type WaveShaperOptions } from "./waveshaper"
 
-export type CustomAudioNode =EQNode | ReverbNode | WaveShaperNode
+export type CustomAudioNode =ReverbNode | WaveShaperNode
+export enum CustomNodeName { Reverb, WaveShaper }
 
-export type CustomNodeName ="eq" | "reverb" | "waveshaper"
-export type EffectName =CustomNodeName | "speed"
+export type Preset ={ name: string } & EffectChainOptions
+export const AudioPresets:Preset[] =[
+  {
+    name: "tiktok",
+    sequence: [ CustomNodeName.Reverb ],
+    reverb: {
+      dry: 0.5,
+      wet: 0.3
+    },
+    speed: 0.82
+  },
+  {
+    name: "nightcore",
+    sequence: [ CustomNodeName.WaveShaper, CustomNodeName.Reverb ],
+    waveshaper: {
+      curveType: WaveshaperCurveType.SOFT_CLIP,
+      intensity: 1.3,
+      dry: 0,
+      wet: 1
+    },
+    reverb: {
+      dry: 0.6,
+      wet: 0.1
+    },
+    speed: 1.13
+  },
+  {
+    name: "normal",
+    sequence: [],
+    speed: 1
+  },
+  {
+    name: "meme",
+    sequence: [ CustomNodeName.WaveShaper ],
+    waveshaper: {
+      curveType: WaveshaperCurveType.HARD_CLIP,
+      intensity: 10,
+      wet: 0.2,
+      dry: 0
+    },
+    speed: 1
+  }
+]
+
 export type EffectChainOptions ={
   sequence?: CustomNodeName[],
-  eq?: EQBandOptions[],
   reverb?: ReverbOptions,
   waveshaper?: WaveShaperOptions,
   speed?: number,
 }
 
-export type AudioEffects ={
-  readonly analyzer: AnalyserNode,
-  getEqCurve:(filters:EQBandOptions[],size?:number)=>Float32Array,
-  loadEffectChain(options?: EffectChainOptions):AudioEffects,
-  changeEffectParam(options: Omit<EffectChainOptions,"sequence">):AudioEffects
-}
-export function createAudioEffects( context:AudioContext, audioElement:HTMLAudioElement ):AudioEffects {
-  
-  const nodes =new Map<EffectName,CustomAudioNode>()
-  
+export type AudioEffects =ReturnType<typeof createAudioEffects>
+export function createAudioEffects( context:AudioContext, audioElement:HTMLAudioElement ) {
+    
+  const currentPreset ={
+    sequence: [] as CustomNodeName[],
+    reverb: { dry: 0.4, wet: 0.5 },
+    speed: 1,
+    waveshaper: {
+      curveType: WaveshaperCurveType.HARD_CLIP,
+      dry: 0,
+      wet: 0.4,
+      intensity: 1,
+      resolution: 200
+    }
+  }
+
+  const presetStore =writable(currentPreset)
+
   const reverbNode =createReverbNode( context )
-  const eqNode =createEQNode( context )
   const waveshaperNode =createWaveShaperNode( context )
 
   reverbNode.loadImpulseResponse( impulseAudioSource )
-
-  nodes.set("eq",eqNode)
-  nodes.set("reverb",reverbNode)
-  nodes.set("waveshaper",waveshaperNode)
-
-
   const mediaSource = context.createMediaElementSource( audioElement )
+  
   const analyserNode = context.createAnalyser()
   analyserNode.fftSize =8192
-
-  
   
   const setSongProperties =(options: EffectChainOptions) => {
-    audioElement.playbackRate =options.speed || 1
+    if ( !options.speed ) return audioElement.playbackRate =currentPreset.speed || 1
+    
+    currentPreset.speed =options.speed
+    audioElement.playbackRate =options.speed
     audioElement.preservesPitch =false
   }
 
   const setReverbProperties =(options: EffectChainOptions) => {
-    reverbNode.setDryWetAtTime(
-      options.reverb?.dry || 0,
-      options.reverb?.wet || 0,
-    )
-  }
+    if ( !options.reverb ) return
+    const { dry, wet } =options.reverb
+    
+    reverbNode.setDryAtTime(dry ?? currentPreset.reverb.dry)
+    currentPreset.reverb.dry =dry ?? currentPreset.reverb.dry
 
-  const setEQProperties =(options: EffectChainOptions) => {
-    options.eq?.forEach((band, i) => {
-      if (band.frequency !== undefined) eqNode.setBandFrequencyAtTime(i, band.frequency)
-      if (band.Q !== undefined) eqNode.setBandQAtTime(i, band.Q)
-      if (band.gain !== undefined) eqNode.setBandGainAtTime(i, band.gain)
-      if (band.type !== undefined) eqNode.setBandType(i, band.type)
-    })
+    reverbNode.setWetAtTime(wet ?? currentPreset.reverb.wet)
+    currentPreset.reverb.wet =wet ?? currentPreset.reverb.wet
+    
   }
 
   const setWaveshaperProperties =(options: EffectChainOptions) => {
-    if (options.waveshaper?.curve) waveshaperNode.setCurve(options.waveshaper.curve)
-    waveshaperNode.setDryWetAtTime(
-      options.waveshaper?.dry || 0,
-      options.waveshaper?.wet || 0,
-    )
-  }
+    if ( !options.waveshaper ) return
+    const { dry, wet, curveType, intensity } =options.waveshaper
 
-  const handleNodeProperties =(nodeName: EffectName, options: EffectChainOptions) => {
+    waveshaperNode.setDryAtTime(dry ?? currentPreset.waveshaper.dry)
+    currentPreset.waveshaper.dry =dry ?? currentPreset.waveshaper.dry
+
+    waveshaperNode.setWetAtTime(wet ?? currentPreset.waveshaper.wet)
+    currentPreset.waveshaper.wet =wet ?? currentPreset.waveshaper.wet
+
+    waveshaperNode.curveType =curveType ?? currentPreset.waveshaper.curveType
+    currentPreset.waveshaper.curveType =curveType ?? currentPreset.waveshaper.curveType
+
+    waveshaperNode.intensity =intensity ?? currentPreset.waveshaper.intensity
+    currentPreset.waveshaper.intensity =intensity ?? currentPreset.waveshaper.intensity
+  }
+  
+  const getNodeByName =(nodeName:CustomNodeName) => {
     switch ( nodeName ) {
-      case "eq": return setEQProperties(options)
-      case "reverb": return setReverbProperties(options)
-      case "waveshaper": return setWaveshaperProperties(options)
+      case CustomNodeName.Reverb: return reverbNode
+      case CustomNodeName.WaveShaper: return waveshaperNode
     }
   }
 
-
   return {
     get analyzer() { return analyserNode },
+    get currentPreset() { return currentPreset },
+    get presetStore() { return derived(presetStore,p => p) },
 
-    getEqCurve: (options:EQBandOptions[],size=50) => eqNode.getCurveData(options,size),
+    loadPreset(presetName: string) {
+      const [ preset ] =AudioPresets.filter(f => f.name === presetName)
+      if ( !preset ) return
+
+      switch ( preset.name ) {
+        case "tiktok": document.documentElement.dataset.mood ="sad"; break
+        case "nightcore": document.documentElement.dataset.mood ="happy"; break
+        case "meme": document.documentElement.dataset.mood ="meme"; break
+        
+        default: document.documentElement.removeAttribute("data-mood")
+      }
+
+      this.loadEffectChain( preset )
+    },
 
     changeEffectParam(options: Omit<EffectChainOptions,"sequence">) {
-      if ( options.speed !== undefined ) {
-        audioElement.playbackRate =options.speed
-      }
+      setSongProperties(options)
+      setReverbProperties(options)
+      setWaveshaperProperties(options)
 
-      if ( options.reverb ) {
-        const { dry, wet } =options.reverb
-        dry !== undefined && reverbNode.setDryAtTime(dry)
-        wet !== undefined && reverbNode.setWetAtTime(wet)
-      }
-
-      if ( options.waveshaper ) {
-        const { dry, wet, curve } =options.waveshaper
-        dry !== undefined && waveshaperNode.setDryAtTime(dry)
-        wet !== undefined && waveshaperNode.setWetAtTime(wet)
-        curve && waveshaperNode.setCurve(curve)
-      }
-
-      options.eq?.forEach((filter,i) => {
-        if ( !eqNode.filters[i] ) return
-        
-        const { Q, disabled, frequency, gain, type } =filter
-                
-        Q !== undefined && eqNode.setBandQAtTime(i,Q)
-        frequency !== undefined && eqNode.setBandFrequencyAtTime(i,frequency)
-        gain !== undefined && eqNode.setBandGainAtTime(i,gain)
-        type !== undefined && eqNode.setBandType(i,type)
-        
-      })
+      presetStore.set(currentPreset)
 
       return this
     },
 
     loadEffectChain(options?: EffectChainOptions) {
-      mediaSource.disconnect()
       analyserNode.disconnect()
-      nodes.forEach(node => node?.disconnect())
+      mediaSource.disconnect()
+      reverbNode.disconnect()
+      waveshaperNode.disconnect()
   
+      this.changeEffectParam(options || {})
+      const sequence =options?.sequence ?? currentPreset.sequence ?? []
+      
+      if ( !compareArrays(sequence,currentPreset.sequence) ) {
+        currentPreset.sequence =[...sequence]
+        presetStore.set(currentPreset)
+      }
 
-      setSongProperties(options || {})
-
-      const { sequence =[] } =options || {}
       if ( sequence.length < 1 ) mediaSource.connect( analyserNode )
 
       sequence.forEach((nodeName,i) => {
-        const currentNode =nodes.get(nodeName)
+        const currentNode =getNodeByName(nodeName)
         const nextNodeName =sequence[i + 1]
-        const nextNode =nodes.get(nextNodeName)
+        const nextNode =getNodeByName(nextNodeName)
 
         if ( !currentNode ) return
-
-        handleNodeProperties(nodeName, options || {})        
-
-        if ( i === 0 ) {
-          mediaSource.connect( currentNode.node )
-        }
-        if ( !nextNode ) {
-          return currentNode.connect( analyserNode )
-        }
+        if ( i === 0 ) mediaSource.connect( currentNode.node )
+        if ( !nextNode ) return currentNode.connect( analyserNode )
 
         currentNode.connect( nextNode.node )
       })

@@ -20,7 +20,7 @@
   
   body {
     min-height: 100vh;
-    @apply bg-gradient-to-t from-black to-neutral-800;
+    @apply bg-black;
     background-attachment: fixed;
   }
 

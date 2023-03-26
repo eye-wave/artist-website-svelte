@@ -1,8 +1,17 @@
 import { shortFetch } from "src/utils/shortFetch"
 import { derived, writable } from "svelte/store"
-import type { DemoSong } from "src/routes/music/eyewave_2/+page"
 
-export type SongMetadata ={} & DemoSong
+export type SongMetadata ={
+  audioId:string
+  metadata: {
+    imageId:string,
+    title:string,
+    artists:string[],
+    timestamp:number,
+    tags:string[],
+  }
+  descriptionId:string
+}
 
 export type SongQueue =ReturnType<typeof createSongQueue>
 export function createSongQueue() {
@@ -21,7 +30,10 @@ export function createSongQueue() {
     metadataMap.set(songId,metadata)
   }
 
+  // TODO revoke old songs when memory usage is too high
+
   return {
+    get length() { return queue.length },
     get currentSongId() { return songsMap.get(queue[currentSongIndex]) },
     get isCurrentLast() { return currentSongIndex === queue.length -1 },
 
@@ -44,7 +56,7 @@ export function createSongQueue() {
       if ( currentSongIndex < 0 ) return
       if ( queue.length < 1 ) return
 
-      currentSongIndex = --currentSongIndex % queue.length
+      currentSongIndex = (--currentSongIndex + queue.length) % queue.length
       return queue[currentSongIndex]
     },
 
