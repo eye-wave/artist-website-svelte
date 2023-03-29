@@ -1,39 +1,36 @@
 <script lang="ts">
-  import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
   import { createEventDispatcher } from "svelte"
+  import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
 
-  const dispatch =createEventDispatcher<{change: number}>()
-
-  let startX =0
-  let startY =0
-  let startValue =-1
-  let mouseDown =false
-
+  export let color ="#7469ff"
   export let defaultValue =0.5
-  export let value =defaultValue
+  export let knobAngle =35
+  export let knobSpeed =1
+  export let label =""
   export let max =1
   export let min =0
   export let step =0.02
-  export let color ="#7469ff"
-  export let label =""
+  export let value =defaultValue
 
-  export let knobAngle =35
-  export let knobSpeed =1
+  const dispatch =createEventDispatcher<{change: number}>()
+
   $: knobRange =360 -knobAngle *2
   $: angle =(value -min) / (max -min) *knobRange
   $: valueText =value.toFixed(1)
 
+  let startX =0
+  let startValue =-1
+  let mouseDown =false
+
   function onDragStart(e:MouseEvent|TouchEvent) {
     mouseDown =true
-
-    const { x,y } =getCoordinatesFromEvent(e)
+    const { x } =getCoordinatesFromEvent(e)
     
     startX =x
-    startY =y
     startValue =value
   }
 
-  function onDragEnd(e:MouseEvent|TouchEvent) {
+  function onDragEnd() {
     if ( !mouseDown ) return
     mouseDown =false
     if ( startValue !== value ) dispatch("change",value)

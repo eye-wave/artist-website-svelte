@@ -2,44 +2,48 @@
   export const musicPlayer =MusicPlayer.getInstance()
 </script>
 <script lang="ts">
-  import LoopAllIcon from "virtual:icons/cil/loop"
-  import LoopOneIcon from "virtual:icons/cil/loop-1"
-  import LoopNoneIcon from "virtual:icons/heroicons-solid/arrow-down-on-square"
-  import PrevIcon from "virtual:icons/basil/skip-prev-solid"
-  import NextIcon from "virtual:icons/basil/skip-next-solid"
-  import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
+  import { formatSeconds } from "src/utils/time"
+  import { MusicPlayer } from "."
+  import { onMount } from "svelte"
+  import { PLAYER_STATE, PRESET_NAMES, QUEUE_STATE } from "./enums"
+  import { PUBLIC_DB_URL } from "$env/static/public"
+  import { trimText } from "src/utils/text"
+  import AutoplayOffIcon from "virtual:icons/ic/round-play-disabled"
   import LoadingIcon from "virtual:icons/line-md/loading-loop"
+  import LoopAllIcon from "virtual:icons/cil/loop"
+  import LoopNoneIcon from "virtual:icons/heroicons-solid/arrow-down-on-square"
+  import LoopOneIcon from "virtual:icons/cil/loop-1"
+  import MoodSwitcher from "./MoodSwitcher.svelte"
+  import NextIcon from "virtual:icons/basil/skip-next-solid"
   import PauseIcon from "virtual:icons/typcn/media-pause"
   import PlayIcon from "virtual:icons/material-symbols/play-arrow-rounded"
+  import PrevIcon from "virtual:icons/basil/skip-prev-solid"
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
-  import AutoplayOffIcon from "virtual:icons/ic/round-play-disabled"
-
-  import { MusicPlayer, PLAYER_STATE } from "./music_player"
-  // import AudioGraph from "./music_player/audio_effects/AudioGraph.svelte"
-  import { QUEUE_STATE } from "./music_player"
-  import { formatSeconds } from "src/utils/time"
-  import { onDestroy, onMount } from "svelte"
-  import { trimText } from "src/utils/text"
+  import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
+  
   const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore, timeStore } =musicPlayer.stores
 
+  $: songTitle =trimText($currentTrackStore?.metadata.title || "",Math.ceil(windowWidth /50) +1)
+
+  let mood =PRESET_NAMES.NORMAL
   let windowWidth =300
+
+
   function onWinResize() { windowWidth =window.innerWidth }
   onMount(onWinResize)
   
-  $: songTitle =trimText($currentTrackStore?.metadata.title || "",Math.ceil(windowWidth /50) +1)
 
   async function handlePlayButton() {
     if ( !musicPlayer.isInitialized ) await musicPlayer.initialize()
 
     switch ( $playerStateStore ) {
-      case PLAYER_STATE.paused: return musicPlayer.resume()
-      case PLAYER_STATE.playing: return musicPlayer.pause()
-      case PLAYER_STATE.idle: {
+      case PLAYER_STATE.PAUSED: return musicPlayer.resume()
+      case PLAYER_STATE.PLAYING: return musicPlayer.pause()
+      case PLAYER_STATE.IDLE:
         if ( $currentTrackStore?.audioId ) {
           return musicPlayer.replay()
         }
-      }
       
       default: return
     }
@@ -47,10 +51,11 @@
 
   function handleQueueButton() {
     switch ( $queueStateStore ) {
-      case QUEUE_STATE.loopall: return musicPlayer.queueState =QUEUE_STATE.loopone
-      case QUEUE_STATE.loopone: return musicPlayer.queueState =QUEUE_STATE.loopoff
-      case QUEUE_STATE.loopoff: return musicPlayer.queueState =QUEUE_STATE.autoplayoff
-      case QUEUE_STATE.autoplayoff: return musicPlayer.queueState =QUEUE_STATE.loopall
+      case QUEUE_STATE.LOOPALL: return musicPlayer.queueState =QUEUE_STATE.LOOPONE
+      case QUEUE_STATE.LOOPONE: return musicPlayer.queueState =QUEUE_STATE.LOOPOFF
+      case QUEUE_STATE.LOOPOFF: return musicPlayer.queueState =QUEUE_STATE.AUTOPLAYOFF
+      case QUEUE_STATE.AUTOPLAYOFF: return musicPlayer.queueState =QUEUE_STATE.LOOPALL
+      default: return musicPlayer.queueState =QUEUE_STATE.AUTOPLAYOFF
     }
   }
 
@@ -66,6 +71,10 @@
     musicPlayer.playPrev()
   }
 
+  function handleSongSkip(e:Event) {
+    musicPlayer.skipTo(+(e.target as HTMLInputElement).value)
+  }
+
 </script>
 
 <svelte:window on:resize={onWinResize} />
@@ -74,11 +83,11 @@
   <div class="button-group">
     {#if windowWidth > 650}
       <button class="text-xl" on:click={handleQueueButton}>
-        {#if $queueStateStore === QUEUE_STATE.loopall}
+        {#if $queueStateStore === QUEUE_STATE.LOOPALL}
           <LoopAllIcon />
-        {:else if $queueStateStore === QUEUE_STATE.loopone}
+        {:else if $queueStateStore === QUEUE_STATE.LOOPONE}
           <LoopOneIcon />
-        {:else if $queueStateStore === QUEUE_STATE.autoplayoff}
+        {:else if $queueStateStore === QUEUE_STATE.AUTOPLAYOFF}
           <AutoplayOffIcon />
         {:else}
           <LoopNoneIcon class="-rotate-90" />
@@ -91,11 +100,11 @@
     </button>
 
     <button on:click={handlePlayButton}>
-      {#if $playerStateStore === PLAYER_STATE.error}
+      {#if $playerStateStore === PLAYER_STATE.ERROR}
         <WifiErrorIcon />
-      {:else if $playerStateStore === PLAYER_STATE.loading}
+      {:else if $playerStateStore === PLAYER_STATE.LOADING}
         <LoadingIcon />
-      {:else if $playerStateStore === PLAYER_STATE.playing}
+      {:else if $playerStateStore === PLAYER_STATE.PLAYING}
         <PauseIcon />
       {:else}
         <PlayIcon />
@@ -127,7 +136,7 @@
 
       {#if windowWidth > 500}
         <input class="min-w-0 w-full"
-          on:change={e => musicPlayer.skipTo(e?.target?.value || 0)}
+          on:change={handleSongSkip}
           type="range" name="progress-bar" min={0} max={$currentTrackStore?.duration || 0} value={$timeStore}>
       {/if}
         
@@ -140,15 +149,14 @@
       <p>{songTitle}</p>
       <p class="text-right text-xs text-neutral-400">{$currentTrackStore?.metadata.artists || ""}</p>
     </div>
-    <img class="w-12 h-12" width={48} height={48} src="http://localhost:3000/storage/file/{$currentTrackStore?.metadata.imageId}?width=48&height=48" alt="?">
+    <a href="#{$currentTrackStore?.audioId}" class="w-12 h-12 flex-shrink-0">
+      <img width={48} height={48} src="{PUBLIC_DB_URL}/storage/file/{$currentTrackStore?.metadata.imageId}?width=48&height=48" alt="?">
+    </a>
   </div>
 
-  <select on:change={e => musicPlayer.audioEffects?.loadPreset(e.target.value)}>
-    <option value="normal">normal</option>
-    <option value="tiktok">tiktok</option>
-    <option value="meme">meme</option>
-    <option value="nightcore">nightcore</option>
-  </select>
+  {#if windowWidth > 350}
+    <MoodSwitcher bind:currentMood={mood} on:change={() => musicPlayer?.audioEffects?.loadPreset(mood)} />
+  {/if}
 
 </div>
 

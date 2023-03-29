@@ -9,13 +9,9 @@ html {
     }
   }
 
-  &[data-mood='meme'] {      
-    filter: saturate(2000%) brightness(100%);  
-
-    &::after {
-      background-color: #20100090;
-      mix-blend-mode:color-burn; 
-    }
+  &[data-mood='angry'] {      
+    filter: saturate(1000%);
+    &::after { background-color: #caca2010 }
   }
 
   &[data-mood='happy'] {

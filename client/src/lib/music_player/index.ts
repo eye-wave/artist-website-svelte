@@ -1,12 +1,11 @@
 import { browser } from "$app/environment"
-import { derived, writable } from "svelte/store"
 import { createAudioEffects, type AudioEffects, type EffectChainOptions } from "./audioEffects"
 import { createSongQueue, type SongMetadata } from "./queue"
+import { derived, writable } from "svelte/store"
+import { PLAYER_STATE, QUEUE_STATE, type T_PLAYER_STATE, type T_QUEUE_STATE } from "./enums"
+import { PUBLIC_DB_URL } from "$env/static/public"
 
-export enum PLAYER_STATE { playing, paused, idle, loading, error }
-export enum QUEUE_STATE { loopall, loopone, loopoff, autoplayoff }
-
-type CurrentTrack ={ duration:number } & SongMetadata
+export type CurrentTrack ={ duration:number } & SongMetadata
 
 export class MusicPlayer {
   static instance: MusicPlayer
@@ -35,7 +34,7 @@ export class MusicPlayer {
   async initialize() {
     if ( !browser ) return
 
-    this.setPlayerState(PLAYER_STATE.loading)
+    this.setPlayerState(PLAYER_STATE.LOADING)
     this.isInitializedStore.set(true)
 
     this._audioContext = new AudioContext()
@@ -49,18 +48,18 @@ export class MusicPlayer {
     this._mediaSession.setActionHandler("previoustrack",() => this.playPrev())
 
     this._audioElement.onerror =() => {
-      this.setPlayerState(PLAYER_STATE.error)
+      this.setPlayerState(PLAYER_STATE.ERROR)
       this.currentTrackStore.set(null)
     }
 
     this._audioElement.onended =() => {
-      this.setPlayerState(PLAYER_STATE.idle)
+      this.setPlayerState(PLAYER_STATE.IDLE)
       this.timeStore.set(0)
 
-      if ( this.queue.isCurrentLast && this.queueState === QUEUE_STATE.loopoff ) return
-      if ( this._queueState === QUEUE_STATE.autoplayoff ) return
+      if ( this.queue.isCurrentLast && this.queueState === QUEUE_STATE.LOOPOFF ) return
+      if ( this._queueState === QUEUE_STATE.AUTOPLAYOFF ) return
       
-      if ( this.queueState === QUEUE_STATE.loopone ) return this.replay() 
+      if ( this.queueState === QUEUE_STATE.LOOPONE ) return this.replay() 
       
       const nextId =this.shuffleOn ? this.queue.random() : this.queue.next()
       if ( !nextId ) return console.warn("Couldn't find next track")
@@ -77,7 +76,7 @@ export class MusicPlayer {
       if ( !this._audioEffects ) return
       if ( !this._audioElement ) return
   
-      this.setPlayerState(PLAYER_STATE.playing)
+      this.setPlayerState(PLAYER_STATE.PLAYING)
       this._audioEffects.loadEffectChain()
       this.currentTrackStore.update(meta => {
         if ( !meta ) return null
@@ -89,7 +88,7 @@ export class MusicPlayer {
     // AEE -> Audio Element Events
 
 
-    this.setPlayerState(PLAYER_STATE.idle)
+    this.setPlayerState(PLAYER_STATE.IDLE)
     return this
   }
   
@@ -101,16 +100,16 @@ export class MusicPlayer {
   private readonly queue =createSongQueue()
   private readonly currentTrackStore =writable<CurrentTrack|null>(null)
 
-  private _queueState =QUEUE_STATE.autoplayoff
-  private readonly queueStateStore =writable<QUEUE_STATE>(this._queueState)
-  private setQueueState(state:QUEUE_STATE) {
+  private _queueState:T_QUEUE_STATE =QUEUE_STATE.AUTOPLAYOFF
+  private readonly queueStateStore =writable<T_QUEUE_STATE>(this._queueState)
+  private setQueueState(state:T_QUEUE_STATE) {
     this._queueState =state
     this.queueStateStore.set(state)
   }
 
   get queueLength() { return this.queue.length }
   get queueState() { return this._queueState }
-  set queueState(state:QUEUE_STATE) { this.setQueueState(state) }
+  set queueState(state:T_QUEUE_STATE) { this.setQueueState(state) }
 
   public loadQueue(input:string[]) { this.queue.loadQueue(input) }
   private playRandom() {
@@ -142,9 +141,9 @@ export class MusicPlayer {
   // PS -> Player State
 
 
-  private playerState =PLAYER_STATE.idle
-  private readonly playerStateStore =writable<PLAYER_STATE>(PLAYER_STATE.idle)
-  private setPlayerState (state:PLAYER_STATE) {
+  private playerState =PLAYER_STATE.IDLE
+  private readonly playerStateStore =writable<T_PLAYER_STATE>(PLAYER_STATE.IDLE)
+  private setPlayerState (state:T_PLAYER_STATE) {
     this.playerState =state
     this.playerStateStore.set(state)
   }
@@ -169,7 +168,7 @@ export class MusicPlayer {
 
   get stores () {
     return {
-      isInitializedStore: derived(this.isInitializedStore,init=>init),
+      isInitializedStore: derived(this.isInitializedStore,init => init),
       playerStateStore: derived(this.playerStateStore,state => state),
       queueStateStore: derived(this.queueStateStore,state => state),
       shuffleOnStore: derived(this.shuffleOnStore,shuffle => shuffle),
@@ -184,24 +183,21 @@ export class MusicPlayer {
   public async play( songId:string ) {
     if ( !this._audioElement ) return this
     
-    this.setPlayerState(PLAYER_STATE.loading)
+    this.setPlayerState(PLAYER_STATE.LOADING)
 
-    const id =await this.queue.play(songId)
-    if ( !id ) return this
+    const song =await this.queue.play(songId)
+    if ( !song ) return this
     
-    const metadata =this.queue.getSongMetadata(songId)!
-    // TODO remove ! and add error handling
-
-    this.currentTrackStore.set({duration:0,...metadata})
-    this._audioElement.src =id
+    this.currentTrackStore.set({duration:0,...song.metadata})
+    this._audioElement.src =song.url
 
     if ( !this._mediaSession ) return this
     this._mediaSession.metadata =new MediaMetadata({
-      title: metadata.metadata.title,
+      title: song.metadata.metadata.title,
       album: "",
       artist: "_eyewave",
       artwork: [96,128,192,256,384,512].map(n => ({
-        src: `http://localhost:3000/storage/file/${metadata.metadata.imageId}?width=${n}&height=${n}`,
+        src: `${PUBLIC_DB_URL}/storage/file/${song.metadata.metadata.imageId}?width=${n}&height=${n}`,
         sizes: `${n}x${n}`,
         type: "image/webp"
       }))
@@ -212,7 +208,7 @@ export class MusicPlayer {
 
   public replay() {
     if ( !this._audioElement ) return this
-    this.setPlayerState(PLAYER_STATE.playing)
+    this.setPlayerState(PLAYER_STATE.PLAYING)
     this._audioElement.play()
   }
 
@@ -224,21 +220,21 @@ export class MusicPlayer {
 
 
   public pause() {
-    if ( this.playerState !== PLAYER_STATE.playing ) return this
+    if ( this.playerState !== PLAYER_STATE.PLAYING ) return this
     if ( !this._audioElement ) return this
 
     this._audioElement.pause()
-    this.setPlayerState(PLAYER_STATE.paused)
+    this.setPlayerState(PLAYER_STATE.PAUSED)
 
     return this
   }
 
   public resume() {
-    if ( this.playerState !== PLAYER_STATE.paused ) return this
+    if ( this.playerState !== PLAYER_STATE.PAUSED ) return this
     if ( !this._audioElement ) return this
 
     this._audioElement.play()
-    this.setPlayerState(PLAYER_STATE.playing)
+    this.setPlayerState(PLAYER_STATE.PLAYING)
     
     return this
   }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores"
-  import Logo from "./Logo.svelte"
+  import Logo from "../Logo.svelte"
   import NavbarItem from "./NavbarItem.svelte"
 
   export let links =[

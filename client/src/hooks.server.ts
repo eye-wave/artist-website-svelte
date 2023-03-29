@@ -2,7 +2,8 @@ import type { Handle } from "@sveltejs/kit"
 import { minify } from "html-minifier"
 
 export const handle = (async ({ event, resolve }) => {
-  const lang ="en"
+  // const lang ="en"
+  // TODO add more languages
 
   const response = await resolve(event, {
     transformPageChunk: ({ html }) => minify(html,{

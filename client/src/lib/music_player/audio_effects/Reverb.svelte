@@ -1,14 +1,13 @@
 <script lang="ts">
-  import { musicPlayer } from "src/lib/MusicPlayer.svelte"
-  import { CustomNodeName } from "../audioEffects"
+  import { CUSTOM_NODE_NAME } from "../enums"
+  import { musicPlayer } from "src/lib/music_player/MusicPlayerBase.svelte"
   import EffectTemplate from "./EffectTemplate.svelte"
   import Knob from "./Knob.svelte"
   
   export let color ="#7469ff"
 
   $: _color =active ? color : "#333"
-  $: active =($presetStore?.sequence || []).indexOf(CustomNodeName.Reverb) !== -1
-  $: console.log($presetStore,"from reverb")
+  $: active =($presetStore?.sequence || []).indexOf(CUSTOM_NODE_NAME.REVERB) !== -1
   $: dry =$presetStore?.reverb.dry || 0.3
   $: presetStore =musicPlayer.audioEffects?.presetStore
   $: wet =$presetStore?.reverb.wet || 0.7
@@ -19,10 +18,10 @@
     const { sequence =[] } =musicPlayer.audioEffects.currentPreset
     const active =e.detail as boolean
 
-    const isReverbInSequence =sequence.indexOf(CustomNodeName.Reverb) !== -1
+    const isReverbInSequence =sequence.indexOf(CUSTOM_NODE_NAME.REVERB) !== -1
     
-    if ( active && !isReverbInSequence ) sequence?.push(CustomNodeName.Reverb)
-    if ( !active && isReverbInSequence ) sequence?.splice(sequence.indexOf(CustomNodeName.Reverb),1)
+    if ( active && !isReverbInSequence ) sequence?.push(CUSTOM_NODE_NAME.REVERB)
+    if ( !active && isReverbInSequence ) sequence?.splice(sequence.indexOf(CUSTOM_NODE_NAME.REVERB),1)
 
     musicPlayer.audioEffects.loadEffectChain({ sequence, reverb: { dry, wet } })
   }

@@ -1,28 +1,23 @@
-
-export enum WaveshaperCurveType {
-  SOFT_CLIP,
-  HARD_CLIP,
-  LINEAR_FOLD
-}
+import { WAVESHAPER_CURVE_TYPE, type T_WAVESHAPER_CURVE_TYPE } from "./enums"
 
 export type WaveShaperOptions ={
   wet?: number,
   dry?: number
-  curveType?: WaveshaperCurveType,
+  curveType?: T_WAVESHAPER_CURVE_TYPE,
   intensity?: number
 }
 
-export function generateDistortionCurve( intensity: number, type: WaveshaperCurveType, resolution =1000 ): Float32Array {
+export function generateDistortionCurve( intensity: number, type: T_WAVESHAPER_CURVE_TYPE, resolution =1000 ): Float32Array {
   const curve: Float32Array =new Float32Array(resolution).fill(0).map((_, i) => (i / (resolution - 1)) * 2 - 1)
 
   switch ( type ) {
-    case WaveshaperCurveType.SOFT_CLIP:
+    case WAVESHAPER_CURVE_TYPE.SOFT_CLIP:
       return curve.map(x => Math.tanh(x * intensity))
 
-    case WaveshaperCurveType.HARD_CLIP:
+    case WAVESHAPER_CURVE_TYPE.HARD_CLIP:
       return curve.map(x => Math.max(-1, Math.min(1, x *intensity)))
 
-    case WaveshaperCurveType.LINEAR_FOLD:
+    case WAVESHAPER_CURVE_TYPE.LINEAR_FOLD:
       return curve.map(x => {
         const y =Math.PI / 2 *x *intensity
         return (2 / Math.PI) *Math.asin(Math.sin(y))
@@ -42,7 +37,7 @@ export function createWaveShaperNode(  context: AudioContext ) {
   
   const resolution =184
   let intensity =1
-  let curveType =WaveshaperCurveType.HARD_CLIP
+  let curveType =WAVESHAPER_CURVE_TYPE.HARD_CLIP
 
   waveshaperNode.curve =generateDistortionCurve(intensity,curveType,resolution)
 
@@ -62,7 +57,7 @@ export function createWaveShaperNode(  context: AudioContext ) {
     },
 
     get curveType() { return curveType },
-    set curveType(input:WaveshaperCurveType ) {
+    set curveType(input:T_WAVESHAPER_CURVE_TYPE ) {
       curveType =input
       waveshaperNode.curve =generateDistortionCurve(intensity,curveType,resolution)
     },

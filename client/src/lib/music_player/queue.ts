@@ -1,5 +1,5 @@
-import { shortFetch } from "src/utils/shortFetch"
-import { derived, writable } from "svelte/store"
+import { lStorage } from "src/utils/localStorage"
+import { PUBLIC_DB_URL } from "$env/static/public"
 
 export type SongMetadata ={
   audioId:string
@@ -13,35 +13,114 @@ export type SongMetadata ={
   descriptionId:string
 }
 
+export type SongMapItem ={
+  url: string,
+  size: number,
+  metadata: SongMetadata
+}
+
 export type SongQueue =ReturnType<typeof createSongQueue>
 export function createSongQueue() {
   const queue:string[] =[]
-  const metadataMap: Map<string, SongMetadata> = new Map()
-  const songsMap: Map<string,string> = new Map()
+  const songMap: SongMapItem[] =[]
+  const sizeThreshold =15 *1024 ** 2
   
   let currentSongIndex =0
-  const currentSongStore =writable<SongMetadata|null>(null)
 
   const downloadSongData =async (songId: string) => {
-    const audioUrl =await shortFetch(`http://localhost:3000/storage/file/${songId}`,"audioUrl") as string
-    const metadata =await shortFetch(`http://localhost:3000/wip/song/${songId}`,"json") as SongMetadata
-    
-    songsMap.set(songId, audioUrl)
-    metadataMap.set(songId,metadata)
+    const promiseArray =[
+      new Promise((resolve,reject) => {
+        fetch(`${PUBLIC_DB_URL}/storage/file/${songId}`)
+          .then(res => res.blob())
+          .then(blob => resolve({
+            url: URL.createObjectURL(blob),
+            size: blob.size
+          }))
+          .catch(reject)
+      }),
+      new Promise<SongMetadata>((resolve,reject) => {
+        fetch(`${PUBLIC_DB_URL}/wip/song/${songId}`)
+          .then(res => res.json())
+          .then(resolve)
+          .catch(reject)
+      })
+    ] as [ Promise<{url:string,size:number}>, Promise<SongMetadata> ]
+
+    const [ audioUrl, metadata ] =await Promise.all(promiseArray)
+    const song ={ metadata, ...audioUrl } as SongMapItem
+
+    lStorage.set("song_cache",songMap)
+    songMap.push(song)
+    return song
   }
 
-  // TODO revoke old songs when memory usage is too high
+  const getSize =() => {
+    let totalSize =0
+    songMap.forEach(song => totalSize += song.size)
+    return totalSize
+  }
+
+  const cleanCache =() => {
+    let size =getSize()
+
+    while ( size > sizeThreshold ) {
+      size -= songMap[0].size
+      URL.revokeObjectURL(songMap[0].url)
+      songMap.shift()
+      lStorage.set("song_cache",songMap)
+    }
+  }
+
+  const ping =(blobUrl:string) => {
+    return new Promise<boolean>(resolve => {
+      fetch(blobUrl)
+        .then(res => {
+          if ( res.ok ) return resolve(true)
+          resolve(false)
+        })
+        .catch(() => resolve(false))
+    })
+  }
+
+  const removeSong =(songId: string) => {
+    for ( let i =0; i < songMap.length; i ++ ) {
+      if ( songMap[i].metadata.audioId === songId ) {
+        URL.revokeObjectURL(songMap[i].url)
+        songMap.splice(i,1)
+
+        return 1
+      }
+    }
+    return 0
+  }
+
+  // this gets executed on page load
+
+  try {
+    const songs =lStorage.get("song_cache") as SongMapItem[]
+    songs.forEach(song => songMap.push(song))
+  }
+  catch {}
 
   return {
     get length() { return queue.length },
-    get currentSongId() { return songsMap.get(queue[currentSongIndex]) },
+    get currentSongId() { return songMap.filter(song => song.metadata.audioId === queue[currentSongIndex])?.[0]?.metadata.audioId },
     get isCurrentLast() { return currentSongIndex === queue.length -1 },
 
     async play( songId: string ) {
-      if ( !songsMap.has(songId) ) await downloadSongData(songId)
+      let [ song ] =songMap.filter(song => song.metadata.audioId === songId)
+      if ( !song ) song =await downloadSongData(songId)
+      
+      const pingSuccess =await ping(song.url)
+      if ( !pingSuccess ) {
+        removeSong(songId)
+        song =await downloadSongData(songId)
+      }
+
       currentSongIndex =queue.indexOf(songId)
       
-      return songsMap.get(songId)
+      cleanCache()
+      return song
     },
 
     next() {
@@ -73,7 +152,6 @@ export function createSongQueue() {
       input.forEach(id => queue.push(id))
     },
 
-    getSongMetadata(songId: string) { return metadataMap.get(songId) },
+    getSong(songId: string) { return songMap.filter(song => song.metadata.audioId === songId)?.[0] },
   }
 }
-

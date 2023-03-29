@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { page } from "$app/stores"
+  export let active =false
   export let href:string
   export let name:string
-  export let active =false
 
 </script>
 

@@ -1,43 +1,23 @@
 <script lang="ts">
-  import { musicPlayer } from "src/lib/MusicPlayer.svelte"
-  import Knob from "./Knob.svelte"
-  import EffectTemplate from "./EffectTemplate.svelte"
+  import { CUSTOM_NODE_NAME, WAVESHAPER_CURVE_TYPE } from "../enums"
+  import { generateDistortionCurve } from "../waveshaper"
+  import { musicPlayer } from "src/lib/music_player/MusicPlayerBase.svelte"
+  import { onDestroy, onMount } from "svelte"
   import { scaleLinear, line } from "d3"
-  import { CustomNodeName } from "../audioEffects"
-  import { generateDistortionCurve, WaveshaperCurveType } from "../waveshaper"
-  import { onDestroy, onMount } from "svelte";
+  import EffectTemplate from "./EffectTemplate.svelte"
+  import Knob from "./Knob.svelte"
+  import type { Unsubscriber } from "svelte/store"
   
   export let color ="#7469ff"
-  export let width =220
   export let height =200
+  export let width =220
 
-  const grandientId =`${Math.random()}`
   const curveTypes =[ "Soft Clip","Hard Clip","Linear Fold" ]
+  const grandientId =`${Math.random()}`
   const resolution =99
   
   $: presetStore =musicPlayer.audioEffects?.presetStore
-  
-  let unsubscribe:undefined|Function
-  onMount(() => {
-    if ( !presetStore ) return
-    unsubscribe =presetStore.subscribe(({ waveshaper }) => {
-      wet =waveshaper.wet
-      dry =waveshaper.dry
-      curveType =waveshaper.curveType
-      intensity =waveshaper.intensity
-    })
-  })
-
-  onDestroy(() => typeof unsubscribe === "function" && unsubscribe() )
-
-
-  $: active =($presetStore?.sequence || []).indexOf(CustomNodeName.WaveShaper) !== -1
-  let dry =$presetStore?.waveshaper?.dry ?? 0
-  let wet =$presetStore?.waveshaper?.wet ?? 0.8
-  let curveType =$presetStore?.waveshaper?.curveType ?? WaveshaperCurveType.HARD_CLIP 
-  let intensity =$presetStore?.waveshaper?.intensity ?? 1
-
-
+  $: active =($presetStore?.sequence || []).indexOf(CUSTOM_NODE_NAME.WAVESHAPER) !== -1
   $: _color =active ? color : "#444"
   $: x =scaleLinear()
     .domain([0,resolution])
@@ -56,15 +36,35 @@
     .replace(/^M[\d.]+,[\d.]+L/,"M")
     .replace(/L[\d.]+,[\d.]+$/,"")
 
+  let unsubscribe:undefined|Unsubscriber
+  
+  onMount(() => {
+    if ( !presetStore ) return
+    unsubscribe =presetStore.subscribe(({ waveshaper }) => {
+      wet =waveshaper.wet
+      dry =waveshaper.dry
+      curveType =waveshaper.curveType
+      intensity =waveshaper.intensity
+    })
+  })
+
+  onDestroy(() => typeof unsubscribe === "function" && unsubscribe() )
+
+
+  let dry =$presetStore?.waveshaper.dry ?? 0
+  let wet =$presetStore?.waveshaper.wet ?? 0.8
+  let curveType =$presetStore?.waveshaper?.curveType ?? WAVESHAPER_CURVE_TYPE.HARD_CLIP 
+  let intensity =$presetStore?.waveshaper?.intensity ?? 1
+
   function handleToggleButton(e:CustomEvent) {
     if ( !musicPlayer.audioEffects ) return
     const { sequence =[] } =musicPlayer.audioEffects.currentPreset
     const active =e.detail as boolean
     
-    const isWaveshaperInSequence =sequence.indexOf(CustomNodeName.WaveShaper) !== -1
+    const isWaveshaperInSequence =sequence.indexOf(CUSTOM_NODE_NAME.WAVESHAPER) !== -1
     
-    if ( active && !isWaveshaperInSequence ) sequence?.push(CustomNodeName.WaveShaper)
-    if ( !active && isWaveshaperInSequence ) sequence?.splice(sequence.indexOf(CustomNodeName.WaveShaper),1)
+    if ( active && !isWaveshaperInSequence ) sequence?.push(CUSTOM_NODE_NAME.WAVESHAPER)
+    if ( !active && isWaveshaperInSequence ) sequence?.splice(sequence.indexOf(CUSTOM_NODE_NAME.WAVESHAPER),1)
 
     musicPlayer.audioEffects.loadEffectChain({ sequence, waveshaper: { dry, wet, curveType, intensity }})
   }

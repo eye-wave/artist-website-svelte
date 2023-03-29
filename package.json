@@ -17,6 +17,7 @@
     "update": "./scripts/update-deps.sh",
     "build": "yarn workspaces run build",
     "dev": "concurrently \"yarn workspace client run dev\" \"yarn workspace server run start\" \"yarn workspace server run dev\"",
+    "preview": "concurrently \"yarn workspace client run preview\" \"yarn workspace server run start\"",
     "lint": "yarn workspaces run lint"
   },
   "devDependencies": {

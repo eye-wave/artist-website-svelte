@@ -1,7 +1,6 @@
+import { PUBLIC_DB_URL } from "$env/static/public"
 import type { SongMetadata } from "src/lib/music_player/queue"
 import type { PageLoad } from "./$types"
-
-export const prerender =true
 
 type PageData ={
   song: SongMetadata,
@@ -17,11 +16,11 @@ export const load:PageLoad =(({ fetch, params }) => new Promise<PageData>(resolv
     post: ""
   }
 
-  fetch("http://localhost:3000/wip/song/"+id,{ method: "GET" })
+  fetch(`${PUBLIC_DB_URL}/wip/song/`+id,{ method: "GET" })
     .then(res => res.json())
     .then((song:SongMetadata) => data.song =song)
     .then(() => {
-      fetch("http://localhost:3000/storage/file/"+data.song.descriptionId)
+      fetch(`${PUBLIC_DB_URL}/storage/file/`+data.song.descriptionId)
         .then(res => res.text())
         .then(text => {
           data.post =text

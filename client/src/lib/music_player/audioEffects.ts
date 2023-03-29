@@ -1,29 +1,29 @@
 import { compareArrays } from "src/utils/array"
+import { createReverbNode, type ReverbNode, type ReverbOptions } from "./reverb"
+import { createWaveShaperNode, type WaveShaperNode, type WaveShaperOptions } from "./waveshaper"
+import { CUSTOM_NODE_NAME, PRESET_NAMES, WAVESHAPER_CURVE_TYPE, type T_CUSTOM_NODE_NAME, type T_PRESET_NAMES } from "./enums"
 import { derived, writable } from "svelte/store"
 import impulseAudioSource from "../audio/impulse.opus"
-import { createReverbNode, type ReverbNode, type ReverbOptions } from "./reverb"
-import { createWaveShaperNode, WaveshaperCurveType, type WaveShaperNode, type WaveShaperOptions } from "./waveshaper"
 
 export type CustomAudioNode =ReverbNode | WaveShaperNode
-export enum CustomNodeName { Reverb, WaveShaper }
 
-export type Preset ={ name: string } & EffectChainOptions
+export type Preset ={ name: T_PRESET_NAMES } & Partial<EffectChainOptions>
 export const AudioPresets:Preset[] =[
   {
-    name: "tiktok",
-    sequence: [ CustomNodeName.Reverb ],
+    name: PRESET_NAMES.SAD,
+    sequence: [ CUSTOM_NODE_NAME.REVERB ],
     reverb: {
-      dry: 0.5,
-      wet: 0.3
+      dry: 0.6,
+      wet: 0.4
     },
     speed: 0.82
   },
   {
-    name: "nightcore",
-    sequence: [ CustomNodeName.WaveShaper, CustomNodeName.Reverb ],
+    name: PRESET_NAMES.HAPPY,
+    sequence: [ CUSTOM_NODE_NAME.WAVESHAPER, CUSTOM_NODE_NAME.REVERB ],
     waveshaper: {
-      curveType: WaveshaperCurveType.SOFT_CLIP,
-      intensity: 1.3,
+      curveType: WAVESHAPER_CURVE_TYPE.SOFT_CLIP,
+      intensity: 1.5,
       dry: 0,
       wet: 1
     },
@@ -34,15 +34,15 @@ export const AudioPresets:Preset[] =[
     speed: 1.13
   },
   {
-    name: "normal",
+    name: PRESET_NAMES.NORMAL,
     sequence: [],
     speed: 1
   },
   {
-    name: "meme",
-    sequence: [ CustomNodeName.WaveShaper ],
+    name: PRESET_NAMES.ANGRY,
+    sequence: [ CUSTOM_NODE_NAME.WAVESHAPER ],
     waveshaper: {
-      curveType: WaveshaperCurveType.HARD_CLIP,
+      curveType: WAVESHAPER_CURVE_TYPE.HARD_CLIP,
       intensity: 10,
       wet: 0.2,
       dry: 0
@@ -52,21 +52,21 @@ export const AudioPresets:Preset[] =[
 ]
 
 export type EffectChainOptions ={
-  sequence?: CustomNodeName[],
-  reverb?: ReverbOptions,
-  waveshaper?: WaveShaperOptions,
-  speed?: number,
+  sequence: T_CUSTOM_NODE_NAME[],
+  reverb: ReverbOptions,
+  waveshaper: WaveShaperOptions,
+  speed: number,
 }
 
 export type AudioEffects =ReturnType<typeof createAudioEffects>
 export function createAudioEffects( context:AudioContext, audioElement:HTMLAudioElement ) {
-    
+
   const currentPreset ={
-    sequence: [] as CustomNodeName[],
+    sequence: [] as T_CUSTOM_NODE_NAME[],
     reverb: { dry: 0.4, wet: 0.5 },
     speed: 1,
     waveshaper: {
-      curveType: WaveshaperCurveType.HARD_CLIP,
+      curveType: WAVESHAPER_CURVE_TYPE.HARD_CLIP,
       dry: 0,
       wet: 0.4,
       intensity: 1,
@@ -85,7 +85,7 @@ export function createAudioEffects( context:AudioContext, audioElement:HTMLAudio
   const analyserNode = context.createAnalyser()
   analyserNode.fftSize =8192
   
-  const setSongProperties =(options: EffectChainOptions) => {
+  const setSongProperties =(options: Partial<Omit<EffectChainOptions,"sequence">>) => {
     if ( !options.speed ) return audioElement.playbackRate =currentPreset.speed || 1
     
     currentPreset.speed =options.speed
@@ -93,7 +93,7 @@ export function createAudioEffects( context:AudioContext, audioElement:HTMLAudio
     audioElement.preservesPitch =false
   }
 
-  const setReverbProperties =(options: EffectChainOptions) => {
+  const setReverbProperties =(options: Partial<Omit<EffectChainOptions,"sequence">>) => {
     if ( !options.reverb ) return
     const { dry, wet } =options.reverb
     
@@ -105,7 +105,7 @@ export function createAudioEffects( context:AudioContext, audioElement:HTMLAudio
     
   }
 
-  const setWaveshaperProperties =(options: EffectChainOptions) => {
+  const setWaveshaperProperties =(options: Partial<Omit<EffectChainOptions,"sequence">>) => {
     if ( !options.waveshaper ) return
     const { dry, wet, curveType, intensity } =options.waveshaper
 
@@ -122,10 +122,11 @@ export function createAudioEffects( context:AudioContext, audioElement:HTMLAudio
     currentPreset.waveshaper.intensity =intensity ?? currentPreset.waveshaper.intensity
   }
   
-  const getNodeByName =(nodeName:CustomNodeName) => {
+  const getNodeByName =(nodeName:T_CUSTOM_NODE_NAME) => {
     switch ( nodeName ) {
-      case CustomNodeName.Reverb: return reverbNode
-      case CustomNodeName.WaveShaper: return waveshaperNode
+      case CUSTOM_NODE_NAME.REVERB: return reverbNode
+      case CUSTOM_NODE_NAME.WAVESHAPER: return waveshaperNode
+      default: return
     }
   }
 
@@ -134,22 +135,20 @@ export function createAudioEffects( context:AudioContext, audioElement:HTMLAudio
     get currentPreset() { return currentPreset },
     get presetStore() { return derived(presetStore,p => p) },
 
-    loadPreset(presetName: string) {
+    loadPreset(presetName: T_PRESET_NAMES) {
       const [ preset ] =AudioPresets.filter(f => f.name === presetName)
-      if ( !preset ) return
 
       switch ( preset.name ) {
-        case "tiktok": document.documentElement.dataset.mood ="sad"; break
-        case "nightcore": document.documentElement.dataset.mood ="happy"; break
-        case "meme": document.documentElement.dataset.mood ="meme"; break
-        
+        case PRESET_NAMES.SAD: document.documentElement.dataset.mood ="sad"; break
+        case PRESET_NAMES.HAPPY: document.documentElement.dataset.mood ="happy"; break
+        case PRESET_NAMES.ANGRY: document.documentElement.dataset.mood ="angry"; break
         default: document.documentElement.removeAttribute("data-mood")
       }
 
       this.loadEffectChain( preset )
     },
 
-    changeEffectParam(options: Omit<EffectChainOptions,"sequence">) {
+    changeEffectParam(options: Partial<Omit<EffectChainOptions,"sequence">>) {
       setSongProperties(options)
       setReverbProperties(options)
       setWaveshaperProperties(options)
@@ -159,7 +158,7 @@ export function createAudioEffects( context:AudioContext, audioElement:HTMLAudio
       return this
     },
 
-    loadEffectChain(options?: EffectChainOptions) {
+    loadEffectChain(options?: Partial<EffectChainOptions>) {
       analyserNode.disconnect()
       mediaSource.disconnect()
       reverbNode.disconnect()

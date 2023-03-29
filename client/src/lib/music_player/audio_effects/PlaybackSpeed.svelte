@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { musicPlayer } from "src/lib/MusicPlayer.svelte"
-  import { onDestroy, onMount } from "svelte";
+  import { musicPlayer } from "src/lib/music_player/MusicPlayerBase.svelte"
+  import { onDestroy, onMount } from "svelte"
   import EffectTemplate from "./EffectTemplate.svelte"
+  import type { Unsubscriber } from "svelte/store"
 
   $: presetStore =musicPlayer.audioEffects?.presetStore
   
   let speed =1
-  let unsubscribe:undefined|Function
+  let unsubscribe:undefined|Unsubscriber
 
   onMount(() => {
     if ( !presetStore ) return
@@ -18,7 +19,7 @@
   /* NOTE holy shit i found a bug in svelte framework
   * i'm using onmount, ondestroy and unsubscribe because autosubscribtions with $ are broken for some reason
   * my range input is stuck, and can't be moved
-  * and $: console.log($presetStore) fired on every frame when *moving* input even tho store hasn't changed at all
+  * and $: console.log($presetStore) fired on every update frame when *moving* input even tho store hasn't changed at all
   */
 
   function onSpeedChange() {
@@ -27,7 +28,7 @@
 
   function onReset() {
     speed =1
-    // onSpeedChange()
+    onSpeedChange()
   }
 
 </script>

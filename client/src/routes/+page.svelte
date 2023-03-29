@@ -1,13 +1,11 @@
 <script lang="ts">
-  
+  import Head from "src/lib/Head.svelte"
+
   
 </script>
 
-<svelte:head>
-  <title>Welcome</title>
-</svelte:head>
+<Head title="Demo Songs"></Head>
 
 <main class="min-h-screen">
   
-
 </main>

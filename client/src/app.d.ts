@@ -9,7 +9,5 @@ declare namespace App {
 	// interface Platform {}
 }
 
-declare type Point ={ x: number, y: number }
-
 declare module "*.opus"
 declare module "virtual:icons*"

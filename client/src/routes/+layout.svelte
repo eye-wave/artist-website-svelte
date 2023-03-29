@@ -1,22 +1,32 @@
 <script lang="ts">
-  import Footer from "src/lib/Footer.svelte"
-  import MusicPlayer, { musicPlayer } from "src/lib/MusicPlayer.svelte"
-  import Navbar from "src/lib/Navbar.svelte"
-  import { onMount } from "svelte"
+  import Footer from "src/lib/navigation/Footer.svelte"
+  import Navbar from "src/lib/navigation/Navbar.svelte"
+  import { onDestroy, onMount, type ComponentType } from "svelte"
   import "./styles.css"
   import "$lib/screenEffects.css"
+  import { isMusicPlayerInitialized } from "src/stores/isMusicPlayerInitialized"
 
   let isJavascriptEnabled =false
   onMount(() => isJavascriptEnabled =true)
+  
+  let loadMusicPlayerPromise:Promise<{default:ComponentType}>
+  const unsubscribe =isMusicPlayerInitialized.subscribe(val => {
+    if ( val ) {
+      loadMusicPlayerPromise =import("$lib/music_player/MusicPlayerBase.svelte")
+    }
+  })
 
-  const { isInitializedStore } =musicPlayer.stores
+  onDestroy(unsubscribe)
 
 </script>
 
 <Navbar />
 <slot />
 
-{#if isJavascriptEnabled && $isInitializedStore}
-  <MusicPlayer />
+{#if $isMusicPlayerInitialized}
+  {#await loadMusicPlayerPromise}
+  {:then { default: Component }} 
+    <Component />
+  {/await}
 {/if}
 <Footer />

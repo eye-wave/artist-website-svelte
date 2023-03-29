@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { musicPlayer } from "../../MusicPlayer.svelte"
+  import { musicPlayer } from "../MusicPlayerBase.svelte"
   import { scaleLinear, line, curveBasis } from "d3"
   import { onMount, onDestroy } from "svelte"
   import { browser } from "$app/environment"
@@ -30,7 +30,7 @@
     .domain([255,0])
     .range([0,height])
 
-  $: lineGenerator =line<Point>()
+  $: lineGenerator =line<{x:number,y:number}>()
     .x(d => x(d.x))
     .y(d => y(d.y))
     .curve(curveBasis)
