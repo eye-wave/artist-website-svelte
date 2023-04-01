@@ -3,7 +3,7 @@
   import SoundCloudIcon from "virtual:icons/grommet-icons/soundcloud"
   import SpotifyIcon from "virtual:icons/ph/spotify-logo-fill"
   import YoutubeIcon from "virtual:icons/fe/youtube"
-  import { PUBLIC_DB_URL } from "$env/static/public";
+  import { PUBLIC_DB_URL } from "$env/static/public"
 
   export let title: string
   export let image: string
@@ -34,9 +34,8 @@
     },
   ]
 
-  // TODO add sort by oldest / newest
-  // TODO SUGGESTION use scrapers / apis to get total views count for each song
 
+  // TODO SUGGESTION use scrapers / apis to get total views count for each song
 </script>
 
 <Card {title} img={image}>

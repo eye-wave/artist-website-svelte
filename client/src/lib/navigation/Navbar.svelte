@@ -4,12 +4,8 @@
   import NavbarItem from "./NavbarItem.svelte"
 
   export let links =[
-    {name: "Home",href: "/"},
-    // {name: "News",href: "/news"},
-    // {name: "About",href: "/about"},
     {name: "Music",href: "/music"},
-    {name: "Demo Songs",href: "/music/eyewave_2"},
-    // {name: "Contact",href: "/contact"},
+    {name: "w.i.p.",href: "/music/eyewave_2"},
     {name: "Debug",href: "/testing"},
   ]
 
@@ -21,12 +17,14 @@
 
 <nav class="bg-surface0/10 px-3 py-10 select-none flex gap-10">
   <div class="flex items-center justify-evenly w-full">
-    <div class="text-primary-400 text-3xl w-40">
-      <Logo />
-    </div>
     <div class="flex gap-3 text-xl">
+      <NavbarItem class="w-16" href="/">
+        <Logo />
+      </NavbarItem>
       {#each links as {href,name}}
-        <NavbarItem active={$page.url.pathname === href} {href} {name}/>
+        <NavbarItem active={$page.url.pathname === href} {href}>
+          {name}
+        </NavbarItem>
       {/each}
     </div>
   </div>

@@ -1,14 +1,13 @@
 <script lang="ts">
   export let active =false
   export let href:string
-  export let name:string
 
 </script>
 
 <a
   class="select-none relative {$$props.class || ""}"
   class:active {href}>
-  {name}
+  <slot>link</slot>
 </a>
 
 <style lang="postcss">

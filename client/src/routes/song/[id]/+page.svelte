@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { PUBLIC_DB_URL } from "$env/static/public";
-  export let data  
-  const { song, post } =data
+    import { PUBLIC_DB_URL } from "$env/static/public"
+export let data  
+const { song, post } =data
 
 </script>
 

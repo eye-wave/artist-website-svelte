@@ -68,6 +68,11 @@
 
   async function handlePrevButton() {
     if ( !musicPlayer.isInitialized ) await musicPlayer.initialize()
+    if ( $timeStore > 3 ) {
+      musicPlayer.skipTo(0)
+      return
+    }
+
     musicPlayer.playPrev()
   }
 
@@ -163,7 +168,7 @@
 
 <style lang="postcss">
   .music-player {
-    z-index: 2;
+    z-index: 10;
     bottom: 0;
     position: sticky;
     @apply flex justify-between gap-2 h-16;

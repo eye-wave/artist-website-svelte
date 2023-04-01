@@ -12,8 +12,6 @@
     dispatch("change",active)
   }
 
-  // TODO accesibility on toggle
-
 </script>
 
 <div class="p-4 bg-neutral-700">

@@ -12,13 +12,18 @@
 
 <Head title="Demo Songs"></Head>
 
-<Noscript>Enable Javascript for the best experience on this page</Noscript>
+<Noscript>
+  Some features may not be available without scripts.
+  Enable Javascript for full experience.
+</Noscript>
 
 <main>
-  <section class="text-xl px-[10vmin] text-center select-none my-20">
-    <p>Oh so you found my Garbage Disposal</p>
-    <p>Well... here you can find songs that didn't fit on main, early versions of released songs, and shitposts.</p>
-    <p>Don't even bother opening soundcloud, this music player has all you need. and more</p>
+  <section class="text-xl px-[10vmin] text-center select-none my-96 font-semibold text-neutral-400">
+    <p class="mx-auto max-w-4xl">
+      Ooops, looks like my precious songs have been exposed. <br>
+      Well... now you might as well check them out. <span class="font-black text-xl text-neutral-600">Right?</span> <br>
+      Enough from me. Have fun messing around.
+    </p>
   </section>
 
   <section class="flex flex-wrap gap-10 justify-center px-10">

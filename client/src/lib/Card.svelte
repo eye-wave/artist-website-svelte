@@ -1,28 +1,15 @@
 <script lang="ts">  
-  import { onMount } from "svelte"
   import { PUBLIC_DB_URL } from "$env/static/public" 
+  import { viewport } from "src/actions/viewport"
 
   export let img:string
   export let title:string
 
   let enteredViewport =false
-  let figure:HTMLElement
 
-  onMount(() => {
-    const observer =new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if ( !entry.isIntersecting ) return
-        observer.unobserve(entry.target)
-        enteredViewport =true
-      })
-    },{ threshold: 0 })
-
-    observer.observe(figure)
-  })
-  
 </script>
 
-<figure bind:this={figure}>
+<figure use:viewport on:enterViewport={() => enteredViewport =true}>
   <figcaption> { title } </figcaption>
   
   {#if enteredViewport}
@@ -64,7 +51,7 @@
   figcaption {
     z-index: 1;
     @apply relative p-2;
-    @apply text-2xl text-center;
+    @apply text-2xl text-center font-light;
     text-shadow: 2px 2px 10px #000;
   }
 

@@ -55,9 +55,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        "round": ["Varela Round", "sans-serif"],
-        "sans": ["Rubik", "sans-serif"],
-        "serif": ["Playfair Display", "serif"],
+        title: ["Lilita One","cursive"],
+        sans: ["Montserrat","sans-serif"]
       },
       screens: {
         "xs": "300px",

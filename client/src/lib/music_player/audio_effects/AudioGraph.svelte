@@ -4,8 +4,6 @@
   import { onMount, onDestroy } from "svelte"
   import { browser } from "$app/environment"
 
-  // TODO IMPORTANT fix canvas width and height on window resize
-
   let canvas:HTMLCanvasElement
   let ctx:CanvasRenderingContext2D
   let animationId =-1
