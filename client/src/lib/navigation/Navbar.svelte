@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores"
-  import Logo from "../Logo.svelte"
+  import Logo from "../icons/Logo.svg?component"
   import NavbarItem from "./NavbarItem.svelte"
 
   export let links =[
@@ -11,8 +11,6 @@
 
   // TODO create theme swticher with cool animation based on:
   // https://youtu.be/6D5jSRfoSAA?t=5929
-
-  // TODO responsive web design
 </script>
 
 <nav class="bg-surface0/10 px-3 py-10 select-none flex gap-10">

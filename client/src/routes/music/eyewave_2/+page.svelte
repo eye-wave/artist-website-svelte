@@ -1,7 +1,7 @@
 <script lang="ts">
-  import SongCard from "src/lib/SongCard.svelte"
-  import Head from "src/lib/Head.svelte"
-  import Noscript from "src/lib/Noscript.svelte"
+  import Head from "$lib/Head.svelte"
+  import Noscript from "$lib/Noscript.svelte"
+  import SongCard from "./SongCard.svelte"
 
   export let data
 

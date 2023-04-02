@@ -1,6 +1,6 @@
 <script lang="ts">
   import { CUSTOM_NODE_NAME } from "../enums"
-  import { musicPlayer } from "src/lib/music_player/MusicPlayerBase.svelte"
+  import { musicPlayer } from "$lib/music_player"
   import EffectTemplate from "./EffectTemplate.svelte"
   import Knob from "./Knob.svelte"
   

@@ -1,16 +1,13 @@
-export function typewriter(element:HTMLElement,{ speed =1 }) {
+export function typewriter(element:HTMLElement,{ speed =1 } ={}) {
   const valid = (
     element.childNodes.length === 1 &&
     element.childNodes[0].nodeType === Node.TEXT_NODE
   )
 
-  if (!valid) {
-    throw new Error("This transition only works on elements with a single text node child")
-  }
+  if (!valid) return
 
-
-  const text = element.textContent || ""
-  const duration = text.length / (speed * 0.01)
+  const text =element.textContent || ""
+  const duration =text.length / (speed * 0.01)
 
   return {
     duration,

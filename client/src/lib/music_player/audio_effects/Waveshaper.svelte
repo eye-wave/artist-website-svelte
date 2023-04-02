@@ -1,7 +1,7 @@
 <script lang="ts">
   import { CUSTOM_NODE_NAME, WAVESHAPER_CURVE_TYPE } from "../enums"
   import { generateDistortionCurve } from "../waveshaper"
-  import { musicPlayer } from "src/lib/music_player/MusicPlayerBase.svelte"
+  import { musicPlayer } from "$lib/music_player"
   import { onDestroy, onMount } from "svelte"
   import { scaleLinear, line } from "d3"
   import EffectTemplate from "./EffectTemplate.svelte"
@@ -111,9 +111,9 @@
       on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({waveshaper:{intensity:e.detail}})} />
   </div>
 
-  <select bind:value={curveType} on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({waveshaper:{ curveType }})}>
+  <select bind:value={curveType} on:change={() => active && musicPlayer.audioEffects?.changeEffectParam({waveshaper:{ curveType }})}>
     {#each curveTypes as caption,value}
-      <option {value}>{caption}</option>
+      <option value={value+1}>{caption}</option>
     {/each}
   </select>
 

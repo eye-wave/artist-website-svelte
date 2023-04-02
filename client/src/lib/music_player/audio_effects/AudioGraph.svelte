@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { musicPlayer } from "../MusicPlayerBase.svelte"
+  import { musicPlayer } from ".."
   import { scaleLinear, line, curveBasis } from "d3"
   import { onMount, onDestroy } from "svelte"
   import { browser } from "$app/environment"

@@ -7,10 +7,10 @@ export const CUSTOM_NODE_NAME ={
 
 export type T_PRESET_NAMES =typeof PRESET_NAMES[keyof typeof PRESET_NAMES]
 export const PRESET_NAMES ={
-  NORMAL: 1,
-  SAD: 2,
-  ANGRY: 3,
-  HAPPY: 4
+  NORMAL: 0,
+  SAD: 1,
+  ANGRY: 2,
+  HAPPY: 3
 }
 
 

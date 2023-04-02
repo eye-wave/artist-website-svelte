@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { musicPlayer } from "src/lib/music_player/MusicPlayerBase.svelte"
+  import { musicPlayer } from "$lib/music_player"
   import { onDestroy, onMount } from "svelte"
   import EffectTemplate from "./EffectTemplate.svelte"
   import type { Unsubscriber } from "svelte/store"

@@ -2,23 +2,32 @@
   import { createEventDispatcher } from "svelte"
   import { PRESET_NAMES, type T_PRESET_NAMES } from "./enums"
   import { slide } from "svelte/transition"
-  import Angery from "../icons/Angery.svelte"
-  import Fuwa from "../icons/Fuwa.svelte"
-  import Happy from "../icons/Happy.svelte"
-  import Sad from "../icons/Sad.svelte"
+  import Angery from "../icons/Angery.svg?component"
+  import Fuwa from "../icons/Fuwa.svg?component"
+  import Happy from "../icons/Happy.svg?component"
+  import Sad from "../icons/Sad.svg?component"
 
   export let currentMood:T_PRESET_NAMES =PRESET_NAMES.NORMAL
 
   const dispatch =createEventDispatcher<{change:T_PRESET_NAMES}>()
+  const presetMap =new Map<T_PRESET_NAMES,typeof Happy>([
+    [PRESET_NAMES.NORMAL,Happy],
+    [PRESET_NAMES.SAD,Sad],
+    [PRESET_NAMES.ANGRY,Angery],
+    [PRESET_NAMES.HAPPY,Fuwa],
+  ])
+
+  let currentComponent:(typeof Happy) =Happy
   let hover =false
 
-  function change(item:T_PRESET_NAMES) {
-    currentMood =item
+  function change(name:T_PRESET_NAMES) {
+    currentMood =name
+    currentComponent =presetMap.get(name) || Happy
+
     dispatch("change", currentMood)
   }
 
 </script>
-
 
 <div
   on:mouseover={() => hover =true}
@@ -26,22 +35,13 @@
   on:mouseleave={() => hover =false}
   class="switcher flex-shrink-0">
   
-  {#if currentMood === PRESET_NAMES.ANGRY}
-    <Angery />
-  {:else if currentMood === PRESET_NAMES.HAPPY}
-    <Fuwa />
-  {:else if currentMood === PRESET_NAMES.NORMAL}
-    <Happy />
-  {:else if currentMood === PRESET_NAMES.SAD}
-    <Sad />
-  {/if}
+  <svelte:component this={currentComponent} />
 
   {#if hover}
     <div class="popup" class:hover >
-      <div transition:slide on:click={() => change(PRESET_NAMES.NORMAL)}> <Happy /> </div>
-      <div transition:slide on:click={() => change(PRESET_NAMES.SAD)}> <Sad /> </div>
-      <div transition:slide on:click={() => change(PRESET_NAMES.ANGRY)}> <Angery /> </div>
-      <div transition:slide on:click={() => change(PRESET_NAMES.HAPPY)}> <Fuwa /> </div>
+      {#each Array.from(presetMap.entries()) as [name,Component]}
+        <div transition:slide on:click={() => change(name)}> <Component /> </div>      
+      {/each}
     </div>
   {/if}
 </div>

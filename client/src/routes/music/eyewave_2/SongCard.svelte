@@ -1,14 +1,14 @@
 <script lang="ts">  
   import { isMusicPlayerInitialized } from "src/stores/isMusicPlayerInitialized"
   import { onMount } from "svelte"
-  import { PLAYER_STATE } from "./music_player/enums"
-  import Card from "./Card.svelte"
+  import { PLAYER_STATE } from "$lib/music_player/enums"
+  import Card from "$lib/Card.svelte"
   import LoadingIcon from "virtual:icons/line-md/loading-loop"
   import OpenIcon from "virtual:icons/material-symbols/open-in-new-rounded"
   import PauseIcon from "virtual:icons/mingcute/pause-circle-fill"
   import PlayIcon from "virtual:icons/material-symbols/play-circle-rounded"
-  import Tag from "./Tag.svelte"
-  import type { MusicPlayer } from "./music_player"
+  import Tag from "$lib/Tag.svelte"
+  import type { MusicPlayer } from "$lib/music_player"
 
   export let playlist:string[]
   export let audioId:string
@@ -17,7 +17,7 @@
     imageId:string,
     timestamp: number,
     artists: string[],
-    tags: string[],
+    genre: string,
   }
 
 
@@ -34,7 +34,7 @@
   async function handlePlayButton() {
     if ( musicPlayer === undefined ) {
       cardLoading =true
-      const { musicPlayer: mplayer } =await import("src/lib/music_player/MusicPlayerBase.svelte")
+      const { musicPlayer: mplayer } =await import("$lib/music_player")
       isMusicPlayerInitialized.set(mplayer)
       musicPlayer =mplayer
     }
@@ -69,11 +69,7 @@
     <OpenIcon />
   </a>
 
-  <ul class="relative text-primary-300 flex gap-2 pl-2 mr-24 flex-wrap items-baseline justify-start">
-    {#each metadata.tags as tag}
-      <Tag>{tag}</Tag>
-    {/each}
-  </ul>
+  <Tag class="relative text-primary-300 ml-4">{metadata.genre}</Tag>
     
   {#if isJavascriptEnabled}
     <button on:click={handlePlayButton}

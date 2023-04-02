@@ -1,9 +1,9 @@
 <script lang="ts">  
-  import Card from "src/lib/Card.svelte"
+  import { PUBLIC_DB_URL } from "$env/static/public"
+  import Card from "$lib/Card.svelte"
   import SoundCloudIcon from "virtual:icons/grommet-icons/soundcloud"
   import SpotifyIcon from "virtual:icons/ph/spotify-logo-fill"
   import YoutubeIcon from "virtual:icons/fe/youtube"
-  import { PUBLIC_DB_URL } from "$env/static/public"
 
   export let title: string
   export let image: string

@@ -1,14 +1,14 @@
 <script lang="ts">
-  import Head from "src/lib/Head.svelte"
+  import { fade } from "svelte/transition"
+  import { glitch } from "src/transitions/glitch"
+  import { onMount } from "svelte"
+  import { PUBLIC_SOUNDCLOUD_URL, PUBLIC_SPOTIFY_URL, PUBLIC_YOUTUBE_URL } from "$env/static/public"
+  import { typewriter } from "src/transitions/typewriter"
+  import { viewport } from "src/actions/viewport"
+  import CdIcon from "virtual:icons/clarity/cd-dvd-line"
+  import Head from "$lib/Head.svelte"
   import OfficialCard from "./OfficialCard.svelte"
   import type { ReleaseEntry } from "./+page.server"
-  import { viewport } from "src/actions/viewport"
-  import { onMount } from "svelte"
-  import { typewriter } from "src/transitions/typewriter";
-  import { glitch } from "src/transitions/glitch";
-  import { fade } from "svelte/transition";
-  import CdIcon from "virtual:icons/clarity/cd-dvd-line"
-  import ClockIcon from "virtual:icons/material-symbols/nest-clock-farsight-analog-rounded"
 
   export let data
 
@@ -65,9 +65,9 @@
     <p class="max-w-3xl mx-auto">
       <span class="font-title text-primary-400 text-4xl inline-flex gap-1"> <CdIcon /> Discography</span> <br>
       Find all of my released songs right here, going back to 2019 and beyond!
-      Most of them are released on <a href="" class="text-orange-400 font-title text-2xl">Soundcloud</a>,
-      but you can also find them on my <a href="" class="text-red-400 font-title text-2xl">YouTube</a>
-      channel and even on <a href="" class="text-green-400 font-title text-2xl">Spotify</a>.
+      Most of them are released on <a href={PUBLIC_SOUNDCLOUD_URL} target="_blank" class="text-orange-400 font-title text-2xl">Soundcloud</a>,
+      but you can also find them on my <a href={PUBLIC_YOUTUBE_URL} target="_blank" class="text-red-400 font-title text-2xl">YouTube</a>
+      channel and even on <a href={PUBLIC_SPOTIFY_URL} target="_blank" class="text-green-400 font-title text-2xl">Spotify</a>.
       And if you're still looking for more, check out my <abbr title="Work in progress">w.i.p</abbr> page.</p>
   </section>
 
@@ -90,7 +90,7 @@
        
       <div class="h-20 my-10 flex flex-col items-center">
         {#if group.active}
-          <h2 in:glitch={{speed:0.7}} out:fade|local
+          <h2 in:glitch out:fade|local
             class="text-3xl font-title text-primary-300">
             { group.year }
           </h2>

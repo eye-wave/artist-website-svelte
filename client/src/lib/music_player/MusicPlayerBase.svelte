@@ -1,9 +1,6 @@
-<script context="module" lang="ts">
-  export const musicPlayer =MusicPlayer.getInstance()
-</script>
 <script lang="ts">
   import { formatSeconds } from "src/utils/time"
-  import { MusicPlayer } from "."
+  import { musicPlayer } from "."
   import { onMount } from "svelte"
   import { PLAYER_STATE, PRESET_NAMES, QUEUE_STATE } from "./enums"
   import { PUBLIC_DB_URL } from "$env/static/public"

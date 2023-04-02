@@ -1,5 +1,5 @@
 import { browser } from "$app/environment"
-import { createAudioEffects, type AudioEffects, type EffectChainOptions } from "./audioEffects"
+import { createAudioEffects, type AudioEffects } from "./audioEffects"
 import { createSongQueue, type SongMetadata } from "./queue"
 import { derived, writable } from "svelte/store"
 import { PLAYER_STATE, QUEUE_STATE, type T_PLAYER_STATE, type T_QUEUE_STATE } from "./enums"
@@ -240,3 +240,5 @@ export class MusicPlayer {
   }
 
 }
+
+export const musicPlayer =MusicPlayer.getInstance()

@@ -12,47 +12,17 @@ module.exports = {
     extend: {
       colors: {
         "primary": {
-          "50": "#e9fbfa",
-          "100": "#d2f8f5",
-          "200": "#a6f0ea",
-          "300": "#79e9e0",
-          "400": "#4de1d5",
-          "500": "#20dacb",
-          "600": "#1aaea2",
-          "700": "#13837a",
-          "800": "#0d5751",
-          "900": "#062c29"
+          '50':  '#effdfd',
+          '100': '#d2f7f9',
+          '200': '#aaf0f4',
+          '300': '#76e4ec',
+          '400': '#39d0dd',
+          '500': '#14b4c6',
+          '600': '#0892a2',
+          '700': '#097684',
+          '800': '#0b5e6b',
+          '900': '#0d4f5a',
         },
-        dark: {
-          "blue": {
-            "50": "#e7e8eb",
-          "100": "#cfd2d6",
-          "200": "#9fa4ad",
-          "300": "#6f7784",
-          "400": "#3f495b",
-          "500": "#0f1c32",
-          "600": "#0c1628",
-          "700": "#09111e",
-          "800": "#060b14",
-          "900": "#03060a"
-          }
-        },
-        catppuccin: {
-          rosewater: "#f4dbd6",
-          flamingo: "#f0c6c6",
-          pink: "#f5bde6",
-          mauve: "#c6a0f6",
-          red: "#ed8796",
-          maroon: "#ee99a0",
-          peach: "#f5a97f",
-          yellow: "#eed49f",
-          green: "#a6da95",
-          teal: "#8bd5ca",
-          sky: "#91d7e3",
-          sapphire: "#7dc4e4",
-          blue: "#8aadf4",
-          lavender: "#b7bdf8",
-        }
       },
       fontFamily: {
         title: ["Lilita One","cursive"],
@@ -67,3 +37,4 @@ module.exports = {
     }
   },
 }
+

@@ -1,21 +1,22 @@
 <script lang="ts">
+  import { PUBLIC_REPO_URL, PUBLIC_SOUNDCLOUD_URL, PUBLIC_YOUTUBE_URL } from "$env/static/public"
   import GithubIcon from "virtual:icons/mdi/github"
   import SoundCloudIcon from "virtual:icons/grommet-icons/soundcloud"
   import YoutubeIcon from "virtual:icons/mdi/youtube"
 
   const links =[
     {
-      href: "https://example.com",
+      href: PUBLIC_REPO_URL,
       Component: GithubIcon,
       caption: "[Source Code]"
     },
     {
-      href: "https://example.com",
+      href: PUBLIC_YOUTUBE_URL,
       Component: YoutubeIcon,
       caption: "[Youtube]"
     },
     {
-      href: "https://example.com",
+      href: PUBLIC_SOUNDCLOUD_URL,
       Component: SoundCloudIcon,
       caption: "[Soundcloud]"
     },
