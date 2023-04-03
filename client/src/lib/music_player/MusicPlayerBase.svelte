@@ -18,6 +18,7 @@
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
   import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
+  import Slider from "../Slider.svelte"
   
   const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore, timeStore } =musicPlayer.stores
 
@@ -73,8 +74,8 @@
     musicPlayer.playPrev()
   }
 
-  function handleSongSkip(e:Event) {
-    musicPlayer.skipTo(+(e.target as HTMLInputElement).value)
+  function handleSongSkip(e:CustomEvent) {
+    musicPlayer.skipTo(e.detail *($currentTrackStore?.duration || 1))
   }
 
 </script>
@@ -136,10 +137,13 @@
     <div class="progress-bar">
       <label for="progress-bar" class="w-14 font-bold">{formatSeconds($timeStore)}</label>
 
-      {#if windowWidth > 500}
-        <input class="min-w-0 w-full"
+      {#if windowWidth > 1000 }
+        <Slider
           on:change={handleSongSkip}
-          type="range" name="progress-bar" min={0} max={$currentTrackStore?.duration || 0} value={$timeStore}>
+          max={$currentTrackStore?.duration} value={$timeStore}/>
+        <!-- <input class="min-w-0 w-full"
+          on:change={handleSongSkip}
+          type="range" name="progress-bar" min={0} max={$currentTrackStore?.duration || 0} value={$timeStore}> -->
       {/if}
         
       <label for="progress-bar" class="w-14">{formatSeconds($currentTrackStore?.duration || 0)}</label>
