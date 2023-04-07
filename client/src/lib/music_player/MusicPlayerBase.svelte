@@ -1,36 +1,59 @@
 <script lang="ts">
+  import { fly } from "svelte/transition"
   import { formatSeconds } from "src/utils/time"
   import { musicPlayer } from "."
-  import { onMount } from "svelte"
-  import { PLAYER_STATE, PRESET_NAMES, QUEUE_STATE } from "./enums"
+  import { type SvelteComponent, onMount } from "svelte"
+  import { PLAYER_STATE, QUEUE_STATE, type T_PLAYER_STATE, type T_QUEUE_STATE } from "./enums"
   import { PUBLIC_DB_URL } from "$env/static/public"
   import { trimText } from "src/utils/text"
   import AutoplayOffIcon from "virtual:icons/ic/round-play-disabled"
   import LoadingIcon from "virtual:icons/line-md/loading-loop"
   import LoopAllIcon from "virtual:icons/cil/loop"
-  import LoopNoneIcon from "virtual:icons/heroicons-solid/arrow-down-on-square"
+  import LoopOffIcon from "virtual:icons/heroicons-solid/arrow-down-on-square"
   import LoopOneIcon from "virtual:icons/cil/loop-1"
-  import MoodSwitcher from "./MoodSwitcher.svelte"
   import NextIcon from "virtual:icons/basil/skip-next-solid"
   import PauseIcon from "virtual:icons/typcn/media-pause"
   import PlayIcon from "virtual:icons/material-symbols/play-arrow-rounded"
   import PrevIcon from "virtual:icons/basil/skip-prev-solid"
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
-  import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
   import Slider from "../Slider.svelte"
+  import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
+  import ArrowUpIcon from "virtual:icons/material-symbols/keyboard-arrow-up-rounded"
   
   const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore, timeStore } =musicPlayer.stores
+  const playerStateComponents =new Map<T_PLAYER_STATE,SvelteComponent>([
+    [PLAYER_STATE.ERROR,WifiErrorIcon],
+    [PLAYER_STATE.LOADING,LoadingIcon],
+    [PLAYER_STATE.PAUSED,PlayIcon],
+    [PLAYER_STATE.IDLE,PlayIcon],
+    [PLAYER_STATE.PLAYING,PauseIcon],
+  ])
+  const queueStateComponents =new Map<T_QUEUE_STATE,SvelteComponent>([
+    [QUEUE_STATE.AUTOPLAYOFF,AutoplayOffIcon],
+    [QUEUE_STATE.LOOPALL,LoopAllIcon],
+    [QUEUE_STATE.LOOPOFF,LoopOffIcon],
+    [QUEUE_STATE.LOOPONE,LoopOneIcon],
+  ])
 
-  $: songTitle =trimText($currentTrackStore?.metadata.title || "",Math.ceil(windowWidth /50) +1)
+  type ComponentType =typeof import("./MusicPlayerFullscreen.svelte").default
 
-  let mood =PRESET_NAMES.NORMAL
+  let FullScreen:ComponentType
+  
   let windowWidth =300
-
+  let fullScreen =false
+  $: {
+    if ( fullScreen && !FullScreen ) {
+      import("./MusicPlayerFullscreen.svelte")
+        .then(_module => FullScreen =_module.default )
+    }
+  }
 
   function onWinResize() { windowWidth =window.innerWidth }
   onMount(onWinResize)
-  
+
+  $: songTitle =trimText($currentTrackStore?.metadata.title || "",windowWidth > 450 ? 999 : windowWidth *0.07)
+  $: songUrl =`/song/${$currentTrackStore?.audioId}`
 
   async function handlePlayButton() {
     if ( !musicPlayer.isInitialized ) await musicPlayer.initialize()
@@ -38,11 +61,7 @@
     switch ( $playerStateStore ) {
       case PLAYER_STATE.PAUSED: return musicPlayer.resume()
       case PLAYER_STATE.PLAYING: return musicPlayer.pause()
-      case PLAYER_STATE.IDLE:
-        if ( $currentTrackStore?.audioId ) {
-          return musicPlayer.replay()
-        }
-      
+      case PLAYER_STATE.IDLE: return $currentTrackStore?.audioId ? musicPlayer.replay() : void 0
       default: return
     }
   }
@@ -82,119 +101,126 @@
 
 <svelte:window on:resize={onWinResize} />
 
-<div class="music-player">  
-  <div class="button-group">
-    {#if windowWidth > 650}
-      <button class="text-xl" on:click={handleQueueButton}>
-        {#if $queueStateStore === QUEUE_STATE.LOOPALL}
-          <LoopAllIcon />
-        {:else if $queueStateStore === QUEUE_STATE.LOOPONE}
-          <LoopOneIcon />
-        {:else if $queueStateStore === QUEUE_STATE.AUTOPLAYOFF}
-          <AutoplayOffIcon />
-        {:else}
-          <LoopNoneIcon class="-rotate-90" />
-        {/if}
-      </button>
-    {/if}
-
-    <button on:click={handlePrevButton}>
-      <PrevIcon />
-    </button>
-
-    <button on:click={handlePlayButton}>
-      {#if $playerStateStore === PLAYER_STATE.ERROR}
-        <WifiErrorIcon />
-      {:else if $playerStateStore === PLAYER_STATE.LOADING}
-        <LoadingIcon />
-      {:else if $playerStateStore === PLAYER_STATE.PLAYING}
-        <PauseIcon />
-      {:else}
-        <PlayIcon />
+{#if !fullScreen}
+  <div class="music-player" transition:fly={{y: 30}}>
+    <div class="button-group">
+      {#if windowWidth > 850}
+        <button class="text-xl" on:click={handleQueueButton}>
+          <svelte:component
+            class={$queueStateStore === QUEUE_STATE.LOOPOFF ? "-rotate-90" : ""}
+            this={queueStateComponents.get($queueStateStore) || AutoplayOffIcon} />
+        </button>
       {/if}
-    </button>
 
-    <button on:click={handleNextButton}>
-      <NextIcon />
-    </button>
+      {#if windowWidth > 420 }
+        <button on:click={handlePrevButton}>
+          <PrevIcon />
+        </button>
+      {/if}
 
-    {#if windowWidth > 650}
-      <button class="text-xl" on:click={handleShuffleButton}>
-        {#if $shuffleOnStore}
-          <ShuffleIcon class="text-primary-400" />
-        {:else}
-          <ShuffleOffIcon />
-        {/if}
+      <button on:click={handlePlayButton}>
+        <svelte:component this={playerStateComponents.get($playerStateStore) || WifiErrorIcon} />
       </button>
-    {/if}
-  </div>
 
-  <!-- {#if windowWidth > 1000}
-    <AudioGraph />
-  {/if} -->
+      {#if windowWidth > 420 }
+        <button on:click={handleNextButton}>
+          <NextIcon />
+        </button>
+      {/if}
 
-  {#if windowWidth > 450}
-    <div class="progress-bar">
-      <label for="progress-bar" class="w-14 font-bold">{formatSeconds($timeStore)}</label>
+      {#if windowWidth > 850}
+        <button class="text-xl" on:click={handleShuffleButton}>
+          {#if $shuffleOnStore}
+            <ShuffleIcon class="text-primary-400" />
+          {:else}
+            <ShuffleOffIcon />
+          {/if}
+        </button>
+      {/if}
+    </div>
 
-      {#if windowWidth > 1000 }
+    {#if windowWidth > 1000}
+      <div class="progress-bar">
+        <label for="progress-bar" class="w-14 font-bold">{formatSeconds($timeStore)}</label>
         <Slider
           on:change={handleSongSkip}
           max={$currentTrackStore?.duration} value={$timeStore}/>
-        <!-- <input class="min-w-0 w-full"
-          on:change={handleSongSkip}
-          type="range" name="progress-bar" min={0} max={$currentTrackStore?.duration || 0} value={$timeStore}> -->
-      {/if}
-        
-      <label for="progress-bar" class="w-14">{formatSeconds($currentTrackStore?.duration || 0)}</label>
-    </div>
-  {/if}
+        <label for="progress-bar" class="w-14">{formatSeconds($currentTrackStore?.duration || 0)}</label>
+      </div>
 
-  <div class="song-title">
-    <div>
-      <p>{songTitle}</p>
-      <p class="text-right text-xs text-neutral-400">{$currentTrackStore?.metadata.artists || ""}</p>
+      <button on:click={() => fullScreen =true }
+        class="absolute w-full h-8 bg-white/10 inset-0 -translate-y-full flex justify-center text-xl">
+        <ArrowUpIcon />
+      </button>
+    {:else}
+      <button on:click={() => fullScreen =true }
+        class="w-full flex justify-center text-2xl">
+        <ArrowUpIcon />
+      </button>
+    {/if}
+
+    <div class="flex w-96 justify-end gap-2">
+      <div class="flex flex-col items-end">
+        <a href={songUrl}
+          class="font-title">{songTitle}</a>
+      </div>
+      
+      <a href={songUrl} class="w-12 h-12 relative" draggable="false">
+        {#key $currentTrackStore?.metadata.imageId || ""}
+          <img transition:fly={{ x: -20 }} class="absolute inset-0 rounded-sm"
+            draggable="false"
+            src="{PUBLIC_DB_URL}/storage/file/{$currentTrackStore?.metadata.imageId}?width=48&height=48" alt="">
+        {/key}
+      </a>
     </div>
-    <a href="#{$currentTrackStore?.audioId}" class="w-12 h-12 flex-shrink-0">
-      <img width={48} height={48} src="{PUBLIC_DB_URL}/storage/file/{$currentTrackStore?.metadata.imageId}?width=48&height=48" alt="?">
-    </a>
+
   </div>
+{/if}
 
-  {#if windowWidth > 350}
-    <MoodSwitcher bind:currentMood={mood} on:change={() => musicPlayer?.audioEffects?.loadPreset(mood)} />
-  {/if}
-
-</div>
+{#if fullScreen && FullScreen}
+  <FullScreen
+    on:close={() => fullScreen =false}
+    {handleNextButton}
+    {handlePlayButton}
+    {handlePrevButton}
+    {handleQueueButton}
+    {handleShuffleButton}
+    {handleSongSkip}
+    {windowWidth}
+    title={$currentTrackStore?.metadata.title || "untitled"}
+    artists={$currentTrackStore?.metadata.artists || []}
+    currentTime={$timeStore || 0}
+    duration={$currentTrackStore?.duration || 0}
+    image={$currentTrackStore?.metadata.imageId || "null"}
+    playerComponent={playerStateComponents.get($playerStateStore) || WifiErrorIcon}
+    queueComponent={queueStateComponents.get($queueStateStore) || AutoplayOffIcon}
+    queueState={$queueStateStore}
+    shuffleOn={$shuffleOnStore}
+  />
+{/if}
 
 
 <style lang="postcss">
   .music-player {
-    z-index: 10;
+    z-index: 20;
     bottom: 0;
     position: sticky;
+    @apply py-1 px-1 sm:px-[10vmin];
     @apply flex justify-between gap-2 h-16;
-    @apply bg-black py-1 px-3;
+    @apply bg-black select-none;
   }
 
   .button-group {
-    @apply flex items-center gap-1;
+    @apply flex items-center gap-1 flex-shrink-0;
     @apply text-3xl text-primary-100 w-fit px-2;
-    flex-shrink: 0.2;
     z-index: 2;
   }
 
   .progress-bar {
+    min-width: 40vmin;
+    max-width: 90vmin;
     @apply flex text-center items-center w-full max-w-2xl;
     @apply text-xs md:text-sm;
-    flex-shrink: 1;
-    min-width: 4rem;
   }
-
-  .song-title {
-    @apply flex gap-2 justify-end w-32;
-    flex-shrink: 0.6;
-    word-break: keep-all;
-  }
-
 
 </style>

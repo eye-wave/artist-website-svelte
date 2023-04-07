@@ -1,13 +1,13 @@
 <script lang="ts">
   import { musicPlayer } from ".."
-  import { scaleLinear, line, curveBasis } from "d3"
-  import { onMount, onDestroy } from "svelte"
+  import { curveBasis, line, scaleLinear } from "d3"
+  import { onDestroy, onMount } from "svelte"
   import { browser } from "$app/environment"
 
   let canvas:HTMLCanvasElement
   let ctx:CanvasRenderingContext2D
   let animationId =-1
-  let fftSize =8192
+  const fftSize =8192
   let domRect:DOMRect
   let div:HTMLDivElement
 

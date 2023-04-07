@@ -372,6 +372,13 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.21.tgz#5de5a2385a35309427f6011992b544514d559aa1"
   integrity sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==
 
+"@poppanator/sveltekit-svg@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@poppanator/sveltekit-svg/-/sveltekit-svg-3.0.0.tgz#4c1b57cc9f0e660cba7d890ebec971c392431c22"
+  integrity sha512-ZWY65A79R52EYTMAQpTwsS05gvS3nOqtqrEGKfkY7PTQErFBjvHbgmfbEX9hofVrw1SwOhR5gG80VyYdOZjDRQ==
+  dependencies:
+    svgo "^3.0.2"
+
 "@rollup/plugin-commonjs@^24.0.0":
   version "24.0.1"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-commonjs/-/plugin-commonjs-24.0.1.tgz#d54ba26a3e3c495dc332bd27a81f7e9e2df46f90"
@@ -5179,6 +5186,11 @@ svelte-check@^3.1.4:
     sade "^1.7.4"
     svelte-preprocess "^5.0.0"
     typescript "^4.9.4"
+
+svelte-fast-marquee@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/svelte-fast-marquee/-/svelte-fast-marquee-0.4.1.tgz#f564710e70fe4f878e07a3d8145cc2f0946ce9fd"
+  integrity sha512-M5fqQlFZZugoUQo6mOrer0QSe+XTmJnX4x+06x6S07Wlvy0dA8P9xjajPv8QymJgTCMVGHiv2KN16MgIp6JU/g==
 
 svelte-hmr@^0.15.1:
   version "0.15.1"

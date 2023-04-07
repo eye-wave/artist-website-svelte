@@ -1,5 +1,5 @@
-import type { Request, Response } from "express"
 import { db } from "../db"
+import type { Request, Response } from "express"
 
 const AUTH =process.env.AUTH
 
@@ -11,6 +11,7 @@ export function listAllWrapper(req:Request,res:Response,auth:boolean,tableName:s
         return
       }
       
+      console.log(req.body)
       const [ auth ] =req.body.match(/(?<=:)[\w\d]+$/) || []
       if ( auth !== AUTH ) {
         res.sendStatus(403).end()

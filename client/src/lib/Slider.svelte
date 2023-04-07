@@ -15,6 +15,8 @@
   let mouseDown =false
   let percentValue =0
 
+  // TODO fix slider on mobile devices
+
   $: pixelWidth =vertical ?
     ((domRect?.height || margin *2) -margin *2 -10) :
     ((domRect?.width || margin *2) -margin *2 -10)
@@ -22,22 +24,25 @@
     percentValue *pixelWidth :
     ( value -min ) / ( max - min ) *pixelWidth
 
-  function handleMouseDown(e:MouseEvent) {
+  function handleMouseDown(e:MouseEvent|PointerEvent) {
     mouseDown =true
+    onResize()
     handleMouseMove(e)
   }
   
-  function handleMouseMove(e:MouseEvent) {
+  function handleMouseMove(e:MouseEvent|PointerEvent) {
     if ( !mouseDown ) return
 
     const { x, y } =getCoordinatesFromEvent(e)
     const val =vertical ?
-      y -domRect.top -margin :
-      x -domRect.left -margin
+      y -domRect.top -margin -6 :
+      x -domRect.left -margin -6
     
     percentValue =val / pixelWidth
     if ( percentValue < 0 ) percentValue =0
     if ( percentValue > 1 ) percentValue =1
+
+    value =percentValue *(max -min) +min
   }
   
   function handleMouseUp() {
@@ -55,11 +60,15 @@
 
 <svelte:window
   on:resize={onResize}
+  on:pointerup={handleMouseUp}
+  on:pointermove={handleMouseMove}
   on:mousemove={handleMouseMove}
   on:mouseup={handleMouseUp} />
 
 <div
+  on:dblclick
   on:mousedown={handleMouseDown}
+  on:pointerdown={handleMouseDown}
   bind:this={div}
   class:vertical
   class="slider-container">
@@ -76,8 +85,10 @@
   
   .slider {
     &-container {
+      min-width: 4vmin;
       @apply relative m-2 p-3 w-full h-10;
       @apply flex items-center;
+      /* @apply bg-red-800; */
 
       * {
         @apply relative rounded-full;
@@ -85,13 +96,13 @@
       }
     }
 
-    &-track { @apply w-full h-2 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 }
-    &-thumb { @apply w-3 h-6 bg-gradient-to-b from-primary-300 to-primary-500 shadow-md }
+    &-track { @apply w-full h-[2px] bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 }
+    &-thumb { @apply w-3 h-3 bg-gradient-to-b from-primary-300 to-primary-500 shadow-md }
   }
 
   .vertical { @apply justify-center items-start }
   .slider-container.vertical { @apply h-96 w-10 }
   .slider-track.vertical { @apply h-full w-2 bg-gradient-to-b }
-  .slider-thumb.vertical { @apply h-3 w-6 flex-shrink-0 bg-gradient-to-r }
+  .slider-thumb.vertical { @apply flex-shrink-0 bg-gradient-to-r }
   
 </style>

@@ -1,3 +1,5 @@
+export * from "./artists"
 export * from "./demos"
 export * from "./releases"
+export * from "./splitter"
 export * from "./storage"

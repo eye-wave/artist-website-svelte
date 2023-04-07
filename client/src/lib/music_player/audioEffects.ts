@@ -1,8 +1,8 @@
 import { compareArrays } from "src/utils/array"
-import { createReverbNode, type ReverbNode, type ReverbOptions } from "./reverb"
-import { createWaveShaperNode, type WaveShaperNode, type WaveShaperOptions } from "./waveshaper"
-import { CUSTOM_NODE_NAME, PRESET_NAMES, WAVESHAPER_CURVE_TYPE, type T_CUSTOM_NODE_NAME, type T_PRESET_NAMES } from "./enums"
+import { CUSTOM_NODE_NAME, PRESET_NAMES, type T_CUSTOM_NODE_NAME, type T_PRESET_NAMES, WAVESHAPER_CURVE_TYPE } from "./enums"
 import { derived, writable } from "svelte/store"
+import { type ReverbNode, type ReverbOptions, createReverbNode } from "./reverb"
+import { type WaveShaperNode, type WaveShaperOptions, createWaveShaperNode } from "./waveshaper"
 import impulseAudioSource from "../audio/impulse.opus"
 
 export type CustomAudioNode =ReverbNode | WaveShaperNode
@@ -28,7 +28,7 @@ export const AudioPresets:Preset[] =[
       wet: 1
     },
     reverb: {
-      dry: 0.6,
+      dry: 0.8,
       wet: 0.1
     },
     speed: 1.13

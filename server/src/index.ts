@@ -1,6 +1,7 @@
+/* eslint-disable no-duplicate-imports */
+import { artistsRoute, demosRoute, releasesRoute, splitterRoute, storageRoute } from "./routes"
 import express from "express"
-import type { Request, Response, NextFunction } from "express"
-import { storageRoute, demosRoute, releasesRoute } from "./routes"
+import type { NextFunction, Request, Response } from "express"
 
 function logger(req:Request,_:Response,next:NextFunction) {
   console.log(`~> Received ${req.method} on ${req.url}`)
@@ -18,8 +19,10 @@ app
   .use(logger)
   .use(express.text())
   .use(cors)
-  .use("/storage",storageRoute) 
+  .use("/artists",artistsRoute)
   .use("/releases",releasesRoute)  
+  .use("/split",splitterRoute) 
+  .use("/storage",storageRoute) 
   .use("/wip",demosRoute) 
   .use((_,res) => res.sendStatus(404))
   .listen(3000)

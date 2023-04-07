@@ -14,17 +14,17 @@
 
 </script>
 
-<div class="p-4 bg-neutral-700">
+<div class="p-4 bg-neutral-900 rounded-md relative my-1">
   <span class="text-white font-bold">{effectName}</span>
-  <div class="flex gap-2 items-start flex-wrap">
+  <div class="flex items-start flex-wrap justify-evenly">
     <slot />
 
-    {#if enableToggle}
-      <button
-        on:click={handleToggle}
-        class:bg-neutral-500={!active}
-        style:background={active ? color : ""}
-        class="cursor-pointer w-6 h-6 rounded-full" />
-    {/if}
   </div>
+  {#if enableToggle}
+    <button
+      on:click={handleToggle}
+      class:bg-neutral-500={!active}
+      style:background={active ? color : ""}
+      class="cursor-pointer w-6 h-6 rounded-full absolute top-3 right-3" />
+  {/if}
 </div>

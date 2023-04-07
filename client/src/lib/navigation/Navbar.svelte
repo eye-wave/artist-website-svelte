@@ -6,7 +6,6 @@
   export let links =[
     {name: "Music",href: "/music"},
     {name: "w.i.p.",href: "/music/eyewave_2"},
-    {name: "Debug",href: "/testing"},
   ]
 
   // TODO create theme swticher with cool animation based on:

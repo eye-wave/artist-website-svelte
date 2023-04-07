@@ -1,6 +1,6 @@
-import { Router } from "express"
 import { db } from "../db"
 import { listAllWrapper } from "./listAllWrapper"
+import { Router } from "express"
 
 export const releasesRoute =Router()
 releasesRoute.get("/song/:id",(req,res) => {

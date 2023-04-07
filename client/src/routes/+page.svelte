@@ -5,6 +5,6 @@
 
 <Head title="Demo Songs"></Head>
 
-<main class="min-h-screen">
+<main class="flex-1">
   
 </main>

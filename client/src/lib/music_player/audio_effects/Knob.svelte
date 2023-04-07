@@ -39,7 +39,7 @@
   function onDrag(e:MouseEvent|TouchEvent) {
     if ( !mouseDown ) return
     const { x } =getCoordinatesFromEvent(e)
-    let deltaX =x -startX
+    const deltaX =x -startX
 
     let val =deltaX
     val =val /100 *max *knobSpeed
@@ -73,6 +73,7 @@
 
 <div
   class="select-none text-center w-16 text-white{$$props.class ? " "+$$props.class : ""}"
+  on:contextmenu|preventDefault
   on:dblclick={onDblClick}
   on:mousedown={onDragStart}
   on:touchstart={onDragStart}>

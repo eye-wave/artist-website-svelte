@@ -1,4 +1,4 @@
-import { WAVESHAPER_CURVE_TYPE, type T_WAVESHAPER_CURVE_TYPE } from "./enums"
+import { type T_WAVESHAPER_CURVE_TYPE, WAVESHAPER_CURVE_TYPE } from "./enums"
 
 export type WaveShaperOptions ={
   wet?: number,

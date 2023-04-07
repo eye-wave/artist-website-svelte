@@ -9,8 +9,8 @@ export type SongMetadata ={
     artists:string[],
     timestamp:number,
     tags:string[],
+    descriptionId:string
   }
-  descriptionId:string
 }
 
 export type SongMapItem ={
@@ -84,8 +84,8 @@ export function createSongQueue() {
 
   const removeSong =(songId: string) => {
     for ( let i =0; i < songMap.length; i ++ ) {
-      if ( songMap[i].metadata.audioId === songId ) {
-        URL.revokeObjectURL(songMap[i].url)
+      if ( songMap.at(i)?.metadata.audioId === songId ) {
+        URL.revokeObjectURL(songMap.at(i)?.url || "")
         songMap.splice(i,1)
 
         return 1
@@ -104,7 +104,7 @@ export function createSongQueue() {
 
   return {
     get length() { return queue.length },
-    get currentSongId() { return songMap.filter(song => song.metadata.audioId === queue[currentSongIndex])?.[0]?.metadata.audioId },
+    get currentSongId() { return songMap.filter(song => song.metadata.audioId === queue.at(currentSongIndex))?.at(0)?.metadata.audioId },
     get isCurrentLast() { return currentSongIndex === queue.length -1 },
 
     async play( songId: string ) {
@@ -128,7 +128,7 @@ export function createSongQueue() {
       if ( queue.length < 1 ) return
 
       currentSongIndex = ++currentSongIndex % queue.length
-      return queue[currentSongIndex]
+      return queue.at(currentSongIndex)
     },
 
     prev() {
@@ -136,7 +136,7 @@ export function createSongQueue() {
       if ( queue.length < 1 ) return
 
       currentSongIndex = (--currentSongIndex + queue.length) % queue.length
-      return queue[currentSongIndex]
+      return queue.at(currentSongIndex)
     },
 
     random() {
@@ -144,7 +144,7 @@ export function createSongQueue() {
       if ( queue.length < 1 ) return
 
       currentSongIndex =Math.floor(Math.random() * queue.length)
-      return queue[currentSongIndex]
+      return queue.at(currentSongIndex)
     },
 
     loadQueue(input:string[]) {      

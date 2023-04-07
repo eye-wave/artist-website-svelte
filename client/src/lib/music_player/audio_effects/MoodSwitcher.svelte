@@ -1,0 +1,37 @@
+<script lang="ts">
+  import { PRESET_NAMES, type T_PRESET_NAMES } from "../enums"
+  import Angery from "$lib/icons/Angery.svg?component"
+  import Fuwa from "$lib/icons/Fuwa.svg?component"
+  import Happy from "$lib/icons/Happy.svg?component"
+  import Sad from "$lib/icons/Sad.svg?component"
+  import EffectTemplate from "./EffectTemplate.svelte"
+  import { musicPlayer } from ".."
+
+  export let currentMood:T_PRESET_NAMES = PRESET_NAMES.NORMAL
+  // TODO add moodStore so this component can adapt to the actual settings
+
+  const presetMap =new Map<T_PRESET_NAMES,typeof Happy>([
+    [PRESET_NAMES.NORMAL,Happy],
+    [PRESET_NAMES.SAD,Sad],
+    [PRESET_NAMES.ANGRY,Angery],
+    [PRESET_NAMES.HAPPY,Fuwa],
+  ])
+
+  let currentComponent:(typeof Happy) =Happy
+
+  function change(name:T_PRESET_NAMES) {
+    currentMood =name
+    currentComponent =presetMap.get(name) || Happy
+
+    musicPlayer.audioEffects?.loadPreset(currentMood)
+  }
+
+</script>
+
+<EffectTemplate enableToggle={false} effectName="Presets">
+  {#each Array.from(presetMap.entries()) as [name,Component]}
+    <button class:scale-75={name !== currentMood}
+      class="w-12 h-12 transition-transform mx-auto"
+      on:click={() => change(name)}> <Component /> </button>      
+  {/each}
+</EffectTemplate>

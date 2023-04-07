@@ -63,7 +63,7 @@
 
 <Card title={metadata.title} img={metadata.imageId}>
   <a aria-label="view more about {metadata.title} here"
-    class="absolute right-2 top-2 z-10"
+    class="absolute left-2 bottom-2 z-10"
     href="/song/{audioId}">
     
     <OpenIcon />

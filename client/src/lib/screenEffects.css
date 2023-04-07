@@ -2,10 +2,10 @@ html {
   &[data-mood='normal'] { filter: none }
 
   &[data-mood='sad'] {
-    filter: saturate(20%) contrast(140%) brightness(120%);
+    filter: saturate(20%) brightness(120%) contrast(110%);
     &::after {
       background-color: #192b4f;
-      opacity: 0.2;
+      opacity: 0.3;
     }
   }
 

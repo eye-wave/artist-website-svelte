@@ -2,11 +2,11 @@ import { db } from "../db"
 import { listAllWrapper } from "./listAllWrapper"
 import { Router } from "express"
 
-export const demosRoute =Router()
-demosRoute.get("/song/:id",(req,res) => {
+export const artistsRoute =Router()
+artistsRoute.get("/get/:name",(req,res) => {
   try {
-    const { id } =req.params
-    const record =db.demos.get(id,"audioId")
+    const { name } =req.params
+    const record =db.artists.get(name,"name")
 
     if ( !record ) res.sendStatus(404).end()
 
@@ -18,6 +18,4 @@ demosRoute.get("/song/:id",(req,res) => {
   }
 })
 
-demosRoute.post("/list",(req,res) => listAllWrapper(req,res,false,"demos"))
-
-// TODO add song upload with basic auth
+artistsRoute.post("/list",(req,res) => listAllWrapper(req,res,false,"artists"))

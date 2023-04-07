@@ -50,8 +50,9 @@
 
   figcaption {
     z-index: 1;
+    font-size: clamp(14px,3vmin,24px);
     @apply relative p-2;
-    @apply text-2xl text-center font-light;
+    @apply text-center;
     text-shadow: 2px 2px 10px #000;
   }
 

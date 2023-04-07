@@ -1,13 +1,15 @@
 <script lang="ts">
   import { musicPlayer } from "$lib/music_player"
+  import Slider from "src/lib/Slider.svelte"
   import { onDestroy, onMount } from "svelte"
-  import EffectTemplate from "./EffectTemplate.svelte"
   import type { Unsubscriber } from "svelte/store"
-
-  $: presetStore =musicPlayer.audioEffects?.presetStore
-  
+  import EffectTemplate from "./EffectTemplate.svelte"
+    
   let speed =1
   let unsubscribe:undefined|Unsubscriber
+
+  $: presetStore =musicPlayer.audioEffects?.presetStore
+  $: formattedSpeed =Math.floor(speed * 100) /100
 
   onMount(() => {
     if ( !presetStore ) return
@@ -33,10 +35,14 @@
 
 </script>
 
-<EffectTemplate effectName="Speed" enableToggle={false}>
-  <input
-    on:dblclick={onReset}
-    on:change={onSpeedChange}
-    name="speed-changer" type="range" max={2} min={0.5} bind:value={speed} step={0.01}>
-  <label for="speed-changer">{speed}</label>
+
+<EffectTemplate enableToggle={false} effectName="Speed">
+  <div class="w-44">
+    <Slider
+      on:dblclick={onReset}
+      on:change={onSpeedChange} max={2} min={0.5} bind:value={speed} />
+    
+    <div class="text-center text-xl p-3 bg-neutral-800 rounded-full">{formattedSpeed}</div>
+  </div>
 </EffectTemplate>
+

@@ -1,6 +1,7 @@
 import { filemap } from "../filemap"
 
-export function parseExtendedCsv(csvText: string): any[] {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function parseExtendedCsv(csvText: string): unknown[] {
   const lines = csvText
     .replace(/#.*\n/gm,"")
     .trim()
@@ -11,7 +12,7 @@ export function parseExtendedCsv(csvText: string): any[] {
   const data = []
 
   for (const row of rows) {
-    const parsedRow: any = {}
+    const parsedRow: unknown = {}
 
     for (let i = 0; i < headers.length; i++) {
       const header = headers[i]
@@ -34,6 +35,7 @@ function parseHeader(headerText: string): Header[] {
     return { name, type: type?.trim().toLowerCase() ?? "string" }
   })
 }
+
 function setObjectProperty(obj:any, key: string, value: any): void {
   const parts = key.split(".")
 
@@ -80,48 +82,4 @@ function parseValue(value: string | null, type: string):unknown {
   return value
 }
 
-type Header = { name: string; type: string };
-
-
-
-
-
-// export function createHeaderFromRecord<T extends {[key:string]:unknown}>(input:T) {
-//   const headers =new Set()
-
-//   Object.keys(input).forEach(key => {
-//     const item = input[key]
-//     const type =getType(item)
-
-//     if ( type === "object" ) {
-//       const _headers =createHeaderFromRecord(item as {})
-//       const array =Array.from(_headers).map(_key => `${key}.${_key}`)
-
-//       array.forEach(key => headers.add(key))
-      
-//       return
-//     }
-
-//     if ( type === "string" ) return headers.add(key)
-//     return headers.add(`${key}:${type}`)
-//   })
-
-
-
-//   return headers
-// }
-
-// function getType( item:unknown ):string {
-//   const type =typeof item
-//   switch ( type ) {
-//     case "number":
-//     case "bigint": return "nubmer"
-//     case "boolean": return "boolean"
-//     case "object": {
-//       if ( Array.isArray(item) ) return getType(item?.[0]) +"[]"
-//       return "object"
-//     }
-    
-//     default: return "string"
-//   }
-// }
+type Header = { name: string; type: string }

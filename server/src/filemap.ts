@@ -1,7 +1,7 @@
+import "dotenv/config"
+import { createHash } from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
-import { createHash } from "node:crypto"
-import "dotenv/config"
 
 const SECRET_MESSAGE =process.env.SECRET_MESSAGE || ""
 

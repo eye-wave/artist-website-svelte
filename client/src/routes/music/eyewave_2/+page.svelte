@@ -1,13 +1,16 @@
 <script lang="ts">
   import Head from "$lib/Head.svelte"
   import Noscript from "$lib/Noscript.svelte"
+  import { artistMap } from "src/stores/artists"
   import SongCard from "./SongCard.svelte"
 
   export let data
 
-  const { songs } =data
+  const { songs, artists } =data
   const playlist =songs.map(song => song.audioId)
 
+  artists.forEach(a => artistMap.set( a.name, a ))
+  
 </script>
 
 <Head title="Demo Songs"></Head>

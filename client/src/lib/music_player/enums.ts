@@ -30,10 +30,16 @@ export const PLAYER_STATE ={
   ERROR: 5
 }
 
-export type T_QUEUE_STATE =typeof QUEUE_STATE[keyof typeof QUEUE_STATE]
+export type T_QUEUE_STATE =Omit<typeof QUEUE_STATE[keyof typeof QUEUE_STATE],"next">
 export const QUEUE_STATE ={
   LOOPALL: 1,
   LOOPONE: 2,
   LOOPOFF: 3,
-  AUTOPLAYOFF: 4
+  AUTOPLAYOFF: 4,
 }
+export const QUEUE_STATE_NAMES =new Map<T_QUEUE_STATE,string>([
+  [QUEUE_STATE.LOOPALL,"Loop all tracks"],
+  [QUEUE_STATE.LOOPONE,"Loop current track"],
+  [QUEUE_STATE.LOOPOFF,"Stop at the end"],
+  [QUEUE_STATE.AUTOPLAYOFF,"No autoplay"],
+])

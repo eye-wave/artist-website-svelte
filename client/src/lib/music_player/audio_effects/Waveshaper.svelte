@@ -3,7 +3,7 @@
   import { generateDistortionCurve } from "../waveshaper"
   import { musicPlayer } from "$lib/music_player"
   import { onDestroy, onMount } from "svelte"
-  import { scaleLinear, line } from "d3"
+  import { line, scaleLinear } from "d3"
   import EffectTemplate from "./EffectTemplate.svelte"
   import Knob from "./Knob.svelte"
   import type { Unsubscriber } from "svelte/store"
@@ -15,7 +15,10 @@
   const curveTypes =[ "Soft Clip","Hard Clip","Linear Fold" ]
   const grandientId =`${Math.random()}`
   const resolution =99
-  
+
+  let windowWidth =300
+  let unsubscribe:undefined|Unsubscriber
+
   $: presetStore =musicPlayer.audioEffects?.presetStore
   $: active =($presetStore?.sequence || []).indexOf(CUSTOM_NODE_NAME.WAVESHAPER) !== -1
   $: _color =active ? color : "#444"
@@ -35,8 +38,6 @@
   $: pathStroke =pathFill
     .replace(/^M[\d.]+,[\d.]+L/,"M")
     .replace(/L[\d.]+,[\d.]+$/,"")
-
-  let unsubscribe:undefined|Unsubscriber
   
   onMount(() => {
     if ( !presetStore ) return
@@ -69,22 +70,41 @@
     musicPlayer.audioEffects.loadEffectChain({ sequence, waveshaper: { dry, wet, curveType, intensity }})
   }
 
+  function onWinResize() { windowWidth =window.innerWidth }
+  onMount(onWinResize)
+
 </script>
 
-<EffectTemplate color={_color} bind:active on:change={handleToggleButton} effectName="Waveshaper">
-  <div class="curve-monitor bg-neutral-800 w-40 h-40">
-    <svg fill="none"
-      class="w-full h-full"
-      viewBox="0 0 {width} {height}">
-      <linearGradient id={grandientId} x1=0 y1=0 x2=0 y2=1>
-        <stop offset="0%" stop-color={_color}/>
-        <stop offset="50%" stop-color="transparent"/>
-        <stop offset="100%" stop-color={_color}/>
-      </linearGradient>
+<svelte:window on:resize={onWinResize} />
 
-      <path d={pathFill} fill="url(#{grandientId})" />
-      <path d={pathStroke} stroke-width=4 stroke={_color} stroke-linejoin="round" />
-    </svg>
+<EffectTemplate color={_color} bind:active on:change={handleToggleButton} effectName="Waveshaper">
+  
+  <div class="my-2">
+    <select
+      bind:value={curveType}
+      on:change={() => active && musicPlayer.audioEffects?.changeEffectParam({waveshaper:{ curveType }})}>
+      
+      {#each curveTypes as caption,value}
+        <option value={value+1}>{caption}</option>
+      {/each}
+    </select>
+
+    {#if windowWidth > 400}
+      <div class="curve-monitor bg-neutral-800 w-40 h-40">
+        <svg fill="none"
+          class="w-full h-full"
+          viewBox="0 0 {width} {height}">
+          <linearGradient id={grandientId} x1=0 y1=0 x2=0 y2=1>
+            <stop offset="0%" stop-color={_color}/>
+            <stop offset="50%" stop-color="transparent"/>
+            <stop offset="100%" stop-color={_color}/>
+          </linearGradient>
+
+          <path d={pathFill} fill="url(#{grandientId})" />
+          <path d={pathStroke} stroke-width=4 stroke={_color} stroke-linejoin="round" />
+        </svg>
+      </div>
+    {/if}
   </div>
 
   <div class="flex flex-wrap w-32 justify-center">
@@ -110,11 +130,5 @@
       bind:value={intensity}
       on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({waveshaper:{intensity:e.detail}})} />
   </div>
-
-  <select bind:value={curveType} on:change={() => active && musicPlayer.audioEffects?.changeEffectParam({waveshaper:{ curveType }})}>
-    {#each curveTypes as caption,value}
-      <option value={value+1}>{caption}</option>
-    {/each}
-  </select>
 
 </EffectTemplate>

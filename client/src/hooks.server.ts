@@ -1,5 +1,5 @@
-import type { Handle } from "@sveltejs/kit"
 import { minify } from "html-minifier"
+import type { Handle } from "@sveltejs/kit"
 
 export const handle = (async ({ event, resolve }) => {
   const response = await resolve(event, {
