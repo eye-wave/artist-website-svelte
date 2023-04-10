@@ -1,85 +1,81 @@
-import { filemap } from "../filemap"
+export function parseCSV(input: string, customTypes:CustomTypeDefinition[] =[]){
+  input =input.replace(/#.*\n?/g,"").trim()
+  const [ rawHeaders ] =input.match(/.*/) || []
+  
+  if ( !rawHeaders ) throw new Error("File empty")
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export function parseExtendedCsv(csvText: string): unknown[] {
-  const lines = csvText
-    .replace(/#.*\n/gm,"")
-    .trim()
-    .split("\n")
+  const schema =getSchemaFromCSV(rawHeaders)
+  const rows =input.split("\n").slice(1)
 
-  const headers = parseHeader(lines.shift() || "")
-  const rows = lines.map((line) => line.trim().split(","))
-  const data = []
-
-  for (const row of rows) {
-    const parsedRow: unknown = {}
-
-    for (let i = 0; i < headers.length; i++) {
-      const header = headers[i]
-      const value = row[i]?.trim() ?? null
-
-      if (!header) continue
-
-      setObjectProperty(parsedRow, header.name, parseValue(value, header.type))
-    }
-
-    data.push(parsedRow)
-  }
-
-  return data
+  return rows.map(row => parseRowWithSchema(row,schema,customTypes))
 }
 
-function parseHeader(headerText: string): Header[] {
-  return headerText.trim().split(",").map((header) => {
-    const [name, type] = header.split(":")
-    return { name, type: type?.trim().toLowerCase() ?? "string" }
+export type CustomTypeDefinition ={
+  name: string,
+  parse: (input:string) => unknown
+}
+
+function parseItemWithType(input:string, type:string, customTypes:CustomTypeDefinition[] =[]):any {
+  if ( type.endsWith("[]" ) ) {
+    const nestedType =type.slice(0,-2)
+    return input
+      .split(";")
+      .map(item => parseItemWithType(item,nestedType))
+  }
+
+  switch ( type ) {
+    case "int": return parseInt(input)
+    case "float":
+    case "number": return parseFloat(input)
+    case "bool":
+    case "boolean": return input.toLowerCase() === "true"
+  }
+
+  for ( const typedef of customTypes ) {
+    if ( type !== typedef.name ) continue
+    return typedef.parse(input)
+  }
+
+  return input
+}
+
+function parseRowWithSchema(row:string, schema:Schema, customTypes:CustomTypeDefinition[] =[]) {
+  const obj:any ={}
+  row.split(",").forEach((item,i) => {
+    const schemaItem =schema.at(i)
+    if ( !schemaItem ) return
+    
+    const nested =schemaItem.tokens.slice(0,-1)
+    const lastToken =schemaItem.tokens.at(-1)
+
+    if ( !lastToken ) return
+
+    let nestedObject =obj
+    nested.forEach(token => {
+      if (!( token in nestedObject )) nestedObject[token] ={}
+      nestedObject =nestedObject[token]
+    })
+
+    nestedObject[lastToken] =parseItemWithType(item,schemaItem.type,customTypes)
   })
+
+  return obj
 }
 
-function setObjectProperty(obj:any, key: string, value: any): void {
-  const parts = key.split(".")
-
-  for (let i = 0; i < parts.length - 1; i++) {
-    const part = parts[i]
-    if (!obj[part]) obj[part] = {}
-    obj = obj[part]
-  }
-
-  obj[parts[parts.length - 1]] = value
+type Schema =SchemaItem[]
+type SchemaItem ={
+  type: string,
+  tokens: string[]
 }
 
-function parseValue(value: string | null, type: string):unknown {
-  if (value === null || value === "") return null
+function getSchemaFromCSV(input:string):Schema {
+  return input
+    .split(",")
+    .map(item => {
 
-  // Array check
-  if (value.includes(";")) {
-    const arrayValues = value.split(";").map((v) => parseValue(v.trim(), type.slice(0, -2))).filter(i => i!==null)
-    return arrayValues
-  }
+      const [ rawToken, type ="string" ] =item.split(":")
+      const tokens =rawToken.split(".")
 
-  if ( type === "file" ) {
-    for ( const [key,val] of filemap ) {
-      if ( value === val ) {
-        return key
-      }
-    }
-
-    return null
-  }
-
-  if (type === "boolean") {
-    if (value === "true") return true
-    if (value === "false") return false
-    return null
-  }
-
-  if (type === "number") {
-    const numberValue = Number(value)
-    if (!isNaN(numberValue)) return numberValue
-    return null
-  }
-
-  return value
+      return { type, tokens }
+    })
 }
-
-type Header = { name: string; type: string }

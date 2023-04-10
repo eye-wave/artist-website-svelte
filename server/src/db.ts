@@ -1,9 +1,22 @@
 import "dotenv/config"
-import { parseExtendedCsv } from "./lib/parseExtendedCsv"
+import { CustomTypeDefinition, parseCSV } from "./lib/parseExtendedCsv"
 import fs from "node:fs"
 import path from "node:path"
+import { filemap } from "./filemap"
 
 const DB_PATH =process.env.DB_PATH || "static/db"
+const fileType:CustomTypeDefinition ={
+  name: "file",
+  parse: input => {
+    for ( const [key,file] of filemap) {
+      if ( file === input ) {
+        return key
+      }
+    }
+
+    return null
+  }
+}
 
 type Record ={
   id: number|string,
@@ -12,8 +25,6 @@ type Record ={
 
 type Table ={
   readonly name: string,
-  // readonly path: string,
-  // readonly rawData: string,
   readonly data: Record[],
   get: (value:unknown,key?:string) => Record
 }
@@ -29,12 +40,10 @@ export function createDb(PATH =DB_PATH):Database {
     .map(file => {
       const newPath =path.join(PATH, file)
       const rawData =fs.readFileSync(newPath,"utf8")
-      const data =parseExtendedCsv(rawData) as Record[]
-
+      const data =parseCSV(rawData,[fileType]) as Record[]
+      
       return {
         get name() { return file },
-        // get rawData() { return rawData },
-        // get path() { return newPath },
         get data() { return [...data] },
         get: (value,key="id") => data.filter(item => item?.[key] === value )?.[0],
 

@@ -1,5 +1,5 @@
 import { db } from "../db"
-import { listAllWrapper } from "./listAllWrapper"
+import { listAllWrapper } from "./utils/listAllWrapper"
 import { Router } from "express"
 
 export const releasesRoute =Router()
@@ -33,6 +33,6 @@ releasesRoute.get("/artist/:id",(req,res) => {
   }
 })
 
-releasesRoute.post("/list",(req,res) => listAllWrapper(req,res,false,"released"))
+releasesRoute.get("/list",(_,res) => listAllWrapper(res,"released"))
 
 // TODO add release upload with basic auth

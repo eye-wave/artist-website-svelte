@@ -1,5 +1,5 @@
 import { db } from "../db"
-import { listAllWrapper } from "./listAllWrapper"
+import { listAllWrapper } from "./utils/listAllWrapper"
 import { Router } from "express"
 
 export const artistsRoute =Router()
@@ -18,4 +18,4 @@ artistsRoute.get("/get/:name",(req,res) => {
   }
 })
 
-artistsRoute.post("/list",(req,res) => listAllWrapper(req,res,false,"artists"))
+artistsRoute.get("/list",(_,res) => listAllWrapper(res,"artists"))

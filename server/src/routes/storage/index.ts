@@ -1,5 +1,5 @@
 import "dotenv/config"
-import { filemap } from "../filemap"
+import { filemap } from "../../filemap"
 import { Router } from "express"
 import { spawnSync } from "node:child_process"
 import fs from "node:fs"
