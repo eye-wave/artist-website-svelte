@@ -19,7 +19,7 @@ type PageData ={
 }
 
 export const load:PageServerLoad =(({ fetch }) => new Promise<PageData>(resolve => {
-  fetch(`${PUBLIC_DB_URL}/releases/list`,{ method: "POST" })
+  fetch(`${PUBLIC_DB_URL}/releases/list`,{ method: "GET" })
     .then(res => res.json())
     .then(releases => resolve({ releases }))
     .catch(() => console.log("Fetch failed for some reason."))

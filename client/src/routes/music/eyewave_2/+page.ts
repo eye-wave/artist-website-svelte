@@ -34,7 +34,7 @@ export const load:PageLoad =(async ({ fetch }) => {
   const promiseArray:Promise<void>[] =[]
 
   promiseArray.push(new Promise(resolve => {
-    fetch(`${PUBLIC_DB_URL}/wip/list`,{ method: "POST" })
+    fetch(`${PUBLIC_DB_URL}/wip/list`,{ method: "GET" })
       .then(res => res.json())
       .then((songs:SongMetadata[]) => {
         pageData.songs =songs
@@ -55,7 +55,7 @@ export const load:PageLoad =(async ({ fetch }) => {
   }))
   
   promiseArray.push(new Promise(resolve => {
-    fetch(`${PUBLIC_DB_URL}/artists/list`,{ method: "POST" })
+    fetch(`${PUBLIC_DB_URL}/artists/list`,{ method: "GET" })
       .then(res => res.json())
       .then(a => pageData.artists =a)
       .catch(() => console.log("Fetch failed for some reason."))  
