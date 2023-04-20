@@ -7,8 +7,7 @@ demosRoute.get("/song/:id",(req,res) => {
   try {
     const { id } =req.params
     const record =db.demos.get(id,"audioId")
-    console.log(record)
-
+    
     if ( !record ) res.sendStatus(404).end()
 
     res.json(record)

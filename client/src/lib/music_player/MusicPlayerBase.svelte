@@ -20,8 +20,11 @@
   import Slider from "../Slider.svelte"
   import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
   import ArrowUpIcon from "virtual:icons/material-symbols/keyboard-arrow-up-rounded"
+  import VolumeIcon from "virtual:icons/ic/round-volume-up"
+  import MutedIcon from "virtual:icons/material-symbols/volume-off-rounded"
+  import Tooltip from "../Tooltip.svelte"
   
-  const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore, timeStore } =musicPlayer.stores
+  const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore, timeStore, volumeStore } =musicPlayer.stores
   const playerStateComponents =new Map<T_PLAYER_STATE,SvelteComponent>([
     [PLAYER_STATE.ERROR,WifiErrorIcon],
     [PLAYER_STATE.LOADING,LoadingIcon],
@@ -39,7 +42,8 @@
   type ComponentType =typeof import("./MusicPlayerFullscreen.svelte").default
 
   let FullScreen:ComponentType
-  
+
+  let isOnMobile =true
   let windowWidth =300
   let fullScreen =false
   $: {
@@ -50,7 +54,13 @@
   }
 
   function onWinResize() { windowWidth =window.innerWidth }
-  onMount(onWinResize)
+  onMount(() => {
+    onWinResize()
+    
+    const mediaQueryList: MediaQueryList =window.matchMedia("(hover: hover)")
+    isOnMobile =!mediaQueryList.matches
+
+  })
 
   $: songTitle =trimText($currentTrackStore?.metadata.title || "",windowWidth > 450 ? 999 : windowWidth *0.07)
   $: songUrl =`/song/${$currentTrackStore?.audioId}`
@@ -149,7 +159,7 @@
       </div>
 
       <button on:click={() => fullScreen =true }
-        class="absolute w-full h-8 bg-white/10 inset-0 -translate-y-full flex justify-center text-xl">
+        class="absolute w-full max-w-lg h-5 bg-white/10 inset-0 -top-1 left-[50%] -translate-x-[50%] -translate-y-full flex justify-center text-xl">
         <ArrowUpIcon />
       </button>
     {:else}
@@ -157,6 +167,17 @@
         class="w-full flex justify-center text-2xl">
         <ArrowUpIcon />
       </button>
+    {/if}
+
+    {#if !isOnMobile}
+      <Tooltip class="w-8 h-8 bg-slate flex-shrink-0 flex items-center text-xl">
+        <button on:click={() => musicPlayer.setVolume($volumeStore > 0 ? 0 : 1)}>
+          <svelte:component this={ $volumeStore < 0.01 ? MutedIcon : VolumeIcon }/>
+        </button>
+        <div slot="tooltip" class="bg-slate-700 translate-y-28 -translate-x-5 rounded-md">
+          <Slider on:change={e => musicPlayer.setVolume(1 -e.detail)} maxSize={200} fixed={true} vertical={true} />
+        </div>
+      </Tooltip>
     {/if}
 
     <div class="flex w-96 justify-end gap-2">
@@ -206,8 +227,8 @@
     bottom: 0;
     position: sticky;
     @apply py-1 px-1 sm:px-[10vmin];
-    @apply flex justify-between gap-2 h-16;
-    @apply bg-black select-none;
+    @apply flex justify-between items-center gap-2 h-16;
+    @apply bg-neutral-900 select-none mx-1 rounded-md;
   }
 
   .button-group {

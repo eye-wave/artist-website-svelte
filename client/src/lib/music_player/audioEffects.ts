@@ -81,7 +81,7 @@ export function createAudioEffects( context:AudioContext, audioElement:HTMLAudio
 
   reverbNode.loadImpulseResponse( impulseAudioSource )
   const mediaSource = context.createMediaElementSource( audioElement )
-  
+
   const analyserNode = context.createAnalyser()
   analyserNode.fftSize =8192
   

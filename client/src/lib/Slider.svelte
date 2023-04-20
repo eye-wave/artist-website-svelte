@@ -6,6 +6,8 @@
   export let min =0
   export let value =0
   export let vertical =false
+  export let fixed =false
+  export let maxSize =9999
 
   const dispatch =createEventDispatcher<{change:number}>()
   const margin =12
@@ -33,10 +35,10 @@
   function handleMouseMove(e:MouseEvent|PointerEvent) {
     if ( !mouseDown ) return
 
-    const { x, y } =getCoordinatesFromEvent(e)
+    const { x, y } =getCoordinatesFromEvent(e,fixed)
     const val =vertical ?
-      y -domRect.top -margin -6 :
-      x -domRect.left -margin -6
+      y -domRect.y -margin -6 :
+      x -domRect.x -margin -6
     
     percentValue =val / pixelWidth
     if ( percentValue < 0 ) percentValue =0
@@ -71,6 +73,7 @@
   on:pointerdown={handleMouseDown}
   bind:this={div}
   class:vertical
+  style="--max:{maxSize}px"
   class="slider-container">
   
   <div class="slider-track" class:vertical>
@@ -86,6 +89,7 @@
   .slider {
     &-container {
       min-width: 4vmin;
+      max-width: var(--max);
       @apply relative m-2 p-3 w-full h-10;
       @apply flex items-center;
       /* @apply bg-red-800; */
@@ -101,8 +105,12 @@
   }
 
   .vertical { @apply justify-center items-start }
-  .slider-container.vertical { @apply h-96 w-10 }
-  .slider-track.vertical { @apply h-full w-2 bg-gradient-to-b }
+  .slider-container.vertical {
+    @apply h-96 w-10;
+    max-width: max-content;
+    max-height: var(--max);
+  }
+  .slider-track.vertical { @apply h-full w-[2px] bg-gradient-to-b }
   .slider-thumb.vertical { @apply flex-shrink-0 bg-gradient-to-r }
   
 </style>

@@ -27,6 +27,7 @@ export class MusicPlayer {
   private _mediaSession:MediaSession|undefined
   private timeStore =writable<number>(-1)
   private isInitializedStore =writable(false)
+  private volumeStore =writable(1)
 
   get isInitialized() { return this._audioContext !== undefined || this._audioElement !== undefined }
   get audioEffects() { return this._audioEffects }
@@ -173,7 +174,8 @@ export class MusicPlayer {
       queueStateStore: derived(this.queueStateStore,state => state),
       shuffleOnStore: derived(this.shuffleOnStore,shuffle => shuffle),
       currentTrackStore: derived(this.currentTrackStore,track => track),
-      timeStore: derived(this.timeStore,time => time)
+      timeStore: derived(this.timeStore,time => time),
+      volumeStore: derived(this.volumeStore,e => e)
     }
   }
 
@@ -204,6 +206,12 @@ export class MusicPlayer {
     })
 
     return this
+  }
+
+  public setVolume(input:number) {
+    if ( !this._audioElement ) return
+    this._audioElement.volume =input
+    this.volumeStore.set(input)
   }
 
   public replay() {

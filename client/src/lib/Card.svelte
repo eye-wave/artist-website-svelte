@@ -16,7 +16,7 @@
     <slot name="image">
       <picture>
         <source media="(min-width:480px)" srcset="{PUBLIC_DB_URL}/storage/file/{img}?width=384&height=384">
-        <img src="{PUBLIC_DB_URL}/storage/file/{img}?width=192&height=192" alt=""/>
+        <img draggable="false" src="{PUBLIC_DB_URL}/storage/file/{img}?width=192&height=192" alt=""/>
       </picture>
     </slot>
   {:else}
@@ -24,7 +24,7 @@
       <slot name="image">
         <picture>
           <source media="(min-width:480px)" srcset="{PUBLIC_DB_URL}/storage/file/{img}?width=384&height=384">
-          <img src="{PUBLIC_DB_URL}/storage/file/{img}?width=192&height=192" alt=""/>
+          <img draggable="false" src="{PUBLIC_DB_URL}/storage/file/{img}?width=192&height=192" alt=""/>
         </picture>
       </slot>
     </noscript>

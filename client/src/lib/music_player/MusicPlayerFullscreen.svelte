@@ -9,16 +9,26 @@
   import AudioGraph from "./audio_effects/AudioGraph.svelte"
   import CogIcon from "virtual:icons/ic/round-settings"
   import Marquee from "svelte-fast-marquee"
-  import MoodSwitcher from "./audio_effects/MoodSwitcher.svelte"
   import NextIcon from "virtual:icons/basil/skip-next-solid"
   import NoteIcon from "virtual:icons/solar/music-note-bold"
-  import PlaybackSpeed from "./audio_effects/PlaybackSpeed.svelte"
   import PrevIcon from "virtual:icons/basil/skip-prev-solid"
-  import Reverb from "./audio_effects/Reverb.svelte"
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
   import Slider from "../Slider.svelte"
-  import Waveshaper from "./audio_effects/Waveshaper.svelte"
+
+  let MoodSwitcher: SvelteComponent
+  let PlaybackSpeed: SvelteComponent
+  let Reverb: SvelteComponent
+  let Waveshaper: SvelteComponent
+
+  $: {
+    if ( isSettingsTabOpen ) {
+      if ( !MoodSwitcher ) import("./audio_effects/MoodSwitcher.svelte").then(module => MoodSwitcher =module.default)
+      if ( !PlaybackSpeed ) import("./audio_effects/PlaybackSpeed.svelte").then(module => PlaybackSpeed =module.default)
+      if ( !Reverb ) import("./audio_effects/Reverb.svelte").then(module => Reverb =module.default)
+      if ( !Waveshaper ) import("./audio_effects/Waveshaper.svelte").then(module => Waveshaper =module.default)
+    }
+  }
 
   export let artists:string[]
   export let currentTime:number
@@ -52,6 +62,8 @@
     document.documentElement.style.removeProperty("overflow")
   })
 
+  // TODO lazy load effect panel
+
 </script>
 
 <div transition:fade class="fixed inset-0 w-full h-full bg-neutral-800/80" />
@@ -84,11 +96,10 @@
     <div in:fly|local={{ x: -10, delay: 300 }} out:fly|local={{ x: -10 }}
       class="w-full h-full py-20">
 
-      <MoodSwitcher />
-
-      <PlaybackSpeed />
-      <Reverb color="#50aaff" />
-      <Waveshaper color="#de8098" />
+      <svelte:component this={MoodSwitcher}/>
+      <svelte:component this={PlaybackSpeed}/>
+      <svelte:component this={Reverb} color="#50aaff"/>
+      <svelte:component this={Waveshaper} color="de8098"/>
       
     </div>
 

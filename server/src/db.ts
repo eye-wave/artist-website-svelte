@@ -1,5 +1,5 @@
 import "dotenv/config"
-import { CustomTypeDefinition, parseCSV } from "./lib/parseExtendedCsv"
+import { CustomTypeDefinition, parseCSV } from "extended-csv-parser"
 import fs from "node:fs"
 import path from "node:path"
 import { filemap } from "./filemap"

@@ -22,6 +22,6 @@
 <slot />
 
 {#if $isMusicPlayerInitialized && MusicPlayer}
-  <MusicPlayer />
+  <svelte:component this={MusicPlayer} />
 {/if}
 <Footer />

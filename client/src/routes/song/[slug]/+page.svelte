@@ -1,12 +1,11 @@
 <script lang="ts">
   import { artistMap } from "src/stores/artists"
-  import { curveBumpY as curve, line, scaleLinear } from "d3"
   import { fly } from "svelte/transition"
   import { formatUnixDate } from "src/utils/date"
   import { isMusicPlayerInitialized } from "src/stores/isMusicPlayerInitialized"
   import { onMount } from "svelte"
   import { parsePost } from "./parser"
-  import { PLAYER_STATE } from "src/lib/music_player/enums";
+  import { PLAYER_STATE } from "src/lib/music_player/enums"
   import { PUBLIC_DB_URL } from "$env/static/public"
   import ExitIcon from "virtual:icons/material-symbols/exit-to-app-rounded"
   import LoadingIcon from "virtual:icons/line-md/loading-loop"
@@ -21,69 +20,16 @@
   let pageLoading =false
   let windowWidth =300
 
+  const width =800
+  const height =200
+
   $: musicPlayer =$isMusicPlayerInitialized
   $: playerStateStore =musicPlayer?.stores.playerStateStore
   $: currentTrackStore =musicPlayer?.stores.currentTrackStore
-
-  const a =2
-
   $: song =data.song
   $: post =data.post
   $: waveform =data.waveform
   $: artists =data.artists
-
-  type Point2D = { x: number, y: number };
-
-  function convertToPoint2DArray(input: Int8Array): Point2D[] {
-    const point2DArray: Point2D[] = []
-
-    for (let i = 0; i < input.length; i++) {
-      const currentNumber = input[i]
-      const diffPrev =Math.abs(currentNumber -input[i -1])
-      const diffNext =Math.abs(currentNumber -input[i +1])
-      const diff = diffPrev + diffNext
-
-      if ( i > 0 && i < input.length && diff < 1 ) continue
-
-      const point2D: Point2D = { x: i, y: currentNumber }
-      point2DArray.push(point2D)
-    }
-
-    point2DArray.unshift({x:0,y:0})
-    point2DArray.push({x:input.length,y:0})
-
-    return point2DArray
-  }
-
-
-  const width =800
-  const height =200
-
-  $: optimized =convertToPoint2DArray(waveform)
-
-  $: x =scaleLinear()
-    .domain([0,waveform.length])
-    .range([0,width])
-
-  $: y1 =scaleLinear()
-    .domain([32,0])
-    .range([0,height /2])
-
-  $: y2 =scaleLinear()
-    .domain([0,32])
-    .range([height/2,height])
-
-  $: lineGenerator1 =line<Point2D>()
-    .x(d => x(d.x))
-    .y(d => y1(d.y))
-    .curve(curve)
-
-  $: lineGenerator2 =line<Point2D>()
-    .x(d => x(d.x))
-    .y(d => y2(d.y))
-    .curve(curve)
-
-  $: d =(lineGenerator1(optimized)! +lineGenerator2(optimized)!).replace(/\.\d+/g,"")
 
   async function handlePlayButton() {
     if ( musicPlayer === undefined ) {
@@ -162,9 +108,9 @@
 
 
       {#if windowWidth >= 640}
-        <div>
+        <div class="w-96">
           <svg viewBox="0 0 {width} {height}">
-            <path {d} fill="#fff" />
+            <path d={waveform} fill="#fff" />
           </svg>
         </div>
       {/if}

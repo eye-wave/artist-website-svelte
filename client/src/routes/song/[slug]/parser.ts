@@ -5,5 +5,5 @@ export function parsePost(input:string) {
     .replace(/>/g, "&gt;")
     .replace(/\"/g,"&#34;")
     .replace(/\n/g,"<br>")
-    .replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, `<a class="text-primary-400 underline" target="_blank" href="$2">$1</a>`)
+    .replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, "<a class=\"text-primary-400 underline\" target=\"_blank\" href=\"$2\">$1</a>")
 }

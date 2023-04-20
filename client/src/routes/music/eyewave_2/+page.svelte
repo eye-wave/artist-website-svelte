@@ -3,14 +3,60 @@
   import Noscript from "$lib/Noscript.svelte"
   import { artistMap } from "src/stores/artists"
   import SongCard from "./SongCard.svelte"
+  import Search from "./Search.svelte"
+  import { debounce } from "src/utils/debounce"
+  import type { ModifiedSongData } from "./+page"
 
   export let data
 
   const { songs, artists } =data
+  let filteredSongs =songs
   const playlist =songs.map(song => song.audioId)
-
-  artists.forEach(a => artistMap.set( a.name, a ))
+  const testInputSongs =new Map(songs.map(song => {
+    const testInput =""
+      .concat(song.metadata.artists.join(""))
+      .concat(song.metadata.tags.join(""))
+      .concat(song.metadata.title)
+      .toLowerCase()
+    
+    return [song.audioId,testInput]
+  }))
   
+  artists.forEach(a => artistMap.set( a.name, a ))
+
+  // TODO create playlist store, that changes based on filtered songs
+
+  let lastSearched =""
+  let searchInputValue =""
+  let searchedTags =new Set<string>()
+
+  function filterByText(songArray:ModifiedSongData[]) {
+    const toLower =searchInputValue.trim().toLowerCase()
+    return songArray.filter(song => testInputSongs.get(song.audioId)?.includes(toLower))
+  }
+
+  function filterByTags(songArray:ModifiedSongData[],tags:string[]) {
+    return songArray.filter(song => tags.every(tag => testInputSongs.get(song.audioId)?.includes(tag)))
+  }
+
+  function onSearch() {
+    let filtered =songs
+
+    if ( searchInputValue ) filtered =filterByText(filtered)
+    if ( searchedTags.size > 0 ) filtered =filterByTags(filtered,[...searchedTags])
+
+    filteredSongs =filtered
+  }
+
+  const debouncedOnSearch =debounce(onSearch,180)
+
+  $: {
+    if ( searchInputValue.trim() !== lastSearched || searchedTags ) {
+      lastSearched =searchInputValue.trim()
+      debouncedOnSearch()
+    }
+  }
+
 </script>
 
 <Head title="Demo Songs"></Head>
@@ -20,18 +66,24 @@
   Enable Javascript for full experience.
 </Noscript>
 
-<main>
-  <section class="text-xl px-[10vmin] text-center select-none my-96 font-semibold text-neutral-400">
-    <p class="mx-auto max-w-4xl">
-      Ooops, looks like my precious songs have been exposed. <br>
-      Well... now you might as well check them out. <span class="font-black text-xl text-neutral-600">Right?</span> <br>
-      Enough from me. Have fun messing around.
-    </p>
-  </section>
+<main class="flex flex-col items-center">
+  <Search
+    bind:tags={searchedTags}
+    bind:value={searchInputValue} />
 
-  <section class="flex flex-wrap gap-10 justify-center px-10">
-    {#each songs as song}
+  {#if searchInputValue.length +searchedTags.size > 0 }
+    <span class="mb-4 ">Showing {filteredSongs.length} results.</span>
+  {/if}
+
+  <section class="flex flex-wrap gap-10 justify-center px-10 pb-20">
+    {#each filteredSongs as song (song.audioId)}
       <SongCard {playlist} {...song} />
     {/each}
   </section>
 </main>
+
+<style lang="postcss">
+  section {
+    min-height: 400px;
+  }
+</style>

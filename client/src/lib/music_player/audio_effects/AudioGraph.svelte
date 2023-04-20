@@ -1,6 +1,7 @@
 <script lang="ts">
   import { musicPlayer } from ".."
-  import { curveBasis, line, scaleLinear } from "d3"
+  import { curveBasis, line } from "d3-shape"
+  import { scaleLinear } from "d3-scale"
   import { onDestroy, onMount } from "svelte"
   import { browser } from "$app/environment"
 

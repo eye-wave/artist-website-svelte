@@ -7,7 +7,7 @@ type PageData ={
   song: SongMetadata,
   post: string,
   artists: ArtistData[],
-  waveform: Int8Array
+  waveform: string
 }
 
 export const load:PageLoad =(async ({ fetch, params }) => {
@@ -18,7 +18,7 @@ export const load:PageLoad =(async ({ fetch, params }) => {
     song: {} as SongMetadata,
     post: "",
     artists: [] as ArtistData[],
-    waveform: new Int8Array()
+    waveform: ""
   }
 
   const promiseArray:Promise<void>[] =[]
@@ -40,23 +40,15 @@ export const load:PageLoad =(async ({ fetch, params }) => {
   }))
 
   promiseArray.push(new Promise(resolve => {
-    fetch(`${PUBLIC_DB_URL}/storage/file/${pageData.song.audioId}?waveform=true&res=100`,{ method: "GET" })
-      .then(res => res.arrayBuffer())
-      .then(data => pageData.waveform =new Int8Array(data))
+    fetch(`${PUBLIC_DB_URL}/storage/file/${pageData.song.audioId}?waveform=true&res=100&svg=true`,{ method: "GET" })
+      .then(res => res.text())
+      .then(data => pageData.waveform =data)
       .catch(() => console.log("Fetch failed for some reason."))  
       .finally(resolve)
   }))
-
-  promiseArray.push(new Promise(resolve => {
-    fetch(`${PUBLIC_DB_URL}/artists/list`,{ method: "GET" })
-      .then(res => res.json())
-      .then(a => pageData.artists =a)
-      .catch(() => console.log("Fetch failed for some reason."))  
-      .finally(resolve)
-  }))
-
 
   await Promise.all(promiseArray)
+  pageData.song.metadata.tags.sort()
 
   return pageData
 })

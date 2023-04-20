@@ -55,7 +55,6 @@
   onMount(() => groupedByYear.forEach(g => g.active =false))
 
   // TODO fix animation bugs on scroll
-  // TODO add sort by oldest / newest
 </script>
 
 <Head title="Demo Songs"></Head>

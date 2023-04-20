@@ -2,13 +2,14 @@ import { PUBLIC_DB_URL } from "$env/static/public"
 import type { PageLoad } from "./$types"
 import type { SongMetadata } from "$lib/music_player/queue"
 
-type ModifiedSongData ={
+export type ModifiedSongData ={
   audioId: string,
   metadata:{
     title: string,
     imageId:string,
     timestamp: number,
     artists: string[],
+    tags: string[],
     genre: string,
   }
 }
@@ -17,7 +18,7 @@ export type ArtistData ={
   name:string,
   link:string,
   image:string,
-  descriptio:string
+  description:string
 }
 
 type PageData ={
@@ -45,7 +46,6 @@ export const load:PageLoad =(async ({ fetch }) => {
             song.metadata.genre =genre
 
             delete song.metadata.descriptionId
-            delete song.metadata.tags
 
             return song
           })

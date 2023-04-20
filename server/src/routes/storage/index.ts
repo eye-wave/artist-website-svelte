@@ -1,11 +1,11 @@
 import "dotenv/config"
 import { filemap } from "../../filemap"
 import { Router } from "express"
-import { spawnSync } from "node:child_process"
 import fs from "node:fs"
 import path from "node:path"
-import sharp from "sharp"
 import url from "node:url"
+import { handleImage } from "./image"
+import { handleWaveform } from "./waveform"
 
 const NULL_IMAGE =process.env.NULL_IMAGE
 const AUTH =process.env.AUTH
@@ -18,6 +18,11 @@ storageRoute.get("/file/:id",(req,res) => {
     
     if ( id === "null" || id === "undefined" ) filePath =NULL_IMAGE
     if ( !filePath ) return res.sendStatus(404).end()
+
+    if ( !fs.existsSync(filePath) ) {
+      res.status(404).end()
+      return
+    }
 
     const parsedUrl =url.parse(req.url)
     const params =new URLSearchParams(parsedUrl.query || "")
@@ -33,56 +38,14 @@ storageRoute.get("/file/:id",(req,res) => {
       case "jpeg":
       case "jpg":
       case "png":
-      case "webp": {
-
-        res.setHeader("Content-Type","image/webp")
-
-        const width  =+(params.get("width") || 192)
-        const height =+(params.get("height") || 192)
-
-        if ( !fs.existsSync(filePath) ) {
-          res.status(404).end()
-          return
-        }
-        const stream =fs.createReadStream(filePath)
-        const transform =sharp()
-          .resize(width,height)
-          .flatten()
-          .webp()
-
-        stream
-          .pipe(transform)
-          .pipe(res)
-        
-        return
-      }
+      case "webp": return handleImage(res,params,filePath)
 
       case "mp3":
       case "wav":
       case "opus":
       {
         res.setHeader("Content-Type",`audio/${fileExt === "mp3" ? "mpeg" : fileExt}`)
-
-        const isWaveform =params.get("waveform") === "true" || false
-        if ( !isWaveform ) break
-
-        const resolution =+(params.get("res") || 100)
-
-        const audioData =spawnSync(`ffprobe -hide_banner -loglevel panic -show_format -show_streams ${filePath}`,{shell:true}).stdout.toString()
-        const audioLength =parseFloat(audioData.match(/(?:duration=)([\d\.]+)/)?.[1] || "0")
-        const audioSamplerate =parseInt(audioData.match(/(?:sample_rate=)(\d+)/)?.[1] || "44100")
-        const spp =Math.floor(audioSamplerate * audioLength /resolution)
-
-        const stdout =spawnSync(`audiowaveform -i ${filePath} --bits 8 --zoom ${spp} -q --output-format json`,{shell:true}).stdout.toString() 
-        const { data } =JSON.parse(stdout) as { data: number[] }
-        const ui8 =new Int8Array([0,...data.map(n => Math.floor(Math.abs(n)) / 256 * 32 ),0])
-
-        res.setHeader("Content-Type","octet-stream")
-        res.end(Buffer.from(ui8))
-
-        // TODO add svg flag to make ssr faster ( no need to include d3 in client code )
-
-        return
+        if ( handleWaveform(res,params,filePath) ) return
       }
     }
 
