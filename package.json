@@ -51,11 +51,17 @@
   },
   "type": "module",
   "dependencies": {
+    "@aws-sdk/credential-providers": "^3.332.0",
+    "@mongodb-js/zstd": "^1.1.0",
+    "aws4": "^1.12.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "html-minifier": "^4.0.0",
+    "kerberos": "^2.0.1",
     "mongodb": "^5.5.0",
-    "sharp": "^0.32.1"
+    "mongodb-client-encryption": "^2.8.0",
+    "sharp": "^0.32.1",
+    "snappy": "^7.2.2"
   },
   "license": "MIT"
 }
