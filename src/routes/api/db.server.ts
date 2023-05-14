@@ -1,10 +1,10 @@
-import { DB_SECRET_KEY, DB_URL } from "$env/static/private"
+import { DB_SECRET_KEY, MONGODB_URI } from "$env/static/private"
 import { GridFSBucket, MongoClient, ObjectId } from "mongodb"
 import type { SongMetadata } from "src/lib/music_player/queue"
 import type { Stream } from "stream"
 
 function createMongoWrapper() {
-  const client = new MongoClient(DB_URL)
+  const client = new MongoClient(MONGODB_URI)
   const db = client.db("portfolio")
 
   const officialSongsCollection =db.collection("OfficialSongs")
