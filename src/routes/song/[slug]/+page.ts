@@ -47,7 +47,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
   pageData.song.metadata.artists.forEach(name => {
     promiseArray.push(new Promise<void>(resolve => {
 
-      fetch("http://localhost:5173/api/artists/"+name)
+      fetch("/api/artists/"+name)
         .then(res => res.json())
         .then(json => pageData.artists.push(json as ArtistData))
         .then(() => resolve())
