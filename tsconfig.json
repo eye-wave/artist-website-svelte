@@ -1,20 +1,20 @@
 {
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
-    "strict": true, 
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",   
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "emitDecoratorMetadata": true,
+    "checkJs": true,
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "src": ["./src"],
+      "src/*": ["./src/*"],
+      "$lib": ["./src/lib"],
+      "$lib/*": ["./src/lib/*"]
+    }
   }
 }

@@ -1,45 +1,26 @@
-/** @type {import('eslint').Linter.BaseConfig} */
 module.exports = {
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-  ],
+  root: true,
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:svelte/recommended", "prettier"],
   parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint"],
+  ignorePatterns: ["*.cjs"],
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module"
+    sourceType: "module",
+    ecmaVersion: 2020,
+    extraFileExtensions: [".svelte"],
   },
-  plugins: [
-    "@typescript-eslint",
+  env: {
+    browser: true,
+    es2017: true,
+    node: true,
+  },
+  overrides: [
+    {
+      files: ["*.svelte"],
+      parser: "svelte-eslint-parser",
+      parserOptions: {
+        parser: "@typescript-eslint/parser",
+      },
+    },
   ],
-  rules: {
-    "@typescript-eslint/array-type": "error",
-    "@typescript-eslint/ban-ts-comment": "warn",
-    "@typescript-eslint/ban-tslint-comment":"error",
-    "@typescript-eslint/ban-types": "error",
-    "@typescript-eslint/consistent-type-definitions": ["warn","type"],
-    "@typescript-eslint/no-empty-function": "off",
-    "arrow-spacing":["warn"],
-    "consistent-return":["off"],
-    "default-case-last":["error"],
-    "dot-notation":["error"],
-    "eol-last": ["error", "always"],
-    "eqeqeq":["error"],
-    "indent": ["error",2,{ "SwitchCase": 1 }],
-    "linebreak-style": ["error","unix"],
-    "no-constant-binary-expression":["error"],
-    "no-duplicate-imports":["warn",{"includeExports":true}],
-    "no-empty": "off",
-    "no-empty-function": ["error",{ allow: ["constructors"] }],
-    "no-eval":["error"],
-    "no-floating-decimal":["warn"],
-    "no-lone-blocks":["error"],
-    "no-lonely-if":["error"],
-    "no-new-wrappers":["error"],
-    "no-self-compare":["error"],
-    "no-unreachable-loop":["error"],
-    "no-useless-escape":"off",
-    "quotes": ["error","double"],
-    "semi": ["warn","never"],
-  }
 }
