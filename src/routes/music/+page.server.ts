@@ -1,4 +1,3 @@
-import { PUBLIC_DB_URL } from "$env/static/public"
 import type { PageServerLoad } from "./$types"
 
 export type ReleaseEntry = {
