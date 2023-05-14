@@ -2,7 +2,7 @@
   "name": "client",
   "version": "1.0.0",
   "scripts": {
-    "dev": "vite dev --host",
+    "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -51,17 +51,11 @@
   },
   "type": "module",
   "dependencies": {
-    "@aws-sdk/credential-providers": "^3.332.0",
-    "@mongodb-js/zstd": "^1.1.0",
-    "aws4": "^1.12.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "html-minifier": "^4.0.0",
-    "kerberos": "^2.0.1",
     "mongodb": "^5.5.0",
-    "mongodb-client-encryption": "^2.8.0",
-    "sharp": "^0.32.1",
-    "snappy": "^7.2.2"
+    "sharp": "^0.32.1"
   },
   "license": "MIT"
 }
