@@ -18,7 +18,7 @@
     type="text"
     bind:this={inputElement}
     bind:value
-    autocomplete="false"
+    autocomplete="off"
     class={$$props.class}
     on:change
     on:input
