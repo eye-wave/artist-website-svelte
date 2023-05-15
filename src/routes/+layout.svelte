@@ -17,7 +17,10 @@
 </script>
 
 <Navbar />
-<slot />
+
+<main class="flex-1 flex-col px-[4vmin]">
+  <slot />
+</main>
 
 {#if $isMusicPlayerInitialized && MusicPlayer}
   <svelte:component this={MusicPlayer} />

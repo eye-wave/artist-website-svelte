@@ -62,58 +62,56 @@
 
 <Head title="Demo Songs" />
 
-<main>
-  <section class="mb-96 mt-52 select-none px-[10vmin] text-center text-xl font-semibold text-neutral-400">
-    <p class="mx-auto max-w-3xl">
-      <span class="inline-flex gap-1 font-title text-4xl text-primary-400"> <CdIcon /> Discography</span> <br />
-      Find all of my released songs right here, going back to 2019 and beyond! Most of them are released on
-      <a href={PUBLIC_SOUNDCLOUD_URL} target="_blank" class="font-title text-2xl text-orange-400">Soundcloud</a>, but you can
-      also find them on my
-      <a href={PUBLIC_YOUTUBE_URL} target="_blank" class="font-title text-2xl text-red-400">YouTube</a>
-      channel and even on
-      <a href={PUBLIC_SPOTIFY_URL} target="_blank" class="font-title text-2xl text-green-400">Spotify</a>. And if you're still
-      looking for more, check out my
-      <abbr title="Work in progress">w.i.p</abbr> page.
-    </p>
-  </section>
+<section class="mb-96 mt-52 select-none px-[10vmin] text-center text-xl font-semibold text-neutral-400">
+  <p class="mx-auto max-w-3xl">
+    <span class="inline-flex gap-1 font-title text-4xl text-primary-400"> <CdIcon /> Discography</span> <br />
+    Find all of my released songs right here, going back to 2019 and beyond! Most of them are released on
+    <a href={PUBLIC_SOUNDCLOUD_URL} target="_blank" class="font-title text-2xl text-orange-400">Soundcloud</a>, but you can also
+    find them on my
+    <a href={PUBLIC_YOUTUBE_URL} target="_blank" class="font-title text-2xl text-red-400">YouTube</a>
+    channel and even on
+    <a href={PUBLIC_SPOTIFY_URL} target="_blank" class="font-title text-2xl text-green-400">Spotify</a>. And if you're still
+    looking for more, check out my
+    <abbr title="Work in progress">w.i.p</abbr> page.
+  </p>
+</section>
 
-  {#each groupedByYear as group}
-    <section
-      use:viewport
-      on:enterViewport={() => (group.active = true)}
-      on:leaveViewport={() => (group.active = false)}
-      on:leaveFromAbove={() => {
-        group.top = true
-        group.bottom = false
-      }}
-      on:leaveFromBelow={() => {
-        group.top = false
-        group.bottom = true
-      }}
-      class:top={group.top}
-      class:bottom={group.bottom}
-      class:active={group.active}
-      class="group"
-    >
-      <div class="my-10 flex h-20 flex-col items-center">
-        {#if group.active}
-          <h2 in:glitch out:fade|local class="font-title text-3xl text-primary-300">
-            {group.year}
-          </h2>
-          <h3 class="text-sm font-normal" in:typewriter out:fade|local>
-            {`${group.oldestMonth} ${group.newestMonth !== group.oldestMonth ? ` - ${group.newestMonth}` : ""}`}
-          </h3>
-        {/if}
-      </div>
+{#each groupedByYear as group}
+  <section
+    use:viewport
+    on:enterViewport={() => (group.active = true)}
+    on:leaveViewport={() => (group.active = false)}
+    on:leaveFromAbove={() => {
+      group.top = true
+      group.bottom = false
+    }}
+    on:leaveFromBelow={() => {
+      group.top = false
+      group.bottom = true
+    }}
+    class:top={group.top}
+    class:bottom={group.bottom}
+    class:active={group.active}
+    class="group"
+  >
+    <div class="my-10 flex h-20 flex-col items-center">
+      {#if group.active}
+        <h2 in:glitch out:fade|local class="font-title text-3xl text-primary-300">
+          {group.year}
+        </h2>
+        <h3 class="text-sm font-normal" in:typewriter out:fade|local>
+          {`${group.oldestMonth} ${group.newestMonth !== group.oldestMonth ? ` - ${group.newestMonth}` : ""}`}
+        </h3>
+      {/if}
+    </div>
 
-      <section class="flex flex-wrap justify-center gap-10 px-10">
-        {#each group.items as { image, link, title }}
-          <OfficialCard {image} {link} {title} />
-        {/each}
-      </section>
+    <section class="flex flex-wrap justify-center gap-10 px-10">
+      {#each group.items as { image, link, title }}
+        <OfficialCard {image} {link} {title} />
+      {/each}
     </section>
-  {/each}
-</main>
+  </section>
+{/each}
 
 <style lang="postcss">
   .group {

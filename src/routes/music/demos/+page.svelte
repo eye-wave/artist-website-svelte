@@ -60,23 +60,20 @@
   }
 </script>
 
-<Head title="Demo Songs" />
-
+<Head title="Demo Songs" description="Listen to project that propably won't be finished ever." />
 <Noscript>Some features may not be available without scripts. Enable Javascript for full experience.</Noscript>
 
-<main class="flex flex-1 flex-col items-center">
-  <Search bind:tags={searchedTags} bind:value={searchInputValue} />
+<Search class="mx-auto" bind:tags={searchedTags} bind:value={searchInputValue} />
 
-  {#if searchInputValue.length + searchedTags.size > 0}
-    <span class="mb-4">Showing {filteredSongs.length} results.</span>
-  {/if}
+{#if searchInputValue.length + searchedTags.size > 0}
+  <span class="mb-4">Showing {filteredSongs.length} results.</span>
+{/if}
 
-  <section class="flex flex-wrap justify-center gap-10 px-10 pb-20">
-    {#each filteredSongs as song (song.audioId)}
-      <SongCard {playlist} {...song} />
-    {/each}
-  </section>
-</main>
+<section class="flex flex-wrap justify-center gap-10 px-10 pb-20">
+  {#each filteredSongs as song (song.audioId)}
+    <SongCard {playlist} {...song} />
+  {/each}
+</section>
 
 <style lang="postcss">
   section {
