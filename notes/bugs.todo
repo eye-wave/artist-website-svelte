@@ -1,0 +1,9 @@
+[ ] - double skip or prev when queue is on shuffle
+[ ] - get rid of useless queue caching
+[ ] - mobile quirks
+  [ ] - sliders and knobs
+  [ ] - visual bugs on firefox mobile
+  [ ] - performance issues on firefox mobile
+
+[ ] - null image
+[ ] - confusing screen reader captions on clickables
