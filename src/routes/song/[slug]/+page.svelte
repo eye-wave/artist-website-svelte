@@ -96,12 +96,8 @@
 
       <ul class="my-3 flex flex-wrap justify-center gap-2">
         {#each artists as artist (artist)}
-          <a
-            href={artist.url || ""}
-            target="_blank"
-            out:fly|local={{ x: 10 }}
-            in:fly={{ x: -10 }}
-            class="ml-1 text-xs">{artist.name}</a
+          <a href={artist.url || ""} target="_blank" out:fly|local={{ x: 10 }} in:fly={{ x: -10 }} class="ml-1 text-xs"
+            >{artist.name}</a
           >
         {/each}
       </ul>

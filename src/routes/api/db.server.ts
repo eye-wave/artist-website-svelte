@@ -7,7 +7,7 @@ function createMongoWrapper() {
   const client = new MongoClient(MONGODB_URI)
   const db = client.db("portfolio")
 
-  const officialSongsCollection =db.collection("OfficialSongs")
+  const officialSongsCollection = db.collection("OfficialSongs")
   const demoSongsCollection = db.collection("DemoSongs")
   const artistsCollection = db.collection("Artists")
   const fileBucket = new GridFSBucket(db)

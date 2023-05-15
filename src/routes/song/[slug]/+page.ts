@@ -42,20 +42,21 @@ export const load: PageLoad = async ({ fetch, params }) => {
   )
 
   await Promise.all(promiseArray)
-  
+
   promiseArray.splice(0)
   pageData.song.metadata.artists.forEach(name => {
-    promiseArray.push(new Promise<void>(resolve => {
-
-      fetch("/api/artists/"+name)
-        .then(res => res.json())
-        .then(json => pageData.artists.push(json as ArtistData))
-        .then(() => resolve())
-    }))
+    promiseArray.push(
+      new Promise<void>(resolve => {
+        fetch("/api/artists/" + name)
+          .then(res => res.json())
+          .then(json => pageData.artists.push(json as ArtistData))
+          .then(() => resolve())
+      }),
+    )
   })
 
   await Promise.all(promiseArray)
-  
+
   pageData.song.metadata.tags.sort()
 
   return pageData
