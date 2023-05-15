@@ -52,6 +52,7 @@
 
       return { ...g, oldestMonth, newestMonth, active: true, top: false, bottom: true }
     })
+    .sort((a, b) => a.year - b.year)
     .reverse()
 
   onMount(() => groupedByYear.forEach(g => (g.active = false)))
