@@ -210,7 +210,7 @@
 {/if}
 
 {#if fullScreen && FullScreen}
-  <FullScreen
+  <svelte:component this={FullScreen}
     on:close={() => (fullScreen = false)}
     {handleNextButton}
     {handlePlayButton}
