@@ -48,7 +48,7 @@
   onDestroy(() => windowFocus && browser && window.removeEventListener("keydown", handleFocusOnKeyDown))
 </script>
 
-<div class="w-full max-w-xl px-2">
+<div class="w-full max-w-xl px-2 {$$props.class}">
   <Input bind:inputElement bind:value on:keydown={handleKeyDown} {placeholder}>
     <slot name="icon"><SearchIcon /></slot>
   </Input>

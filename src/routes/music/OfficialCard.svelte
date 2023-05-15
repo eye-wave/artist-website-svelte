@@ -32,8 +32,6 @@
       platform: "Spotify",
     },
   ]
-
-  // TODO SUGGESTION use scrapers / apis to get total views count for each song
 </script>
 
 <Card {title} img={image}>

@@ -1,6 +1,6 @@
 [X] - double skip or prev when queue is on shuffle
 [X] - some songs are not sorted properly even tho timestamps are correct
-[ ] - get rid of useless queue caching
+[X] - get rid of useless queue caching
 [ ] - mobile quirks
   [ ] - sliders and knobs
   [ ] - visual bugs on firefox mobile

@@ -9,7 +9,8 @@
   let isMenuOpened = false
   let searchedItems = [] as string[]
   let lastSearched = ""
-  let selectedIndex = 0
+  // let selectedIndex = 0
+  // TODO arrow keys for selecting items in autocomplete
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "Enter") {

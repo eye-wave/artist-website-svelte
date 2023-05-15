@@ -11,7 +11,7 @@
   const fftSize = 8192
 
   let canvas: HTMLCanvasElement
-  let ctx: CanvasRenderingContext2D
+  let ctx: CanvasRenderingContext2D | null
   let animationId = -1
   let domRect: DOMRect
   let div: HTMLDivElement
@@ -30,7 +30,10 @@
   onDestroy(() => browser && cancelAnimationFrame(animationId))
   onMount(() => {
     domRect = div.getBoundingClientRect()
-    ctx = canvas.getContext("2d")!
+    ctx = canvas.getContext("2d")
+
+    if (!ctx) return console.warn("Failed to get canvas context 2d")
+
     ctx.fillStyle = "#fff"
 
     animationId = requestAnimationFrame(animate)
@@ -38,6 +41,7 @@
 
   function animate() {
     if (animationId < 0) return
+    if (!ctx) return
 
     if (musicPlayer.audioEffects?.analyzer) {
       musicPlayer.audioEffects.analyzer.getByteFrequencyData(buffer)

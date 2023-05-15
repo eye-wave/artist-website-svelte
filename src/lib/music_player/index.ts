@@ -8,6 +8,7 @@ export type CurrentTrack = { duration: number } & SongMetadata
 
 export class MusicPlayer {
   static instance: MusicPlayer
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
   static getInstance(): MusicPlayer {
     if (!MusicPlayer.instance) {

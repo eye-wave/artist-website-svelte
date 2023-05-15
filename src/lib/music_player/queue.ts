@@ -1,5 +1,3 @@
-import { lStorage } from "src/utils/localStorage"
-
 export type SongMetadata = {
   audioId: string
   metadata: {
@@ -50,7 +48,6 @@ export function createSongQueue() {
     const [audioUrl, metadata] = await Promise.all(promiseArray)
     const song = { metadata, ...audioUrl } as SongMapItem
 
-    lStorage.set("song_cache", songMap)
     songMap.push(song)
     return song
   }
@@ -68,7 +65,6 @@ export function createSongQueue() {
       size -= songMap[0].size
       URL.revokeObjectURL(songMap[0].url)
       songMap.shift()
-      lStorage.set("song_cache", songMap)
     }
   }
 
@@ -94,14 +90,6 @@ export function createSongQueue() {
     }
     return 0
   }
-
-  // this gets executed on page load
-  // TODO yeet this stupid ass cache
-
-  try {
-    const songs = lStorage.get("song_cache") as SongMapItem[]
-    songs.forEach(song => songMap.push(song))
-  } catch {}
 
   return {
     get length() {

@@ -112,7 +112,6 @@ function createMongoWrapper() {
       return demoSongsCollection
         .find()
         .map(item => {
-          //@ts-ignore
           delete item._id
           return item
         })
@@ -123,7 +122,6 @@ function createMongoWrapper() {
       return officialSongsCollection
         .find()
         .map(item => {
-          //@ts-ignore
           delete item._id
           return item
         })
