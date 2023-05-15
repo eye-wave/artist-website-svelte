@@ -85,6 +85,8 @@
     imageInput.files = new DataTransfer().files
     imageInput.value = ""
   }
+
+  // TODO replace timestamp number input with a button for a single input with a calendar component
 </script>
 
 <Noscript />

@@ -23,6 +23,7 @@
     on:change
     on:input
     on:keydown
+    on:keydown={e => e.key === "Enter" && e.preventDefault()}
   />
 </div>
 

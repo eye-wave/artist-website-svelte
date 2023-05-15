@@ -14,8 +14,9 @@
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "Enter") {
-      isMenuOpened = false
       e.preventDefault()
+      if (!isMenuOpened) return
+      isMenuOpened = false
 
       if (!searchedItems[0]) return
       const tag = searchedItems[0]
@@ -59,7 +60,7 @@
   <div class="mb-2 flex items-center gap-2 rounded-md bg-neutral-800 px-2">
     <slot name="icon" />
     <input
-      class="w-full bg-transparent p-2"
+      class="w-full bg-transparent p-2 outline-none"
       bind:value
       on:blur={() => (isMenuOpened = false)}
       on:keydown={handleKeyDown}
@@ -98,10 +99,7 @@
 </div>
 
 <style lang="postcss">
-  input:focus {
-    outline: none;
-  }
-  div > div > div:focus-within {
-    box-shadow: 0 0 10px 2px #ffffff40;
+  div > div:focus-within {
+    box-shadow: 0 0 5px #ffffff40;
   }
 </style>
