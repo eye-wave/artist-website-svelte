@@ -127,7 +127,10 @@ export class MusicPlayer {
   }
 
   public playNext() {
-    if (this.shuffleOn) this.playRandom()
+    if (this.shuffleOn) {
+      this.playRandom()
+      return this
+    }
 
     const songId = this.queue.next()
     if (!songId) return console.warn("Couldn't find song with id: " + songId)
@@ -136,7 +139,10 @@ export class MusicPlayer {
   }
 
   public playPrev() {
-    if (this.shuffleOn) this.playRandom()
+    if (this.shuffleOn) {
+      this.playRandom()
+      return this
+    }
 
     const songId = this.queue.prev()
     if (!songId) return console.warn("Couldn't find song with id: " + songId)

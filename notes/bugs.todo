@@ -1,4 +1,4 @@
-[ ] - double skip or prev when queue is on shuffle
+[X] - double skip or prev when queue is on shuffle
 [ ] - get rid of useless queue caching
 [ ] - mobile quirks
   [ ] - sliders and knobs
