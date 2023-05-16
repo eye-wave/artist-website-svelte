@@ -64,7 +64,11 @@
 <svelte:window on:resize={onResize} />
 
 <Head title={data.song.metadata.title} description={data.post} />
-<a aria-label="go back" href="/music/demos" class="ml-3 flex h-12 w-12 -scale-x-100 items-center justify-center text-xl">
+<a
+  aria-label="go back to demo songs"
+  href="/music/demos"
+  class="ml-3 flex h-12 w-12 -scale-x-100 items-center justify-center text-xl"
+>
   <ExitIcon />
 </a>
 

@@ -20,13 +20,16 @@ export type ArtistData = {
 type PageData = {
   songs: ModifiedSongData[]
   artists: ArtistData[]
+  gridView: boolean
 }
 
 export const prerender = true
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async ({ fetch, url }) => {
+  const gridView = url.searchParams.get("view") !== "list"
   const pageData: PageData = {
     songs: [],
     artists: [],
+    gridView,
   }
 
   const promiseArray: Promise<void>[] = []

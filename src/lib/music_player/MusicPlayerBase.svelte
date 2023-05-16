@@ -19,7 +19,7 @@
   import PrevIcon from "virtual:icons/basil/skip-prev-solid"
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
-  import Slider from "../Slider.svelte"
+  import Slider from "$lib/inputs/Slider.svelte"
   import Tooltip from "../Tooltip.svelte"
   import VolumeIcon from "virtual:icons/ic/round-volume-up"
   import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
@@ -180,11 +180,12 @@
     {/if}
 
     {#if !isOnMobile}
-      <Tooltip class="bg-slate flex h-8 w-8 flex-shrink-0 items-center text-xl">
+      <Tooltip class="flex h-8 w-8 flex-shrink-0 items-center text-xl">
         <button on:click={() => musicPlayer.setVolume($volumeStore > 0 ? 0 : 1)}>
           <svelte:component this={$volumeStore < 0.01 ? MutedIcon : VolumeIcon} />
         </button>
-        <div slot="tooltip" class="-translate-x-5 translate-y-28 rounded-md bg-slate-700">
+        <div slot="tooltip" class="-translate-x-5 translate-y-28 rounded-md bg-neutral-900 ring-2 ring-primary-500">
+          <div class="pt-4 text-center text-sm text-primary-400">{$volumeStore.toPrecision(2)}</div>
           <Slider on:change={e => musicPlayer.setVolume(1 - e.detail)} maxSize={200} fixed={true} vertical={true} />
         </div>
       </Tooltip>

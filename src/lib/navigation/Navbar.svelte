@@ -7,9 +7,6 @@
     { name: "Music", href: "/music" },
     { name: "w.i.p.", href: "/music/demos" },
   ]
-
-  // TODO create theme swticher with cool animation based on:
-  // https://youtu.be/6D5jSRfoSAA?t=5929
 </script>
 
 <nav class="bg-surface0/10 flex select-none gap-10 px-3 py-10">

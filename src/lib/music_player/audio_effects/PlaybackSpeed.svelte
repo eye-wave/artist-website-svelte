@@ -2,7 +2,7 @@
   import { musicPlayer } from "$lib/music_player"
   import { onDestroy, onMount } from "svelte"
   import EffectTemplate from "./EffectTemplate.svelte"
-  import Slider from "$lib/Slider.svelte"
+  import Slider from "~/lib/inputs/Slider.svelte"
   import type { Unsubscriber } from "svelte/store"
 
   let speed = 1

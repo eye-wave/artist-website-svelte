@@ -1,16 +1,21 @@
 <script lang="ts">
   import { artistMap } from "~/stores/artists"
   import { debounce } from "~/utils/debounce"
+  import GridIcon from "virtual:icons/ion/grid"
   import Head from "$lib/Head.svelte"
+  import ListIcon from "virtual:icons/ci/hamburger-lg"
   import Noscript from "$lib/Noscript.svelte"
   import Search from "$lib/inputs/TagInput.svelte"
   import SongCard from "./SongCard.svelte"
+  import SongItem from "./SongItem.svelte"
   import type { ModifiedSongData } from "./+page"
+  import { page } from "$app/stores"
 
   export let data
 
-  const { songs, artists } = data
+  const { songs, artists, gridView } = data
 
+  let displayAsGrid = gridView
   let filteredSongs = songs
 
   const playlist = songs.map(song => song.audioId)
@@ -67,13 +72,41 @@
 
 <Search class="mx-auto" bind:tags={searchedTags} bind:value={searchInputValue} />
 
+<div class="mx-auto my-5 flex w-fit gap-5">
+  <a
+    href="{$page.url.pathname}?view=grid"
+    on:click={() => (displayAsGrid = true)}
+    class:bg-primary-500={displayAsGrid}
+    class="rounded-full bg-neutral-900 px-8 py-2 text-3xl"
+    title="grid view"
+  >
+    <GridIcon />
+  </a>
+  <a
+    href="{$page.url.pathname}?view=list"
+    on:click={() => (displayAsGrid = false)}
+    class:bg-primary-500={!displayAsGrid}
+    class="rounded-full bg-neutral-900 px-8 py-2 text-3xl"
+    title="list view"
+  >
+    <ListIcon />
+  </a>
+</div>
+
 {#if searchInputValue.length + searchedTags.size > 0}
   <span class="mb-4">Showing {filteredSongs.length} results.</span>
 {/if}
 
-<section class="flex flex-wrap justify-center gap-10 px-10 pb-20">
+<section
+  class:flex-col={!displayAsGrid}
+  class:gap-3={!displayAsGrid}
+  class:flex-wrap={displayAsGrid}
+  class:gap-10={displayAsGrid}
+  class:px-10={displayAsGrid}
+  class="flex justify-center pb-20"
+>
   {#each filteredSongs as song (song.audioId)}
-    <SongCard {playlist} {...song} />
+    <svelte:component this={displayAsGrid ? SongCard : SongItem} {playlist} {...song} />
   {/each}
 </section>
 

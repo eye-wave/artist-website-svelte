@@ -87,9 +87,8 @@
     &-container {
       min-width: 4vmin;
       max-width: var(--max);
-      @apply relative m-2 h-10 w-full p-3;
+      @apply relative h-10 w-full p-3;
       @apply flex items-center;
-      /* @apply bg-red-800; */
 
       * {
         @apply relative rounded-full;

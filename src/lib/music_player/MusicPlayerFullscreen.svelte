@@ -13,7 +13,7 @@
   import PrevIcon from "virtual:icons/basil/skip-prev-solid"
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
-  import Slider from "../Slider.svelte"
+  import Slider from "$lib/inputs/Slider.svelte"
 
   let MoodSwitcher: SvelteComponent
   let PlaybackSpeed: SvelteComponent
@@ -60,8 +60,6 @@
   onDestroy(() => {
     document.documentElement.style.removeProperty("overflow")
   })
-
-  // TODO lazy load effect panel
 </script>
 
 <div transition:fade class="fixed inset-0 h-full w-full bg-neutral-800/80" />

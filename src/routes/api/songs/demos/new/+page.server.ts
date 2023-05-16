@@ -1,6 +1,5 @@
 import { mongoWrapper } from "$api/db.server"
 import { DB_SECRET_KEY } from "$env/static/private"
-import type { SongMetadata } from "$lib/music_player/queue"
 import { fail } from "@sveltejs/kit"
 import type { File } from "buffer"
 import sharp from "sharp"
