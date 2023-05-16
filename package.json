@@ -1,6 +1,17 @@
 {
   "name": "artist-website-svelte",
+  "description": "Interactive svelte website showcasing the works of Eyewave.",
+  "author": {
+    "name": "_eyewave",
+    "url": "https://github.com/eye-wave"
+  },
+  "homepage": "https://eyewave-website.vercel.app",
+  "repository": "https://github.com/eye-wave/artist-website-svelte.git",
+  "bugs": {
+    "url": "https://github.com/eye-wave/artist-website-svelte/issues"
+  },
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -20,7 +31,7 @@
     "@types/d3-scale": "^4.0.3",
     "@types/d3-shape": "^3.1.1",
     "@types/html-minifier": "^4.0.2",
-    "@types/node": "^20.1.4",
+    "@types/node": "^20.1.5",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "autoprefixer": "^10.4.14",
@@ -43,13 +54,24 @@
     "vite": "^4.3.6",
     "vitest": "^0.31.0"
   },
-  "type": "module",
   "dependencies": {
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "html-minifier": "^4.0.0",
     "mongodb": "^5.5.0",
     "sharp": "^0.32.1"
+  },
+  "keywords": [
+    "artist",
+    "discography",
+    "dubstep",
+    "edm",
+    "eyewave",
+    "music",
+    "svelte"
+  ],
+  "engines": {
+    "node": ">=18"
   },
   "license": "MIT"
 }
