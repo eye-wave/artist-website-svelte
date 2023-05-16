@@ -6,6 +6,7 @@
   import { parsePost } from "./parser"
   import { PLAYER_STATE } from "src/lib/music_player/enums"
   import ExitIcon from "virtual:icons/material-symbols/exit-to-app-rounded"
+  import Head from "src/lib/Head.svelte"
   import LoadingIcon from "virtual:icons/line-md/loading-loop"
   import PauseIcon from "virtual:icons/mingcute/pause-circle-fill"
   import PlayIcon from "virtual:icons/material-symbols/play-circle-rounded"
@@ -62,7 +63,8 @@
 
 <svelte:window on:resize={onResize} />
 
-<a href="/music/demos" class="ml-3 flex h-12 w-12 -scale-x-100 items-center justify-center text-xl">
+<Head title={data.song.metadata.title} description={data.post} />
+<a aria-label="go back" href="/music/demos" class="ml-3 flex h-12 w-12 -scale-x-100 items-center justify-center text-xl">
   <ExitIcon />
 </a>
 
@@ -82,7 +84,7 @@
     <h1 class="break-words text-center font-title">{song.metadata.title}</h1>
     <div class="flex items-center justify-between">
       <span class="h-fit text-sm text-neutral-500">{formatUnixDate(song.metadata.timestamp)}</span>
-      <button on:click={handlePlayButton} class="text-3xl text-primary-400">
+      <button aria-label="play" on:click={handlePlayButton} class="text-3xl text-primary-400">
         {#if song.audioId === $currentTrackStore?.audioId && $playerStateStore === PLAYER_STATE.PLAYING}
           <PauseIcon />
         {:else if pageLoading}
@@ -93,13 +95,13 @@
       </button>
     </div>
 
-    <ul class="my-3 flex flex-wrap justify-center gap-2">
+    <div class="my-3 flex flex-wrap justify-center gap-2">
       {#each artists as artist (artist)}
         <a href={artist.url || ""} target="_blank" out:fly|local={{ x: 10 }} in:fly={{ x: -10 }} class="ml-1 text-xs"
           >{artist.name}</a
         >
       {/each}
-    </ul>
+    </div>
 
     {#if windowWidth >= 640}
       <div class="w-96">

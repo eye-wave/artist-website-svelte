@@ -15,11 +15,11 @@
 <nav class="bg-surface0/10 flex select-none gap-10 px-3 py-10">
   <div class="flex w-full items-center justify-evenly">
     <div class="flex gap-3 text-xl">
-      <NavbarItem class="w-16" href="/">
+      <NavbarItem class="w-16" href="/" label="Home page">
         <Logo />
       </NavbarItem>
       {#each links as { href, name }}
-        <NavbarItem active={$page.url.pathname === href} {href}>
+        <NavbarItem label="{name} page" active={$page.url.pathname === href} {href}>
           {name}
         </NavbarItem>
       {/each}

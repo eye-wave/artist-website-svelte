@@ -1,9 +1,10 @@
 <script lang="ts">
   export let active = false
   export let href: string
+  export let label = ""
 </script>
 
-<a class="relative select-none {$$props.class || ''}" class:active {href}>
+<a aria-label={label} class="relative select-none {$$props.class || ''}" class:active {href}>
   <slot>link</slot>
 </a>
 

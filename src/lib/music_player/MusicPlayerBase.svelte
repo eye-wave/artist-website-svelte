@@ -1,15 +1,18 @@
 <script lang="ts">
+  import "$lib/screenEffects.css"
   import { fly } from "svelte/transition"
   import { formatSeconds } from "src/utils/time"
   import { musicPlayer } from "."
-  import { type SvelteComponent, onMount } from "svelte"
   import { PLAYER_STATE, QUEUE_STATE, type T_PLAYER_STATE, type T_QUEUE_STATE } from "./enums"
   import { trimText } from "src/utils/text"
+  import { type SvelteComponent, onMount } from "svelte"
+  import ArrowUpIcon from "virtual:icons/material-symbols/keyboard-arrow-up-rounded"
   import AutoplayOffIcon from "virtual:icons/ic/round-play-disabled"
   import LoadingIcon from "virtual:icons/line-md/loading-loop"
   import LoopAllIcon from "virtual:icons/cil/loop"
   import LoopOffIcon from "virtual:icons/heroicons-solid/arrow-down-on-square"
   import LoopOneIcon from "virtual:icons/cil/loop-1"
+  import MutedIcon from "virtual:icons/material-symbols/volume-off-rounded"
   import NextIcon from "virtual:icons/basil/skip-next-solid"
   import PauseIcon from "virtual:icons/typcn/media-pause"
   import PlayIcon from "virtual:icons/material-symbols/play-arrow-rounded"
@@ -17,11 +20,9 @@
   import ShuffleIcon from "virtual:icons/ph/shuffle-bold"
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
   import Slider from "../Slider.svelte"
-  import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
-  import ArrowUpIcon from "virtual:icons/material-symbols/keyboard-arrow-up-rounded"
-  import VolumeIcon from "virtual:icons/ic/round-volume-up"
-  import MutedIcon from "virtual:icons/material-symbols/volume-off-rounded"
   import Tooltip from "../Tooltip.svelte"
+  import VolumeIcon from "virtual:icons/ic/round-volume-up"
+  import WifiErrorIcon from "virtual:icons/iconoir/wifi-error"
 
   const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore, timeStore, volumeStore } = musicPlayer.stores
   const playerStateComponents = new Map<T_PLAYER_STATE, SvelteComponent>([
