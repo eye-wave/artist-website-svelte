@@ -1,9 +1,9 @@
 <script lang="ts">
   import { CUSTOM_NODE_NAME, WAVESHAPER_CURVE_TYPE } from "../enums"
   import { generateDistortionCurve } from "../waveshaper"
+  import { line } from "d3-shape"
   import { musicPlayer } from "$lib/music_player"
   import { onDestroy, onMount } from "svelte"
-  import { line } from "d3-shape"
   import { scaleLinear } from "d3-scale"
   import EffectTemplate from "./EffectTemplate.svelte"
   import Knob from "./Knob.svelte"
@@ -17,14 +17,13 @@
   const grandientId = `${Math.random()}`
   const resolution = 99
 
-  let windowWidth = 300
   let unsubscribe: undefined | Unsubscriber
+  let windowWidth = 300
 
-  $: presetStore = musicPlayer.audioEffects?.presetStore
-  $: active = ($presetStore?.sequence || []).indexOf(CUSTOM_NODE_NAME.WAVESHAPER) !== -1
   $: _color = active ? color : "#444"
+  $: active = ($presetStore?.sequence || []).indexOf(CUSTOM_NODE_NAME.WAVESHAPER) !== -1
+  $: presetStore = musicPlayer.audioEffects?.presetStore
   $: x = scaleLinear().domain([0, resolution]).range([0, width])
-
   $: y = scaleLinear().domain([1, -1]).range([0, height])
 
   $: lineGenerator = line<number>()
@@ -46,10 +45,10 @@
 
   onDestroy(() => typeof unsubscribe === "function" && unsubscribe())
 
-  let dry = $presetStore?.waveshaper.dry ?? 0
-  let wet = $presetStore?.waveshaper.wet ?? 0.8
   let curveType = $presetStore?.waveshaper?.curveType ?? WAVESHAPER_CURVE_TYPE.HARD_CLIP
+  let dry = $presetStore?.waveshaper.dry ?? 0
   let intensity = $presetStore?.waveshaper?.intensity ?? 1
+  let wet = $presetStore?.waveshaper.wet ?? 0.8
 
   function handleToggleButton(e: CustomEvent) {
     if (!musicPlayer.audioEffects) return
@@ -104,37 +103,37 @@
 
   <div class="flex w-32 flex-wrap justify-center">
     <Knob
-      defaultValue={0}
-      min={0}
-      max={1}
-      step={0.02}
-      label="dry"
-      color={_color}
-      bind:value={dry}
       on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({ waveshaper: { dry: e.detail } })}
-    />
-
-    <Knob
-      defaultValue={0.8}
+      bind:value={dry}
+      color={_color}
+      defaultValue={0}
+      label="dry"
       min={0}
       max={1}
       step={0.02}
-      label="wet"
-      color={_color}
-      bind:value={wet}
-      on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({ waveshaper: { wet: e.detail } })}
     />
 
     <Knob
+      on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({ waveshaper: { wet: e.detail } })}
+      bind:value={wet}
+      color={_color}
+      defaultValue={0.8}
+      label="wet"
+      min={0}
+      max={1}
+      step={0.02}
+    />
+
+    <Knob
+      on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({ waveshaper: { intensity: e.detail } })}
+      bind:value={intensity}
       class="w-20"
+      color={_color}
       defaultValue={1}
+      label="drive"
       min={0}
       max={20}
       step={0.1}
-      label="drive"
-      color={_color}
-      bind:value={intensity}
-      on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({ waveshaper: { intensity: e.detail } })}
     />
   </div>
 </EffectTemplate>

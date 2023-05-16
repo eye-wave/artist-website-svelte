@@ -1,5 +1,4 @@
-import type { SongMetadata } from "$lib/music_player/queue"
-import type { ArtistData } from "src/routes/music/demos/+page"
+import type { ArtistData } from "~/routes/music/demos/+page"
 import type { PageLoad } from "./$types"
 
 type PageData = {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte"
-  import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
+  import { getCoordinatesFromEvent } from "~/utils/mouseEvent"
 
   export let color = "#7469ff"
   export let defaultValue = 0.5
@@ -14,13 +14,13 @@
 
   const dispatch = createEventDispatcher<{ change: number }>()
 
-  $: knobRange = 360 - knobAngle * 2
   $: angle = ((value - min) / (max - min)) * knobRange
+  $: knobRange = 360 - knobAngle * 2
   $: valueText = value.toFixed(1)
 
-  let startX = 0
-  let startValue = -1
   let mouseDown = false
+  let startValue = -1
+  let startX = 0
 
   function onDragStart(e: MouseEvent | TouchEvent) {
     mouseDown = true

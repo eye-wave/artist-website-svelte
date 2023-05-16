@@ -1,9 +1,9 @@
+import { mongoWrapper } from "$api/db.server"
 import { DB_SECRET_KEY } from "$env/static/private"
+import type { SongMetadata } from "$lib/music_player/queue"
 import { fail } from "@sveltejs/kit"
 import type { File } from "buffer"
 import sharp from "sharp"
-import type { SongMetadata } from "src/lib/music_player/queue"
-import { mongoWrapper } from "../../../db.server"
 import type { Actions, PageServerLoad } from "./$types"
 
 export const load: PageServerLoad = async ({ fetch }) => {

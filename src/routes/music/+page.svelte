@@ -1,10 +1,10 @@
 <script lang="ts">
   import { fade } from "svelte/transition"
-  import { glitch } from "src/transitions/glitch"
+  import { glitch } from "~/transitions/glitch"
   import { onMount } from "svelte"
   import { PUBLIC_SOUNDCLOUD_URL, PUBLIC_SPOTIFY_URL, PUBLIC_YOUTUBE_URL } from "$env/static/public"
-  import { typewriter } from "src/transitions/typewriter"
-  import { viewport } from "src/actions/viewport"
+  import { typewriter } from "~/transitions/typewriter"
+  import { viewport } from "~/actions/viewport"
   import CdIcon from "virtual:icons/clarity/cd-dvd-line"
   import Head from "$lib/Head.svelte"
   import OfficialCard from "./OfficialCard.svelte"

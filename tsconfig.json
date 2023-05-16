@@ -11,8 +11,10 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "src": ["./src"],
-      "src/*": ["./src/*"],
+      "~": ["./src"],
+      "~/*": ["./src/*"],
+      "$api": ["./src/routes/api"],
+      "$api/*": ["./src/routes/api/*"],
       "$lib": ["./src/lib"],
       "$lib/*": ["./src/lib/*"]
     }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import "./styles.css"
-  import { isMusicPlayerInitialized } from "src/stores/isMusicPlayerInitialized"
+  import { isMusicPlayerInitialized } from "~/stores/isMusicPlayerInitialized"
   import Footer from "$lib/navigation/Footer.svelte"
   import Navbar from "$lib/navigation/Navbar.svelte"
 

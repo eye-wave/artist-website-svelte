@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { artistMap } from "src/stores/artists"
+  import { artistMap } from "~/stores/artists"
   import { createEventDispatcher, onMount, onDestroy, type SvelteComponent } from "svelte"
   import { fade, fly } from "svelte/transition"
-  import { formatSeconds } from "src/utils/time"
+  import { formatSeconds } from "~/utils/time"
   import { QUEUE_STATE, QUEUE_STATE_NAMES, type T_QUEUE_STATE } from "./enums"
   import ArrowDownIcon from "virtual:icons/ic/round-keyboard-arrow-down"
   import AudioGraph from "./audio_effects/AudioGraph.svelte"
@@ -32,19 +32,19 @@
   export let artists: string[]
   export let currentTime: number
   export let duration: number
-  export let image: string
-  export let queueState: T_QUEUE_STATE
-  export let shuffleOn: boolean
-  export let title: string
-  export let windowWidth: number
   export let handleNextButton: () => void
   export let handlePlayButton: () => void
   export let handlePrevButton: () => void
   export let handleQueueButton: () => void
   export let handleShuffleButton: () => void
   export let handleSongSkip: (e: CustomEvent) => void
+  export let image: string
   export let playerComponent: typeof SvelteComponent
   export let queueComponent: typeof SvelteComponent
+  export let queueState: T_QUEUE_STATE
+  export let shuffleOn: boolean
+  export let title: string
+  export let windowWidth: number
 
   const dispatch = createEventDispatcher<{ close: void }>()
   const handleClose = () => dispatch("close")
@@ -90,7 +90,7 @@
       <svelte:component this={MoodSwitcher} />
       <svelte:component this={PlaybackSpeed} />
       <svelte:component this={Reverb} color="#50aaff" />
-      <svelte:component this={Waveshaper} color="de8098" />
+      <svelte:component this={Waveshaper} color="#de8098" />
     </div>
   {:else}
     <div
@@ -109,9 +109,9 @@
               <source media="(min-width:480px)" srcset="/api/storage/file/{image}?width=384&height=384" />
               <img
                 transition:fly|local={{ x: -10 }}
-                draggable="false"
-                class="absolute inset-0 rounded-md"
                 src="/api/storage/file/{image}?width=224&height=224"
+                class="absolute inset-0 rounded-md"
+                draggable="false"
                 alt=""
               />
             </picture>

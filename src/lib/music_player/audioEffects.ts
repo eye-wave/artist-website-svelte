@@ -1,6 +1,6 @@
-import { compareArrays } from "src/utils/array"
+import impulseAudioSource from "$lib/audio/impulse.opus"
 import { derived, writable } from "svelte/store"
-import impulseAudioSource from "../audio/impulse.opus"
+import { compareArrays } from "~/utils/array"
 import { CUSTOM_NODE_NAME, PRESET_NAMES, WAVESHAPER_CURVE_TYPE, type T_CUSTOM_NODE_NAME, type T_PRESET_NAMES } from "./enums"
 import { createReverbNode, type ReverbNode, type ReverbOptions } from "./reverb"
 import { createWaveShaperNode, type WaveShaperNode, type WaveShaperOptions } from "./waveshaper"

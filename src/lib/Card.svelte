@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { viewport } from "src/actions/viewport"
+  import { viewport } from "~/actions/viewport"
 
   export let img: string
   export let title: string

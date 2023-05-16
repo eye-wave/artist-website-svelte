@@ -1,18 +1,5 @@
 import type { PageServerLoad } from "./$types"
 
-export type ReleaseEntry = {
-  id: number
-  artists: string[]
-  title: string
-  link: {
-    soundcloud: string
-    youtube: string
-    spotify: string
-  }
-  image: string
-  timestamp: number
-}
-
 type PageData = {
   releases: ReleaseEntry[]
 }

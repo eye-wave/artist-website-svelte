@@ -1,11 +1,11 @@
 <script lang="ts">
+  import { musicPlayer } from ".."
   import { PRESET_NAMES, type T_PRESET_NAMES } from "../enums"
   import Angery from "$lib/icons/Angery.svg?component"
+  import EffectTemplate from "./EffectTemplate.svelte"
   import Fuwa from "$lib/icons/Fuwa.svg?component"
   import Happy from "$lib/icons/Happy.svg?component"
   import Sad from "$lib/icons/Sad.svg?component"
-  import EffectTemplate from "./EffectTemplate.svelte"
-  import { musicPlayer } from ".."
 
   export let currentMood: T_PRESET_NAMES = PRESET_NAMES.NORMAL
   // TODO add moodStore so this component can adapt to the actual settings

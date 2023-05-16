@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { debounce } from "src/utils/debounce"
+  import { debounce } from "~/utils/debounce"
   import CloseIcon from "virtual:icons/ic/round-cancel"
 
   export let value = ""

@@ -1,25 +1,25 @@
 <script lang="ts">
-  import { musicPlayer } from ".."
-  import { curveBasis, line } from "d3-shape"
-  import { scaleLinear } from "d3-scale"
-  import { onDestroy, onMount } from "svelte"
   import { browser } from "$app/environment"
+  import { curveBasis, line } from "d3-shape"
+  import { musicPlayer } from ".."
+  import { onDestroy, onMount } from "svelte"
+  import { scaleLinear } from "d3-scale"
 
   export let bufferSize = 60
   export let curveSteepness = 6
 
   const fftSize = 8192
 
+  let animationId = -1
   let canvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D | null
-  let animationId = -1
-  let domRect: DOMRect
   let div: HTMLDivElement
+  let domRect: DOMRect
 
   $: if (musicPlayer.audioEffects) musicPlayer.audioEffects.analyzer.fftSize = fftSize
-  $: width = domRect?.width || 200
-  $: height = domRect?.height || 48
   $: buffer = new Uint8Array(bufferSize)
+  $: height = domRect?.height || 48
+  $: width = domRect?.width || 200
   $: x = scaleLinear().domain([0, bufferSize]).range([0, width])
   $: y = scaleLinear().domain([255, 0]).range([0, height])
   $: lineGenerator = line<{ x: number; y: number }>()

@@ -1,12 +1,12 @@
 <script lang="ts">
   import { fly } from "svelte/transition"
-  import { formatUnixDate } from "src/utils/date"
-  import { isMusicPlayerInitialized } from "src/stores/isMusicPlayerInitialized"
+  import { formatUnixDate } from "~/utils/time"
+  import { isMusicPlayerInitialized } from "~/stores/isMusicPlayerInitialized"
   import { onMount } from "svelte"
   import { parsePost } from "./parser"
-  import { PLAYER_STATE } from "src/lib/music_player/enums"
+  import { PLAYER_STATE } from "$lib/music_player/enums"
   import ExitIcon from "virtual:icons/material-symbols/exit-to-app-rounded"
-  import Head from "src/lib/Head.svelte"
+  import Head from "$lib/Head.svelte"
   import LoadingIcon from "virtual:icons/line-md/loading-loop"
   import PauseIcon from "virtual:icons/mingcute/pause-circle-fill"
   import PlayIcon from "virtual:icons/material-symbols/play-circle-rounded"
@@ -22,13 +22,13 @@
   const width = 800
   const height = 200
 
+  $: artists = data.artists
+  $: currentTrackStore = musicPlayer?.stores.currentTrackStore
   $: musicPlayer = $isMusicPlayerInitialized
   $: playerStateStore = musicPlayer?.stores.playerStateStore
-  $: currentTrackStore = musicPlayer?.stores.currentTrackStore
-  $: song = data.song
   $: post = data.post
+  $: song = data.song
   $: waveform = data.waveform
-  $: artists = data.artists
 
   async function handlePlayButton() {
     if (musicPlayer === undefined) {

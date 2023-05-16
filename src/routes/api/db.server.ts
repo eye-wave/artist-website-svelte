@@ -1,6 +1,6 @@
 import { DB_SECRET_KEY, MONGODB_URI } from "$env/static/private"
+import type { SongMetadata } from "$lib/music_player/queue"
 import { GridFSBucket, MongoClient, ObjectId } from "mongodb"
-import type { SongMetadata } from "src/lib/music_player/queue"
 import type { Stream } from "stream"
 import type { ReleaseEntry } from "../music/+page.server"
 

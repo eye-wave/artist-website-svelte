@@ -1,14 +1,4 @@
-export type SongMetadata = {
-  audioId: string
-  metadata: {
-    imageId: string
-    title: string
-    artists: string[]
-    timestamp: number
-    tags: string[]
-    descriptionId: string
-  }
-}
+import { rng } from "~/utils/random"
 
 export type SongMapItem = {
   url: string
@@ -138,7 +128,7 @@ export function createSongQueue() {
       if (currentSongIndex < 0) return
       if (queue.length < 1) return
 
-      currentSongIndex = Math.floor(Math.random() * queue.length)
+      currentSongIndex = rng(queue.length)
       return queue.at(currentSongIndex)
     },
 

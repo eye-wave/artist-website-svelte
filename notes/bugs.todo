@@ -1,6 +1,3 @@
-[X] - double skip or prev when queue is on shuffle
-[X] - some songs are not sorted properly even tho timestamps are correct
-[X] - get rid of useless queue caching
 [ ] - mobile quirks
   [ ] - sliders and knobs
   [ ] - visual bugs on firefox mobile
@@ -8,4 +5,3 @@
 
 [ ] - null image
 [ ] - confusing screen reader captions on clickables
-[ ] - invisible waveshaper

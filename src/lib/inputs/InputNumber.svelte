@@ -1,11 +1,11 @@
 <script lang="ts">
-  export let value = 0
-  export let name: string | undefined = undefined
   export let caption = ""
-  export let placeholder = ""
+  export let inputElement: HTMLInputElement | undefined = undefined
   export let min = 0
   export let max = 10
-  export let inputElement: HTMLInputElement | undefined = undefined
+  export let name: string | undefined = undefined
+  export let placeholder = ""
+  export let value = 0
 </script>
 
 {#if caption}

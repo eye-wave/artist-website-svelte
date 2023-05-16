@@ -11,8 +11,9 @@ const config = {
   },
   resolve: {
     alias: {
-      src: "/src",
-      $lib: "src/lib",
+      "~": "/src",
+      $api: "/src/routes/api",
+      $lib: "/src/lib",
     },
   },
 }

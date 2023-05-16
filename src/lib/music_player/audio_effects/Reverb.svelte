@@ -29,23 +29,23 @@
 
 <EffectTemplate color={_color} bind:active on:change={handleToggleButton} effectName="Reverb">
   <Knob
+    color={_color}
     defaultValue={0.3}
+    label="dry"
     min={0}
     max={1}
     step={0.02}
-    label="dry"
-    color={_color}
     value={dry}
     on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({ reverb: { dry: e.detail } })}
   />
 
   <Knob
+    color={_color}
+    defaultValue={0.7}
+    label="wet"
     min={0}
     max={1}
     step={0.02}
-    defaultValue={0.7}
-    label="wet"
-    color={_color}
     value={wet}
     on:change={e => active && musicPlayer.audioEffects?.changeEffectParam({ reverb: { wet: e.detail } })}
   />

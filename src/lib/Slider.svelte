@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte"
-  import { getCoordinatesFromEvent } from "src/utils/mouseEvent"
+  import { getCoordinatesFromEvent } from "~/utils/mouseEvent"
 
   export let max = 100
   export let min = 0

@@ -2,7 +2,7 @@ import { browser } from "$app/environment"
 import { derived, writable } from "svelte/store"
 import { createAudioEffects, type AudioEffects } from "./audioEffects"
 import { PLAYER_STATE, QUEUE_STATE, type T_PLAYER_STATE, type T_QUEUE_STATE } from "./enums"
-import { createSongQueue, type SongMetadata } from "./queue"
+import { createSongQueue } from "./queue"
 
 export type CurrentTrack = { duration: number } & SongMetadata
 

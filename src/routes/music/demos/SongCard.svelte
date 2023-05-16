@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isMusicPlayerInitialized } from "src/stores/isMusicPlayerInitialized"
+  import { isMusicPlayerInitialized } from "~/stores/isMusicPlayerInitialized"
   import { onMount } from "svelte"
   import { PLAYER_STATE } from "$lib/music_player/enums"
   import Card from "$lib/Card.svelte"
@@ -10,8 +10,8 @@
   import Tag from "$lib/Tag.svelte"
   import type { MusicPlayer } from "$lib/music_player"
 
-  export let playlist: string[]
   export let audioId: string
+  export let playlist: string[]
   export let metadata: {
     title: string
     imageId: string
@@ -21,12 +21,13 @@
   }
 
   let musicPlayer: MusicPlayer | undefined
+
+  $: currentTrackStore = musicPlayer?.stores.currentTrackStore
   $: musicPlayer = $isMusicPlayerInitialized
   $: playerStateStore = musicPlayer?.stores.playerStateStore
-  $: currentTrackStore = musicPlayer?.stores.currentTrackStore
 
-  let isJavascriptEnabled = false
   let cardLoading = false
+  let isJavascriptEnabled = false
 
   onMount(() => (isJavascriptEnabled = true))
 
@@ -53,7 +54,9 @@
     }
 
     cardLoading = true
+
     await musicPlayer.play(audioId)
+
     cardLoading = false
   }
 </script>
@@ -67,9 +70,9 @@
 
   {#if isJavascriptEnabled}
     <button
-      on:click={handlePlayButton}
-      aria-label="play {metadata.title}"
       class="absolute bottom-1 right-1 text-6xl text-primary-400"
+      aria-label="play {metadata.title}"
+      on:click={handlePlayButton}
     >
       {#if audioId === $currentTrackStore?.audioId && $playerStateStore === PLAYER_STATE.PLAYING}
         <PauseIcon />

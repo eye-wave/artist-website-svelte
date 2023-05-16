@@ -1,4 +1,4 @@
-import { mongoWrapper } from "../db.server"
+import { mongoWrapper } from "$api/db.server"
 import type { RequestHandler } from "./$types"
 
 export const GET = (async () => {

@@ -1,6 +1,6 @@
+import { mongoWrapper } from "$api/db.server"
 import { DB_SECRET_KEY } from "$env/static/private"
 import { error } from "@sveltejs/kit"
-import { mongoWrapper } from "../../db.server"
 import type { RequestHandler } from "./$types"
 
 export const POST = (async ({ url }) => {

@@ -1,15 +1,15 @@
 <script lang="ts">
   import { musicPlayer } from "$lib/music_player"
-  import Slider from "src/lib/Slider.svelte"
   import { onDestroy, onMount } from "svelte"
-  import type { Unsubscriber } from "svelte/store"
   import EffectTemplate from "./EffectTemplate.svelte"
+  import Slider from "$lib/Slider.svelte"
+  import type { Unsubscriber } from "svelte/store"
 
   let speed = 1
   let unsubscribe: undefined | Unsubscriber
 
-  $: presetStore = musicPlayer.audioEffects?.presetStore
   $: formattedSpeed = Math.floor(speed * 100) / 100
+  $: presetStore = musicPlayer.audioEffects?.presetStore
 
   onMount(() => {
     if (!presetStore) return

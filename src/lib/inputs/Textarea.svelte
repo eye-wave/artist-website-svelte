@@ -1,9 +1,9 @@
 <script lang="ts">
-  export let value = ""
-  export let name: string | undefined = undefined
   export let caption = ""
+  export let name: string | undefined = undefined
   export let placeholder = ""
   export let textAreaElement: HTMLTextAreaElement | undefined = undefined
+  export let value = ""
 </script>
 
 {#if caption}

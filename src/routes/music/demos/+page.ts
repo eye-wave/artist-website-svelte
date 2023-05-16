@@ -1,4 +1,3 @@
-import type { SongMetadata } from "$lib/music_player/queue"
 import type { PageLoad } from "./$types"
 
 export type ModifiedSongData = {

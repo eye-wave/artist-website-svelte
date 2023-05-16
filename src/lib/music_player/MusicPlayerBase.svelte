@@ -1,10 +1,10 @@
 <script lang="ts">
   import "$lib/screenEffects.css"
   import { fly } from "svelte/transition"
-  import { formatSeconds } from "src/utils/time"
+  import { formatSeconds } from "~/utils/time"
   import { musicPlayer } from "."
   import { PLAYER_STATE, QUEUE_STATE, type T_PLAYER_STATE, type T_QUEUE_STATE } from "./enums"
-  import { trimText } from "src/utils/text"
+  import { trimText } from "~/utils/text"
   import { type SvelteComponent, onMount } from "svelte"
   import ArrowUpIcon from "virtual:icons/material-symbols/keyboard-arrow-up-rounded"
   import AutoplayOffIcon from "virtual:icons/ic/round-play-disabled"
@@ -27,9 +27,9 @@
   const { playerStateStore, queueStateStore, shuffleOnStore, currentTrackStore, timeStore, volumeStore } = musicPlayer.stores
   const playerStateComponents = new Map<T_PLAYER_STATE, SvelteComponent>([
     [PLAYER_STATE.ERROR, WifiErrorIcon],
+    [PLAYER_STATE.IDLE, PlayIcon],
     [PLAYER_STATE.LOADING, LoadingIcon],
     [PLAYER_STATE.PAUSED, PlayIcon],
-    [PLAYER_STATE.IDLE, PlayIcon],
     [PLAYER_STATE.PLAYING, PauseIcon],
   ])
   const queueStateComponents = new Map<T_QUEUE_STATE, SvelteComponent>([
@@ -41,11 +41,11 @@
 
   type ComponentType = typeof import("./MusicPlayerFullscreen.svelte").default
 
+  let fullScreen = false
   let FullScreen: ComponentType
-
   let isOnMobile = true
   let windowWidth = 300
-  let fullScreen = false
+
   $: {
     if (fullScreen && !FullScreen) {
       import("./MusicPlayerFullscreen.svelte").then(_module => (FullScreen = _module.default))
@@ -200,8 +200,8 @@
           <img
             transition:fly={{ x: -20 }}
             class="absolute inset-0 rounded-sm"
-            draggable="false"
             src="/api/storage/file/{$currentTrackStore?.metadata.imageId}?width=48&height=48"
+            draggable="false"
             alt=""
           />
         {/key}
@@ -221,7 +221,6 @@
     {handleShuffleButton}
     {handleSongSkip}
     {windowWidth}
-    title={$currentTrackStore?.metadata.title || "untitled"}
     artists={$currentTrackStore?.metadata.artists || []}
     currentTime={$timeStore || 0}
     duration={$currentTrackStore?.duration || 0}
@@ -230,6 +229,7 @@
     queueComponent={queueStateComponents.get($queueStateStore) || AutoplayOffIcon}
     queueState={$queueStateStore}
     shuffleOn={$shuffleOnStore}
+    title={$currentTrackStore?.metadata.title || "untitled"}
   />
 {/if}
 

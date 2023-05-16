@@ -1,6 +1,6 @@
+import { mongoWrapper } from "$api/db.server"
 import { error } from "@sveltejs/kit"
 import sharp from "sharp"
-import { mongoWrapper } from "../../../db.server"
 import type { RequestHandler } from "./$types"
 
 export const GET: RequestHandler = async ({ params, url }) => {

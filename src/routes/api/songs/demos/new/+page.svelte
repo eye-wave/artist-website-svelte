@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatUnixDate } from "src/utils/date.js"
+  import { formatUnixDate } from "~/utils/time"
   import AutocompInput from "$lib/inputs/AutocompInput.svelte"
   import CloseIcon from "virtual:icons/ic/round-cancel"
   import Input from "$lib/inputs/Input.svelte"
@@ -9,8 +9,8 @@
   import PersonIcon from "virtual:icons/material-symbols/person"
   import TagIcon from "virtual:icons/ic/round-tag"
   import TagInput from "$lib/inputs/TagInput.svelte"
+  import Textarea from "$lib/inputs/Textarea.svelte"
   import UploadIcon from "virtual:icons/ic/round-upload"
-  import Textarea from "src/lib/inputs/Textarea.svelte"
 
   export let data
   export let form
@@ -28,8 +28,8 @@
   let imageInput: HTMLInputElement
   let imagePreviewSrc = ""
 
-  let songTags: Set<string> = new Set()
   let songArtists: Set<string> = new Set()
+  let songTags: Set<string> = new Set()
 
   async function onFileUpload(e: Event, fileType: string) {
     const input = e.target as HTMLInputElement

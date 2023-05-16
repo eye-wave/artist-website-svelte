@@ -1,16 +1,18 @@
 <script lang="ts">
+  import { artistMap } from "~/stores/artists"
+  import { debounce } from "~/utils/debounce"
   import Head from "$lib/Head.svelte"
   import Noscript from "$lib/Noscript.svelte"
-  import { artistMap } from "src/stores/artists"
-  import SongCard from "./SongCard.svelte"
   import Search from "$lib/inputs/TagInput.svelte"
-  import { debounce } from "src/utils/debounce"
+  import SongCard from "./SongCard.svelte"
   import type { ModifiedSongData } from "./+page"
 
   export let data
 
   const { songs, artists } = data
+
   let filteredSongs = songs
+
   const playlist = songs.map(song => song.audioId)
   const testInputSongs = new Map(
     songs.map(song => {
@@ -29,8 +31,8 @@
   // TODO create playlist store, that changes based on filtered songs
 
   let lastSearched = ""
-  let searchInputValue = ""
   let searchedTags = new Set<string>()
+  let searchInputValue = ""
 
   function filterByText(songArray: ModifiedSongData[]) {
     const toLower = searchInputValue.trim().toLowerCase()

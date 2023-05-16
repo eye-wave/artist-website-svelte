@@ -1,5 +1,5 @@
 <noscript>
-  <div>
+  <div class="noscript-tag">
     <slot>Javascript is disabled</slot>
   </div>
 </noscript>

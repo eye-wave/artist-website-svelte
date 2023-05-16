@@ -1,4 +1,4 @@
-import { rng } from "../utils/random"
+import { rng } from "~/utils/random"
 
 export function glitch(element: HTMLElement, { speed = 0.7 } = {}) {
   const valid = element.childNodes.length === 1 && element.childNodes[0].nodeType === Node.TEXT_NODE
@@ -16,7 +16,7 @@ export function glitch(element: HTMLElement, { speed = 0.7 } = {}) {
       const i = Math.trunc(text.length * t)
       if (i !== lastTick) {
         lastTick = i
-        letters.splice(rng(0, letters.length), 1)
+        letters.splice(rng(letters.length), 1)
       }
 
       element.textContent = Array.from({ length: text.length })
