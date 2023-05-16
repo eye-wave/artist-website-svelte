@@ -42,11 +42,12 @@ export const load: PageLoad = async ({ fetch }) => {
             .reverse()
             .map(song => {
               const [genre] = song.metadata.tags || ["edm"]
-              song.metadata.genre = genre
+              const newSong = { ...song } as unknown as ModifiedSongData
 
-              delete song.metadata.descriptionId
+              newSong.metadata.genre = genre
+              if ("descriptionId" in newSong.metadata) delete newSong.metadata.descriptionId
 
-              return song
+              return newSong
             })
         })
         .catch(() => console.log("Fetch failed for some reason."))
