@@ -23,6 +23,7 @@ type PageData = {
   artists: ArtistData[]
 }
 
+export const prerender = true
 export const load: PageLoad = async ({ fetch }) => {
   const pageData: PageData = {
     songs: [],
