@@ -99,11 +99,8 @@
 
 <section
   class:flex-col={!displayAsGrid}
-  class:gap-3={!displayAsGrid}
   class:flex-wrap={displayAsGrid}
-  class:gap-10={displayAsGrid}
-  class:px-10={displayAsGrid}
-  class="flex justify-center pb-20"
+  class="flex pb-20 justify-evenly gap-5"
 >
   {#each filteredSongs as song (song.audioId)}
     <svelte:component this={displayAsGrid ? SongCard : SongItem} {playlist} {...song} />
