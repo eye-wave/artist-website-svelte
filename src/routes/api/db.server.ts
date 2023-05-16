@@ -2,6 +2,7 @@ import { DB_SECRET_KEY, MONGODB_URI } from "$env/static/private"
 import { GridFSBucket, MongoClient, ObjectId } from "mongodb"
 import type { SongMetadata } from "src/lib/music_player/queue"
 import type { Stream } from "stream"
+import type { ReleaseEntry } from "../music/+page.server"
 
 function createMongoWrapper() {
   const client = new MongoClient(MONGODB_URI)
@@ -10,6 +11,7 @@ function createMongoWrapper() {
   const officialSongsCollection = db.collection("OfficialSongs")
   const demoSongsCollection = db.collection("DemoSongs")
   const artistsCollection = db.collection("Artists")
+  const fileCollection = db.collection("fs.files")
   const fileBucket = new GridFSBucket(db)
 
   let connectionPromise = client.connect()
@@ -83,17 +85,12 @@ function createMongoWrapper() {
       })
     },
 
-    async downloadFile(id: string) {
+    async downloadFileAsStream(id: string) {
       const oId = new ObjectId(id)
-      const downloadStream = fileBucket.openDownloadStream(oId)
+      const stream = fileBucket.openDownloadStream(oId)
+      const metadata = await fileCollection.findOne({ _id: oId })
 
-      return new Promise<Buffer>((resolve, reject) => {
-        const chunks = [] as Buffer[]
-
-        downloadStream.on("data", d => chunks.push(d))
-        downloadStream.on("end", () => resolve(Buffer.concat(chunks)))
-        downloadStream.on("error", reject)
-      })
+      return { metadata, stream }
     },
 
     async uploadDemoSong(input: SongMetadata, key: string) {
@@ -112,8 +109,9 @@ function createMongoWrapper() {
       return demoSongsCollection
         .find()
         .map(item => {
-          delete item._id
-          return item
+          const newItem = { ...item } as unknown as SongMetadata
+          if ("_id" in newItem) delete newItem._id
+          return newItem
         })
         .toArray()
     },
@@ -122,8 +120,9 @@ function createMongoWrapper() {
       return officialSongsCollection
         .find()
         .map(item => {
-          delete item._id
-          return item
+          const newItem = { ...item } as unknown as ReleaseEntry
+          if ("_id" in newItem) delete newItem._id
+          return newItem
         })
         .toArray()
     },

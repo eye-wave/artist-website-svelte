@@ -1,19 +1,32 @@
 import { error } from "@sveltejs/kit"
+import sharp from "sharp"
 import { mongoWrapper } from "../../../db.server"
 import type { RequestHandler } from "./$types"
 
-export const GET = (async ({ params }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
   const fileId = params.slug
 
   if (fileId === "undefined") throw error(404)
   if (fileId === "null") throw error(404)
   if (fileId === "") throw error(404)
 
-  const something = await mongoWrapper.downloadFile(fileId)
-
-  return new Response(something, {
+  const { stream, metadata } = await mongoWrapper.downloadFileAsStream(fileId)
+  const responseOptions: ResponseInit = {
     headers: {
       "Cache-Control": "max-age=31536000",
     },
-  })
-}) satisfies RequestHandler
+  }
+
+  if (metadata && "filename" in metadata) {
+    const isImage = ["gif", "jpeg", "jpg", "png", "svg", "webp"].includes(metadata.filename.replace(/.+\./, ""))
+    if (isImage) {
+      const width = +(url.searchParams.get("width") as string) || 500
+      const height = +(url.searchParams.get("height") as string) || 500
+
+      const imageStream = stream.pipe(sharp().resize(width, height))
+      return new Response(imageStream as unknown as BodyInit, responseOptions)
+    }
+  }
+
+  return new Response(stream as unknown as BodyInit, responseOptions)
+}
