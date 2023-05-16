@@ -11,9 +11,9 @@ export const GET = (async ({ params }) => {
 
   const something = await mongoWrapper.downloadFile(fileId)
 
-  return new Response(something,{
+  return new Response(something, {
     headers: {
-      "Cache-Control": "max-age=31536000"
-    }
+      "Cache-Control": "max-age=31536000",
+    },
   })
 }) satisfies RequestHandler
