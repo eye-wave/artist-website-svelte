@@ -1,5 +1,27 @@
 let observer: IntersectionObserver
 
+// TODO it's still not working but i think it's a good first step
+
+declare global {
+  interface HTMLElement {
+    enterViewport: CustomEvent<void>
+    enterFromAbove: CustomEvent<void>
+    enterFromBelow: CustomEvent<void>
+    leaveViewport: CustomEvent<void>
+    leaveFromAbove: CustomEvent<void>
+    leaveFromBelow: CustomEvent<void>
+  }
+
+  interface HTMLElementEventMap {
+    enterViewport: CustomEvent<void>
+    enterFromAbove: CustomEvent<void>
+    enterFromBelow: CustomEvent<void>
+    leaveViewport: CustomEvent<void>
+    leaveFromAbove: CustomEvent<void>
+    leaveFromBelow: CustomEvent<void>
+  }
+}
+
 function initializeObserver() {
   observer = new IntersectionObserver(
     entries => {

@@ -169,7 +169,7 @@
 
       <button
         on:click={() => (fullScreen = true)}
-        class="absolute inset-0 -top-1 left-[50%] flex h-5 w-full max-w-lg -translate-x-[50%] -translate-y-full justify-center bg-white/10 text-xl"
+        class="absolute inset-0 -top-1 left-[50%] flex h-7 w-full max-w-lg -translate-x-[50%] -translate-y-full justify-center rounded-full bg-neutral-900 text-xl shadow-md"
       >
         <ArrowUpIcon />
       </button>
@@ -185,7 +185,7 @@
           <svelte:component this={$volumeStore < 0.01 ? MutedIcon : VolumeIcon} />
         </button>
         <div slot="tooltip" class="-translate-x-5 translate-y-28 rounded-md bg-neutral-900 ring-2 ring-primary-500">
-          <div class="pt-4 text-center text-sm text-primary-400">{$volumeStore.toPrecision(2)}</div>
+          <div class="pt-4 text-center text-sm text-primary-400">{Math.floor($volumeStore * 100)}%</div>
           <Slider on:change={e => musicPlayer.setVolume(1 - e.detail)} maxSize={200} fixed={true} vertical={true} />
         </div>
       </Tooltip>

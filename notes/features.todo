@@ -2,4 +2,6 @@
 [ ] - landing page
 [ ] - shortcuts and other accessibility functionality
 [ ] - use scrapers / apis to get total views count for each song
-[X] - add grid / list switcher to demo song page
+[ ] - working eq ( someday )
+[ ] - admin file / post dashboard
+[ ] - storing post data in dedicated collection, instead of using txt files

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { artistMap } from "~/stores/artists"
-  import { createEventDispatcher, onMount, onDestroy, type SvelteComponent } from "svelte"
+  import { createEventDispatcher, onMount, onDestroy, type ComponentType } from "svelte"
   import { fade, fly } from "svelte/transition"
   import { formatSeconds } from "~/utils/time"
   import { QUEUE_STATE, QUEUE_STATE_NAMES, type T_QUEUE_STATE } from "./enums"
@@ -15,10 +15,10 @@
   import ShuffleOffIcon from "virtual:icons/tabler/arrows-right"
   import Slider from "$lib/inputs/Slider.svelte"
 
-  let MoodSwitcher: SvelteComponent
-  let PlaybackSpeed: SvelteComponent
-  let Reverb: SvelteComponent
-  let Waveshaper: SvelteComponent
+  let MoodSwitcher: ComponentType
+  let PlaybackSpeed: ComponentType
+  let Reverb: ComponentType
+  let Waveshaper: ComponentType
 
   $: {
     if (isSettingsTabOpen) {
@@ -39,8 +39,8 @@
   export let handleShuffleButton: () => void
   export let handleSongSkip: (e: CustomEvent) => void
   export let image: string
-  export let playerComponent: typeof SvelteComponent
-  export let queueComponent: typeof SvelteComponent
+  export let playerComponent: ComponentType
+  export let queueComponent: ComponentType
   export let queueState: T_QUEUE_STATE
   export let shuffleOn: boolean
   export let title: string
@@ -131,11 +131,11 @@
         <ul class="my-10 flex flex-wrap gap-3">
           {#each artists as artist (artist)}
             <a
-              href={artistMap.get(artist)?.link || ""}
+              href={artistMap.get(artist)?.url || ""}
               target="_blank"
               out:fly|local={{ x: 10 }}
               in:fly={{ x: -10 }}
-              class="ml-1 text-xs">{artist}</a
+              class="z-10 ml-1 cursor-pointer text-xs">{artist}</a
             >
           {/each}
         </ul>
@@ -150,10 +150,8 @@
       </div>
 
       <div class="flex w-full max-w-xl justify-evenly px-4 text-2xl sm:text-4xl">
-        <button on:click={handleQueueButton}>
-          <abbr title={QUEUE_STATE_NAMES.get(queueState)}>
-            <svelte:component this={queueComponent} class={queueState === QUEUE_STATE.LOOPOFF ? "-rotate-90" : ""} />
-          </abbr>
+        <button on:click={handleQueueButton} title={QUEUE_STATE_NAMES.get(queueState)}>
+          <svelte:component this={queueComponent} class={queueState === QUEUE_STATE.LOOPOFF ? "-rotate-90" : ""} />
         </button>
 
         <button on:click={handlePrevButton}>

@@ -1,6 +1,6 @@
 import type { PageLoad } from "./$types"
 
-export type ModifiedSongData = {
+type ModifiedSongData = {
   audioId: string
   metadata: {
     title: string
@@ -12,33 +12,13 @@ export type ModifiedSongData = {
   }
 }
 
-export type ArtistData = {
-  name: string
-  url: string
-}
-
-type PageData = {
-  songs: ModifiedSongData[]
-  artists: ArtistData[]
-  gridView: boolean
-}
-
-export const load: PageLoad = async ({ fetch, url }) => {
-  const gridView = url.searchParams.get("view") !== "list"
-  const pageData: PageData = {
-    songs: [],
-    artists: [],
-    gridView,
-  }
-
-  const promiseArray: Promise<void>[] = []
-
-  promiseArray.push(
-    new Promise(resolve => {
+export const load: PageLoad = async ({ fetch }) => {
+  return {
+    songs: new Promise<ModifiedSongData[]>(resolve => {
       fetch(`/api/songs/demos`, { method: "GET" })
         .then(res => res.json())
         .then((songs: SongMetadata[]) => {
-          pageData.songs = songs
+          return songs
             .sort((a, b) => a.metadata.timestamp - b.metadata.timestamp)
             .reverse()
             .map(song => {
@@ -51,22 +31,17 @@ export const load: PageLoad = async ({ fetch, url }) => {
               return newSong
             })
         })
+        .then(resolve)
         .catch(() => console.log("Fetch failed for some reason."))
-        .finally(resolve)
+        .finally(() => resolve([]))
     }),
-  )
 
-  promiseArray.push(
-    new Promise(resolve => {
+    artists: new Promise<ArtistData[]>(resolve => {
       fetch(`/api/artists`, { method: "GET" })
         .then(res => res.json())
-        .then(a => (pageData.artists = a))
+        .then(resolve)
         .catch(() => console.log("Fetch failed for some reason."))
-        .finally(resolve)
+        .finally(() => resolve([]))
     }),
-  )
-
-  await Promise.all(promiseArray)
-
-  return pageData
+  }
 }

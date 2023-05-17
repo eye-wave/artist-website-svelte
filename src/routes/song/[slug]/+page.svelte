@@ -12,6 +12,7 @@
   import PlayIcon from "virtual:icons/material-symbols/play-circle-rounded"
   import Tag from "$lib/Tag.svelte"
   import type { MusicPlayer } from "$lib/music_player"
+  import Noscript from "~/lib/Noscript.svelte"
 
   export let data
 
@@ -64,6 +65,8 @@
 <svelte:window on:resize={onResize} />
 
 <Head title={data.song.metadata.title} description={data.post} />
+<Noscript>Javascript is required to play the audio</Noscript>
+
 <a
   aria-label="go back to demo songs"
   href="/music/demos"

@@ -1,21 +1,20 @@
 <script lang="ts">
   import { artistMap } from "~/stores/artists"
   import { debounce } from "~/utils/debounce"
+  import { page } from "$app/stores"
   import GridIcon from "virtual:icons/ion/grid"
   import Head from "$lib/Head.svelte"
+  import Input from "~/lib/inputs/Input.svelte"
   import ListIcon from "virtual:icons/ci/hamburger-lg"
   import Noscript from "$lib/Noscript.svelte"
-  import Search from "$lib/inputs/TagInput.svelte"
   import SongCard from "./SongCard.svelte"
   import SongItem from "./SongItem.svelte"
-  import type { ModifiedSongData } from "./+page"
-  import { page } from "$app/stores"
 
   export let data
 
-  const { songs, artists, gridView } = data
+  const { songs, artists } = data
 
-  let displayAsGrid = gridView
+  let displayAsGrid = $page.url.searchParams.get("view") !== "list"
   let filteredSongs = songs
 
   const playlist = songs.map(song => song.audioId)
@@ -36,31 +35,22 @@
   // TODO create playlist store, that changes based on filtered songs
 
   let lastSearched = ""
-  let searchedTags = new Set<string>()
   let searchInputValue = ""
 
-  function filterByText(songArray: ModifiedSongData[]) {
-    const toLower = searchInputValue.trim().toLowerCase()
-    return songArray.filter(song => testInputSongs.get(song.audioId)?.includes(toLower))
-  }
-
-  function filterByTags(songArray: ModifiedSongData[], tags: string[]) {
-    return songArray.filter(song => tags.every(tag => testInputSongs.get(song.audioId)?.includes(tag)))
-  }
-
   function onSearch() {
-    let filtered = songs
+    const keywords = searchInputValue.trim().toLowerCase().split(" ")
+    if (keywords.length < 1) return
 
-    if (searchInputValue) filtered = filterByText(filtered)
-    if (searchedTags.size > 0) filtered = filterByTags(filtered, [...searchedTags])
-
-    filteredSongs = filtered
+    filteredSongs = songs.filter(song => {
+      const testSong = testInputSongs.get(song.audioId)
+      return keywords.every(word => testSong?.includes(word))
+    })
   }
 
   const debouncedOnSearch = debounce(onSearch, 180)
 
   $: {
-    if (searchInputValue.trim() !== lastSearched || searchedTags) {
+    if (searchInputValue.trim() !== lastSearched) {
       lastSearched = searchInputValue.trim()
       debouncedOnSearch()
     }
@@ -70,7 +60,9 @@
 <Head title="Demo Songs" description="Listen to project that propably won't be finished ever." />
 <Noscript>Some features may not be available without scripts. Enable Javascript for full experience.</Noscript>
 
-<Search class="mx-auto" bind:tags={searchedTags} bind:value={searchInputValue} />
+<div class="mx-auto w-full max-w-3xl">
+  <Input placeholder="Search for songs . . ." bind:value={searchInputValue} />
+</div>
 
 <div class="mx-auto my-5 flex w-fit gap-5">
   <a
@@ -93,15 +85,11 @@
   </a>
 </div>
 
-{#if searchInputValue.length + searchedTags.size > 0}
-  <span class="mb-4">Showing {filteredSongs.length} results.</span>
+{#if searchInputValue.length > 0}
+  <p class="mb-4 text-center">Showing {filteredSongs.length} results.</p>
 {/if}
 
-<section
-  class:flex-col={!displayAsGrid}
-  class:flex-wrap={displayAsGrid}
-  class="flex pb-20 justify-evenly gap-5"
->
+<section class:flex-col={!displayAsGrid} class:flex-wrap={displayAsGrid} class="flex justify-evenly gap-5 pb-20">
   {#each filteredSongs as song (song.audioId)}
     <svelte:component this={displayAsGrid ? SongCard : SongItem} {playlist} {...song} />
   {/each}

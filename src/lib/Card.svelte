@@ -8,7 +8,9 @@
 </script>
 
 <figure use:viewport on:enterViewport={() => (enteredViewport = true)}>
-  <figcaption>{title}</figcaption>
+  <figcaption>
+    <h2>{title}</h2>
+  </figcaption>
 
   {#if enteredViewport}
     <slot name="image">

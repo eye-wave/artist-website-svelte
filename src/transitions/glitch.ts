@@ -1,9 +1,10 @@
+import type { TransitionConfig } from "svelte/transition"
 import { rng } from "~/utils/random"
 
-export function glitch(element: HTMLElement, { speed = 0.7 } = {}) {
+export const glitch = (element: HTMLElement, { speed = 0.7 } = {}) => {
   const valid = element.childNodes.length === 1 && element.childNodes[0].nodeType === Node.TEXT_NODE
 
-  if (!valid) return
+  if (!valid) throw Error("Invalid element")
 
   const text = element.textContent || ""
   const duration = (text.length + 1) / (speed * 0.01)
@@ -24,5 +25,5 @@ export function glitch(element: HTMLElement, { speed = 0.7 } = {}) {
         .map((ch, index) => (letters.includes(index) ? ch : text.charAt(index)))
         .join("")
     },
-  }
+  } as TransitionConfig
 }

@@ -1,4 +1,7 @@
+[ ] - remember user prefs ( grid / list )
+[ ] - make song progress bar centered ( somehow )
 [ ] - mobile quirks
   [ ] - sliders and knobs
   [ ] - visual bugs on firefox mobile
   [ ] - performance issues on firefox mobile
+[ ] - revisit components that use windowWidth varialbe for "responsive design" and use media queries if possible

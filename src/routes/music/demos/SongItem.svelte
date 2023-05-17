@@ -32,7 +32,11 @@
 <svelte:window bind:innerWidth={windowWidth} />
 
 <SongWrapper {audioId} {playlist} let:cardLoading let:handlePlayButton let:isJavascriptEnabled>
-  <div class="flex gap-3 bg-neutral-900 p-2" use:viewport on:enterViewport={() => (enteredViewport = true)}>
+  <div
+    class="mx-auto flex w-full max-w-6xl gap-3 rounded-md bg-neutral-900 p-2"
+    use:viewport
+    on:enterViewport={() => (enteredViewport = true)}
+  >
     <div class="aspect-square w-16 flex-shrink-0 overflow-hidden rounded-sm bg-black sm:w-24">
       {#if enteredViewport}
         <picture>

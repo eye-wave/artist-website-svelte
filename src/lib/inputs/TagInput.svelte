@@ -5,7 +5,7 @@
   import Input from "./Input.svelte"
   import SearchIcon from "virtual:icons/solar/minimalistic-magnifer-linear"
 
-  export let placeholder = "Search for songs"
+  export let placeholder = ""
   export let tags = new Set<string>()
   export let value = ""
   export let windowFocus = true

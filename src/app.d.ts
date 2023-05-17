@@ -21,6 +21,11 @@ declare module "*.svg?component" {
   export default content
 }
 
+declare type ArtistData = {
+  name: string
+  url: string
+}
+
 // Released song object /music
 declare type ReleaseEntry = {
   id: number

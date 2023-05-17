@@ -8,7 +8,6 @@
   import CdIcon from "virtual:icons/clarity/cd-dvd-line"
   import Head from "$lib/Head.svelte"
   import OfficialCard from "./OfficialCard.svelte"
-  import type { ReleaseEntry } from "./+page.server"
 
   export let data
 
@@ -21,6 +20,7 @@
     year: number
     oldestMonth: string
     newestMonth: string
+    // eslint-disable-next-line no-undef
     items: ReleaseEntry[]
   }
 

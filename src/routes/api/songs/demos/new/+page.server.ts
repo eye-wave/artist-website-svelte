@@ -6,9 +6,15 @@ import sharp from "sharp"
 import type { Actions, PageServerLoad } from "./$types"
 
 export const load: PageServerLoad = async ({ fetch }) => {
-  const artists = (await await fetch("/api/artists").then(res => res.json())) as { name: string; url: string }[]
-
-  return { artists }
+  return {
+    artists: new Promise<ArtistData[]>(resolve => {
+      fetch(`/api/artists`, { method: "GET" })
+        .then(res => res.json())
+        .then(resolve)
+        .catch(() => console.log("Fetch failed for some reason."))
+        .finally(() => resolve([]))
+    }),
+  }
 }
 
 export const actions = {
