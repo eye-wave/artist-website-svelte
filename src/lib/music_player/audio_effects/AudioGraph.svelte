@@ -6,7 +6,7 @@
   import { scaleLinear } from "d3-scale"
 
   export let bufferSize = 60
-  export let curveSteepness = 6
+  export let curveSteepness = 5
 
   const fftSize = 8192
 
@@ -18,8 +18,8 @@
 
   $: if (musicPlayer.audioEffects) musicPlayer.audioEffects.analyzer.fftSize = fftSize
   $: buffer = new Uint8Array(bufferSize)
-  $: height = domRect?.height || 48
-  $: width = domRect?.width || 200
+  $: height = domRect?.height ?? 48
+  $: width = domRect?.width ?? 200
   $: x = scaleLinear().domain([0, bufferSize]).range([0, width])
   $: y = scaleLinear().domain([255, 0]).range([0, height])
   $: lineGenerator = line<{ x: number; y: number }>()

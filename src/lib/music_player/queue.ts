@@ -15,9 +15,15 @@ export function createSongQueue() {
   let currentSongIndex = 0
 
   const downloadSongData = async (songId: string) => {
+    console.log("Making fetch request")
+
     const promiseArray = [
       new Promise((resolve, reject) => {
-        fetch(`/api/storage/file/${songId}`)
+        fetch(`/api/storage/file/${songId}`, {
+          headers: {
+            Accept: "audio/mpeg",
+          },
+        })
           .then(res => res.blob())
           .then(blob =>
             resolve({

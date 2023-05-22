@@ -15,14 +15,14 @@ export const load: PageLoad = async ({ fetch, params }) => {
   return {
     song,
     waveform: "",
-    post: new Promise(resolve => {
+    post: new Promise<string>(resolve => {
       fetch("/api/storage/file/" + song.metadata.descriptionId)
         .then(res => res.text())
         .then(resolve)
         .catch(() => console.log("Fetch failed for some reason."))
         .finally(() => resolve(""))
     }),
-    artists: new Promise(resolve => {
+    artists: new Promise<ArtistData[]>(resolve => {
       fetch("/api/artists")
         .then(res => res.json())
         .then((arr: ArtistData[]) => arr.filter(a => song.metadata.artists.includes(a.name)))

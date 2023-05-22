@@ -14,8 +14,9 @@
 
   const { songs, artists } = data
 
-  let displayAsGrid = $page.url.searchParams.get("view") !== "list"
   let filteredSongs = songs
+
+  $: displayAsGrid = $page.url.searchParams.get("view") !== "list"
 
   const playlist = songs.map(song => song.audioId)
   const testInputSongs = new Map(

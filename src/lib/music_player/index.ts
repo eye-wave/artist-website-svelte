@@ -46,6 +46,8 @@ export class MusicPlayer {
     this._audioEffects = createAudioEffects(this._audioContext, this._audioElement)
     this._mediaSession = window.navigator.mediaSession
 
+    this.setVolume(parseFloat(localStorage.getItem("pl-volume") || "1") ?? 1)
+
     this._mediaSession.setActionHandler("play", () => this.resume())
     this._mediaSession.setActionHandler("pause", () => this.pause())
     this._mediaSession.setActionHandler("nexttrack", () => this.playNext())
@@ -222,6 +224,7 @@ export class MusicPlayer {
     if (!this._audioElement) return
     this._audioElement.volume = input
     this.volumeStore.set(input)
+    localStorage.setItem("pl-volume", `${input}`)
   }
 
   public replay() {

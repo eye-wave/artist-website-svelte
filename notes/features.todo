@@ -5,3 +5,4 @@
 [ ] - working eq ( someday )
 [ ] - admin file / post dashboard
 [ ] - storing post data in dedicated collection, instead of using txt files
+[X] - add metadata for better previews in shared urls

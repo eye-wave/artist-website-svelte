@@ -23,11 +23,12 @@
   const width = 800
   const height = 200
 
-  $: artists = data.artists
+  // eslint-disable-next-line no-undef
+  $: artists = data.artists as ArtistData[]
   $: currentTrackStore = musicPlayer?.stores.currentTrackStore
   $: musicPlayer = $isMusicPlayerInitialized
   $: playerStateStore = musicPlayer?.stores.playerStateStore
-  $: post = data.post
+  $: post = data.post as string
   $: song = data.song
   $: waveform = data.waveform
 
@@ -64,7 +65,7 @@
 
 <svelte:window on:resize={onResize} />
 
-<Head title={data.song.metadata.title} description={data.post} />
+<Head title={data.song.metadata.title} description={post} />
 <Noscript>Javascript is required to play the audio</Noscript>
 
 <a

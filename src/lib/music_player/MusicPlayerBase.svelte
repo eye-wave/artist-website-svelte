@@ -186,7 +186,13 @@
         </button>
         <div slot="tooltip" class="-translate-x-5 translate-y-28 rounded-md bg-neutral-900 ring-2 ring-primary-500">
           <div class="pt-4 text-center text-sm text-primary-400">{Math.floor($volumeStore * 100)}%</div>
-          <Slider on:change={e => musicPlayer.setVolume(1 - e.detail)} maxSize={200} fixed={true} vertical={true} />
+          <Slider
+            on:change={e => musicPlayer.setVolume(1 - e.detail)}
+            value={(1 - $volumeStore) * 100}
+            maxSize={200}
+            fixed={true}
+            vertical={true}
+          />
         </div>
       </Tooltip>
     {/if}

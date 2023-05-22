@@ -10,6 +10,7 @@
   import PlayIcon from "virtual:icons/material-symbols/play-circle-rounded"
   import SongWrapper from "./SongWrapper.svelte"
   import Tag from "$lib/Tag.svelte"
+  import { artistMap } from "~/stores/artists"
 
   export let audioId: string
   export let playlist: string[]
@@ -67,7 +68,7 @@
       {#if windowWidth > 550}
         <ul class="flex justify-center gap-2">
           {#each metadata.artists.slice(0, Math.floor(windowWidth / 180)) as artist}
-            <Tag dot={false}>{artist}</Tag>
+            <Tag dot={false} url={artistMap.get(artist)?.url ?? ""}>{artist}</Tag>
           {/each}
           {#if metadata.artists.length > Math.floor(windowWidth / 180)}
             <Tag dot={false}>...</Tag>
