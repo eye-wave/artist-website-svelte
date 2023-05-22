@@ -1,16 +1,19 @@
+import { error } from "@sveltejs/kit"
 import type { PageLoad } from "./$types"
 
 export const load: PageLoad = async ({ fetch, params }) => {
   const { slug } = params
-  const song = await new Promise<SongMetadata>((resolve, reject) => {
+  const song = await new Promise<SongMetadata|undefined>((resolve, reject) => {
     fetch(`/api/songs/demos/${slug}`, { method: "GET" })
       .then(res => res.json())
       .then(resolve)
       .catch(err => {
-        console.log("Fetch failed for some reason.")
-        reject(err)
+        console.log(err)
+        resolve(undefined)
       })
   })
+
+  if ( !song ) throw error(404)
 
   return {
     song,

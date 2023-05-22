@@ -65,7 +65,13 @@
 
 <svelte:window on:resize={onResize} />
 
-<Head title={data.song.metadata.title} description={post || data.post || ""} image={song.metadata.imageId} />
+<Head
+  title={data.song.metadata.title}
+  description={post ?? ""}
+  image="/api/storage/file/{song.metadata.imageId}?width=196&height=196"
+  imageWidth={196}
+  imageHeight={196}
+/>
 <Noscript>Javascript is required to play the audio</Noscript>
 
 <a

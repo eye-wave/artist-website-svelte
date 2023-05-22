@@ -4,11 +4,6 @@ import sharp from "sharp"
 import type { RequestHandler } from "./$types"
 
 export const GET: RequestHandler = async ({ params, url, request }) => {
-  if (request.headers.get("Sec-Fetch-Dest") === "document") throw error(400)
-  if (request.headers.get("Accept")?.startsWith("text")) throw error(400)
-  if (request.headers.get("Sec-Fetch-Dest") === "navigate") throw error(400)
-  if (request.headers.get("Sec-Fetch-Site") !== "same-origin") throw error(400)
-
   const fileId = params.slug
 
   if (fileId === "undefined") throw error(404)
@@ -24,14 +19,6 @@ export const GET: RequestHandler = async ({ params, url, request }) => {
 
   if (metadata && "filename" in metadata) {
     const regex = /.+\./
-
-    const isAudio = ["mp3", "wav", "opus", "ogg", "webm"].includes(metadata.filename.replace(regex, ""))
-    if (isAudio) {
-      if (!request.headers.get("Accept")?.startsWith("audio")) {
-        stream.destroy()
-        throw error(400)
-      }
-    }
 
     const isImage = ["gif", "jpeg", "jpg", "png", "svg", "webp"].includes(metadata.filename.replace(regex, ""))
 
