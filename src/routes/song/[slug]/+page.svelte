@@ -65,7 +65,7 @@
 
 <svelte:window on:resize={onResize} />
 
-<Head title={data.song.metadata.title} description={post} />
+<Head title={data.song.metadata.title} description={post || data.post || ""} image={song.metadata.imageId} />
 <Noscript>Javascript is required to play the audio</Noscript>
 
 <a
