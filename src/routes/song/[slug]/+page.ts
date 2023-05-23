@@ -3,7 +3,7 @@ import type { PageLoad } from "./$types"
 
 export const load: PageLoad = async ({ fetch, params }) => {
   const { slug } = params
-  const song = await new Promise<SongMetadata|undefined>((resolve, reject) => {
+  const song = await new Promise<SongMetadata | undefined>(resolve => {
     fetch(`/api/songs/demos/${slug}`, { method: "GET" })
       .then(res => res.json())
       .then(resolve)
@@ -13,7 +13,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
       })
   })
 
-  if ( !song ) throw error(404)
+  if (!song) throw error(404)
 
   return {
     song,

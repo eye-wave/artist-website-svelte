@@ -10,3 +10,4 @@
 [X] - artist chips are not clickable in list view
 [ ] - fix: volume changes affect audio graph shape
 [ ] - initial slider position is broken sometimes ( volume slider around 1% after page reload )
+[ ] - remove sveltekit icon

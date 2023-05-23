@@ -3,7 +3,7 @@ import { error } from "@sveltejs/kit"
 import sharp from "sharp"
 import type { RequestHandler } from "./$types"
 
-export const GET: RequestHandler = async ({ params, url, request }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
   const fileId = params.slug
 
   if (fileId === "undefined") throw error(404)

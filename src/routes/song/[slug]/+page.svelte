@@ -3,7 +3,7 @@
   import { formatUnixDate } from "~/utils/time"
   import { isMusicPlayerInitialized } from "~/stores/isMusicPlayerInitialized"
   import { onMount } from "svelte"
-  import { parsePost } from "./parser"
+  import { getRawTextFromPost, parsePost } from "./parser"
   import { PLAYER_STATE } from "$lib/music_player/enums"
   import ExitIcon from "virtual:icons/material-symbols/exit-to-app-rounded"
   import Head from "$lib/Head.svelte"
@@ -67,10 +67,10 @@
 
 <Head
   title={data.song.metadata.title}
-  description={post ?? ""}
-  image="/api/storage/file/{song.metadata.imageId}?width=196&height=196"
-  imageWidth={196}
-  imageHeight={196}
+  description={getRawTextFromPost(post ?? "")}
+  image="/api/storage/file/{song.metadata.imageId}?width=500&height=500"
+  imageWidth={500}
+  imageHeight={500}
 />
 <Noscript>Javascript is required to play the audio</Noscript>
 
