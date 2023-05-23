@@ -15,5 +15,7 @@ export function parsePost(input: string) {
 }
 
 export function getRawTextFromPost(input: string) {
-  return sanatizeHtmlString(input).replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, "$1")
+  return sanatizeHtmlString(input)
+    .replace(/\n/g, " ")
+    .replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, "$1")
 }
