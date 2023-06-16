@@ -9,10 +9,10 @@
   ]
 </script>
 
-<nav class="bg-surface0/10 flex select-none gap-10 px-3 py-10">
+<nav class="flex select-none gap-10 bg-black/30 px-3 py-10 shadow-xl">
   <div class="flex w-full items-center justify-evenly">
     <div class="flex gap-3 text-xl sm:gap-20">
-      <NavbarItem class="w-16" href="/" label="Home page">
+      <NavbarItem noUnderline={true} active={$page.url.pathname === "/"} class="w-16" href="/" label="Home page">
         <Logo />
       </NavbarItem>
       {#each links as { href, name }}

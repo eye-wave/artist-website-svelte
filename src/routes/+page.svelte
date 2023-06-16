@@ -30,14 +30,14 @@ His style consists of Dubstep, spiced with a pinch of 🌈Color Bass, baked on a
 
 <Head title="Eyewave" {description} />
 
-<div class="mx-auto flex max-w-xl flex-col items-center gap-4">
+<div class="mx-auto mt-10 flex max-w-xl flex-col items-center gap-4">
   <img class="rounded-full" src="/avatar.webp" alt="" draggable="false" />
   <p class="text-center text-xl font-semibold text-neutral-400">{description}</p>
 
   <ul class="mt-32 w-full">
     {#each links as { href, Component, caption }}
-      <li class="my-8 rounded-full bg-primary-600 shadow-md transition-transform hover:scale-105">
-        <a {href} target="_blank" class="grid grid-cols-3 items-center px-2 text-5xl">
+      <li class="my-8 rounded-full bg-black shadow-md transition-transform hover:scale-105">
+        <a {href} target="_blank" class="grid grid-cols-3 items-center p-2 px-5 text-5xl">
           <Component />
           <div class="text-center text-xl">{caption}</div>
         </a>

@@ -25,10 +25,10 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.78",
+    "@iconify/json": "^2.2.79",
     "@poppanator/sveltekit-svg": "^3.0.1",
-    "@sveltejs/adapter-vercel": "^2.4.3",
-    "@sveltejs/kit": "^1.16.3",
+    "@sveltejs/adapter-vercel": "^3.0.1",
+    "@sveltejs/kit": "^1.20.2",
     "@types/d3-scale": "^4.0.3",
     "@types/d3-shape": "^3.1.1",
     "@types/html-minifier": "^4.0.2",

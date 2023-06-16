@@ -1,5 +1,6 @@
 import svg from "@poppanator/sveltekit-svg"
 import { sveltekit } from "@sveltejs/kit/vite"
+import "sharp"
 import Icons from "unplugin-icons/vite"
 
 /** @type {import('vite').UserConfig} */

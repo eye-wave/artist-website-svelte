@@ -15,7 +15,7 @@
     @apply absolute bottom-0 left-0 w-full;
     @apply transition-transform;
     @apply bg-current;
-    transform: scale(0, 1);
+    transform: scale(0, 1) translateY(10px);
   }
 
   .active,
@@ -23,7 +23,7 @@
   a:focus {
     outline: transparent;
     &::after {
-      transform: scale(1);
+      transform: scale(1) translateY(10px);
     }
   }
 </style>
