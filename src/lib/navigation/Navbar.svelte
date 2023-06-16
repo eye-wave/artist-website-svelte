@@ -11,7 +11,7 @@
 
 <nav class="bg-surface0/10 flex select-none gap-10 px-3 py-10">
   <div class="flex w-full items-center justify-evenly">
-    <div class="flex sm:gap-20 gap-3 text-xl">
+    <div class="flex gap-3 text-xl sm:gap-20">
       <NavbarItem class="w-16" href="/" label="Home page">
         <Logo />
       </NavbarItem>

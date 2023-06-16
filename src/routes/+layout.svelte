@@ -33,6 +33,7 @@
 
 <style lang="postcss">
   .loading {
+    position: absolute;
     @apply h-1 w-full;
     @apply bg-gradient-to-r from-transparent via-primary-600 to-transparent;
     animation: loading 1.2s linear infinite;

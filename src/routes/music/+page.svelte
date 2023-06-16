@@ -64,7 +64,9 @@
 
 <section class="mb-96 mt-52 px-[10vmin] text-center text-xl font-semibold text-neutral-400">
   <p class="mx-auto max-w-3xl">
-    <span class="inline-flex gap-1 font-title text-4xl text-primary-400"> <span class="spin"><CdIcon /></span> Discography</span> <br />
+    <span class="inline-flex gap-1 font-title text-4xl text-primary-400">
+      <span class="spin"><CdIcon /></span> Discography</span
+    > <br />
     Find all of my released songs right here, going back from 2019 to this day. Most of them are released on
     <a href={PUBLIC_SOUNDCLOUD_URL} target="_blank" class="font-title text-2xl text-orange-400">Soundcloud</a>, but you can also
     find them on my
