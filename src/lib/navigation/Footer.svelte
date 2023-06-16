@@ -23,7 +23,7 @@
   ]
 </script>
 
-<footer class="relative bg-black p-3 text-center">
+<footer class="relative bg-black p-10 text-center">
   <div class="flex justify-center gap-2 text-3xl">
     {#each links as { href, caption, Component }}
       <a {href} target="_blank">
@@ -41,6 +41,6 @@
 <style lang="postcss">
   a {
     @apply flex flex-col items-center;
-    @apply font-mono text-xs transition-colors hover:text-primary-400;
+    @apply text-xs transition-colors hover:text-primary-400;
   }
 </style>

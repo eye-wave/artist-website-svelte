@@ -1,5 +1,3 @@
-[X] - remember user prefs
-  [X] - volume
 [ ] - make song progress bar centered ( somehow )
 [ ] - mobile quirks
   [ ] - sliders and knobs
@@ -7,7 +5,6 @@
   [ ] - performance issues on firefox mobile
   [ ] - Fullscreen player on landscape mode and shorter screens
 [ ] - revisit components that use windowWidth varialbe for "responsive design" and use media queries if possible
-[X] - artist chips are not clickable in list view
 [ ] - fix: volume changes affect audio graph shape
 [ ] - initial slider position is broken sometimes ( volume slider around 1% after page reload )
 [ ] - remove sveltekit icon

@@ -1,4 +1,4 @@
-import colors from "tailwindcss/colors"
+import tailwindColors from "tailwindcss/colors"
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -11,8 +11,8 @@ export default {
     },
     extend: {
       colors: {
-        primary: colors.violet,
-        gray: colors.zinc,
+        primary: tailwindColors.violet,
+        gray: tailwindColors.zinc,
       },
     },
   },

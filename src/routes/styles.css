@@ -20,7 +20,7 @@
 
   html {
     color-scheme: dark light;
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */ /* Change this back after it get's fixed on svelte's side of things */
 
     &::-webkit-scrollbar {
       display: none;
@@ -31,8 +31,18 @@
 
   body {
     min-height: 100vh;
-    @apply bg-black;
+    background: #000;
     background-attachment: fixed;
+
+    &::before {
+      content: "";
+      @apply fixed inset-0 h-full w-full;
+      @apply blur-xl;
+      background: url("/avatar.webp");
+      background-size: cover !important;
+      opacity: 0.08;
+      z-index: -1;
+    }
   }
 
   h1 {
